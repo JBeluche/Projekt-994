@@ -1,7 +1,11 @@
 {
 	"files.exclude": {
+		"Z:/StudioBeluche/UnrealengineProjects/Projekt994/.git": true,
+		"Z:/StudioBeluche/UnrealengineProjects/Projekt994/.vs": true,
 		"Z:/StudioBeluche/UnrealengineProjects/Projekt994/.vscode": true,
 		"Z:/StudioBeluche/UnrealengineProjects/Projekt994/Content": true,
-		"Z:/StudioBeluche/UnrealengineProjects/Projekt994/Intermediate": true
+		"Z:/StudioBeluche/UnrealengineProjects/Projekt994/DerivedDataCache": true,
+		"Z:/StudioBeluche/UnrealengineProjects/Projekt994/Intermediate": true,
+		"Z:/StudioBeluche/UnrealengineProjects/Projekt994/Saved": true
 	}
 }
