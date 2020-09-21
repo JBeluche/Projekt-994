@@ -31,9 +31,14 @@ class PROJEKT994_API UGameInstanceBase : public UGameInstance
 {
 	GENERATED_BODY()
 	
-	public:
+public:
 
 	UGameInstanceBase();
+
+
+protected:
+	UFUNCTION(BlueprintCallable)
+		void GoToMap(FString MAPURL);
 
 
 };

@@ -3,7 +3,14 @@
 
 #include "Projekt994/Public/Projekt994/Game/GameInstanceBase.h"
 
+#include "Engine/World.h"
+
 UGameInstanceBase::UGameInstanceBase()
 {
 
+}
+
+void UGameInstanceBase::GoToMap(FString MAPURL)
+{
+    GetWorld()->ServerTravel(MAPURL);
 }
