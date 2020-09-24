@@ -13,7 +13,8 @@ bool AProjekt994BeaconClient::ConnectToServer(const FString& Address)
 {
     FURL Destination = FURL(nullptr, *Address, ETravelType::TRAVEL_Absolute);
     Destination.Port= 7787;
-
+    
+    UE_LOG(LogTemp, Warning, TEXT("Connect to server"));
 
     return InitClient(Destination);
 }
