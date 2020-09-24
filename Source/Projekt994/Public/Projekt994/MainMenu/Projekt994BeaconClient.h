@@ -6,9 +6,9 @@
 #include "OnlineBeaconClient.h"
 #include "Projekt994BeaconClient.generated.h"
 
-/**
- * 
- */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FConnectSuccess, bool, FConnected);
+
 UCLASS()
 class PROJEKT994_API AProjekt994BeaconClient : public AOnlineBeaconClient
 {
@@ -16,6 +16,10 @@ class PROJEKT994_API AProjekt994BeaconClient : public AOnlineBeaconClient
 
 public:
 	AProjekt994BeaconClient();
+
+protected:
+	UPROPERTY(BlueprintAssignable)
+		FConnectSuccess FConnected;
 
 protected:
 	UFUNCTION(BlueprintCallable)
