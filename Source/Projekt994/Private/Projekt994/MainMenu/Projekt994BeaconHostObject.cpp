@@ -27,3 +27,26 @@ void AProjekt994BeaconHostObject::OnClientConnected(AOnlineBeaconClient* NewClie
 
     }
 }
+
+void AProjekt994BeaconHostObject::NotifyClientDisconnected(AOnlineBeaconClient* LeavingClientActor)
+{
+    Super::NotifyClientDisconnected(LeavingClientActor);
+
+        UE_LOG(LogTemp, Warning, TEXT("Client has disconnected"));
+
+}
+
+void AProjekt994BeaconHostObject::DisconnectAllClients()
+{
+        UE_LOG(LogTemp, Warning, TEXT("Disconecting all clients"));
+
+        for(AOnlineBeaconClient* Client : ClientActors)
+        {
+            if(Client){
+                DisconnectClient(Client);
+            }
+        }
+
+        Unregister();
+
+}

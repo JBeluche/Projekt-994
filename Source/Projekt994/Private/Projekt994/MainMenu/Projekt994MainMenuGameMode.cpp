@@ -33,3 +33,8 @@ bool AProjekt994MainMenuGameMode::CreateHostBeacon()
 
     return false;
 }
+
+AProjekt994BeaconHostObject* AProjekt994MainMenuGameMode::GetBeaconHost()
+{
+    return HostObject;
+}

@@ -25,6 +25,9 @@ protected:
 	UFUNCTION(BlueprintCallable)
 		bool ConnectToServer(const FString& Address);
 
+	UFUNCTION(BlueprintCallable)
+		void LeaveLobby();
+
 	virtual void OnFailure() override;
 	virtual void OnConnected() override;
 	

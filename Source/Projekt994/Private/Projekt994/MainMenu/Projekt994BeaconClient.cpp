@@ -30,3 +30,8 @@ void AProjekt994BeaconClient::OnConnected()
     UE_LOG(LogTemp, Warning, TEXT("CLIENT SUCCEDED TO CONNECT TO HOST BEACON"));
     FConnected.Broadcast(true);
 }
+
+void AProjekt994BeaconClient::LeaveLobby()
+{
+    DestroyBeacon();
+}

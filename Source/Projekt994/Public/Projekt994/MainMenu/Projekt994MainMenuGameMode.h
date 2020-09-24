@@ -23,6 +23,9 @@ protected:
 
 		class AProjekt994BeaconHostObject* HostObject;
 
+		UFUNCTION(BlueprintCallable)
+			class AProjekt994BeaconHostObject* GetBeaconHost();
+
 
 
 };
