@@ -16,4 +16,12 @@ class PROJEKT994_API AProjekt994BeaconHostObject : public AOnlineBeaconHostObjec
 	
 public:
 	AProjekt994BeaconHostObject();
+
+protected:
+
+	virtual void OnClientConnected
+(
+    AOnlineBeaconClient * NewClientActor,
+    UNetConnection * ClientConnection
+) override;
 };
