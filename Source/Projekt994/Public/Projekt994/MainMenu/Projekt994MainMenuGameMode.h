@@ -17,4 +17,12 @@ class PROJEKT994_API AProjekt994MainMenuGameMode : public AGameModeBase
 public:
 	AProjekt994MainMenuGameMode();
 	
+protected:
+	UFUNCTION(BlueprintCallable)
+		bool CreateHostBeacon();
+
+		class AProjekt994BeaconHostObject* HostObject;
+
+
+
 };
