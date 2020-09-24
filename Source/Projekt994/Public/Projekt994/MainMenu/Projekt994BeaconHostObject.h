@@ -19,9 +19,5 @@ public:
 
 protected:
 
-	virtual void OnClientConnected
-(
-    AOnlineBeaconClient * NewClientActor,
-    UNetConnection * ClientConnection
-) override;
+	virtual void OnClientConnected(AOnlineBeaconClient * NewClientActor,UNetConnection * ClientConnection) override;
 };

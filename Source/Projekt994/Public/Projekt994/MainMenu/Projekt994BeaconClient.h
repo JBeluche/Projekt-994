@@ -16,5 +16,12 @@ class PROJEKT994_API AProjekt994BeaconClient : public AOnlineBeaconClient
 
 public:
 	AProjekt994BeaconClient();
+
+protected:
+	UFUNCTION(BlueprintCallable)
+		bool ConnectToServer(const FString& Address);
+
+	virtual void OnFailure() override;
+	virtual void OnConnected() override;
 	
 };
