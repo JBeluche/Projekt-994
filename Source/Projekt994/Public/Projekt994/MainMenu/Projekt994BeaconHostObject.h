@@ -23,5 +23,7 @@ protected:
 	virtual void NotifyClientDisconnected(AOnlineBeaconClient * LeavingClientActor) override;
 
 	UFUNCTION(BlueprintCallable)
+		void ShutdownServer();
+		
 		void DisconnectAllClients();
 };

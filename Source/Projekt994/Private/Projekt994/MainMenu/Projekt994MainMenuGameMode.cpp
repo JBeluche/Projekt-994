@@ -11,12 +11,14 @@
 AProjekt994MainMenuGameMode::AProjekt994MainMenuGameMode()
 {
     HostObject = nullptr;
+    Host = nullptr;
 }
 
 
 bool AProjekt994MainMenuGameMode::CreateHostBeacon()
 {
-    if (AOnlineBeaconHost* Host = GetWorld()->SpawnActor<AOnlineBeaconHost>(AOnlineBeaconHost::StaticClass()))
+    Host = GetWorld()->SpawnActor<AOnlineBeaconHost>(AOnlineBeaconHost::StaticClass());
+    if (Host)
     {
         if (Host->InitHost())
         {
@@ -37,4 +39,9 @@ bool AProjekt994MainMenuGameMode::CreateHostBeacon()
 AProjekt994BeaconHostObject* AProjekt994MainMenuGameMode::GetBeaconHost()
 {
     return HostObject;
+}
+
+AOnlineBeaconHost* AProjekt994MainMenuGameMode::GetHost()
+{
+    return Host;
 }
