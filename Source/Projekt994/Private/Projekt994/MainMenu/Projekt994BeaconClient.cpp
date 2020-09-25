@@ -22,13 +22,13 @@ bool AProjekt994BeaconClient::ConnectToServer(const FString& Address)
 void AProjekt994BeaconClient::OnFailure()
 {
     UE_LOG(LogTemp, Warning, TEXT("CLIENT FAILED TO CONNECT TO HOST BEACON"));
-    FConnected.Broadcast(false);
+    FOnConnected.Broadcast(false);
 }
 
 void AProjekt994BeaconClient::OnConnected()
 {
     UE_LOG(LogTemp, Warning, TEXT("CLIENT SUCCEDED TO CONNECT TO HOST BEACON"));
-    FConnected.Broadcast(true);
+    FOnConnected.Broadcast(true);
 }
 
 void AProjekt994BeaconClient::LeaveLobby()
@@ -39,4 +39,5 @@ void AProjekt994BeaconClient::LeaveLobby()
 void AProjekt994BeaconClient::Client_OnDisconnected_Implementation()
 {
     UE_LOG(LogTemp, Warning, TEXT("Disconnected"));
+    FOnDisconnected.Broadcast();
 }
