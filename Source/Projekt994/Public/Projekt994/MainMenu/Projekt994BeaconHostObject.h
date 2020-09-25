@@ -33,6 +33,8 @@ protected:
 	UFUNCTION(BlueprintCallable)
 		void UpdateLobbyInfo(FProjekt994LobbyInfo NewLobbyInfo);
 
+	void UpdateClientLobbyInfo();
+
 
 protected:
 

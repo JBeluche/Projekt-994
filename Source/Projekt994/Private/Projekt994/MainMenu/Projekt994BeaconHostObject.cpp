@@ -84,4 +84,16 @@ void AProjekt994BeaconHostObject::DisconnectClient(AOnlineBeaconClient* ClientAc
 void AProjekt994BeaconHostObject::UpdateLobbyInfo(FProjekt994LobbyInfo NewLobbyInfo)
 {
     LobbyInfo.MapImage = NewLobbyInfo.MapImage;
+    UpdateClientLobbyInfo();
+}
+
+void AProjekt994BeaconHostObject::UpdateClientLobbyInfo()
+{
+    for (AOnlineBeaconClient* ClientBeacon : ClientActors)
+    {
+        if (AProjekt994BeaconClient* Client = Cast<AProjekt994BeaconClient>(ClientBeacon))
+        {
+            Client->Client_OnLobbyUpdated(LobbyInfo);
+        }
+    }
 }
