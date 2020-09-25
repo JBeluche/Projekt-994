@@ -20,6 +20,10 @@ void AProjekt994BeaconHostObject::OnClientConnected(AOnlineBeaconClient* NewClie
     if (NewClientActor)
     {
         UE_LOG(LogTemp, Warning, TEXT("Connect to client VALID"))
+        if(AProjekt994BeaconClient* Client = Cast<AProjekt994BeaconClient>(NewClientActor))
+        {
+            Client->Client_OnLobbyUpdated(LobbyInfo);
+        }
     }
     else 
     {
@@ -75,4 +79,9 @@ void AProjekt994BeaconHostObject::DisconnectClient(AOnlineBeaconClient* ClientAc
         }
         BeaconHost->DisconnectClient(ClientActor);
     }
+}
+
+void AProjekt994BeaconHostObject::UpdateLobbyInfo(FProjekt994LobbyInfo NewLobbyInfo)
+{
+    LobbyInfo.MapImage = NewLobbyInfo.MapImage;
 }

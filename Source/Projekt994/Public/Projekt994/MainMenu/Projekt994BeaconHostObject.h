@@ -6,9 +6,19 @@
 #include "OnlineBeaconHostObject.h"
 #include "Projekt994BeaconHostObject.generated.h"
 
-/**
- * 
- */
+
+USTRUCT(BlueprintType)
+struct FProjekt994LobbyInfo
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(BlueprintReadWrite)
+		class UTexture2D* MapImage;
+
+	UPROPERTY(BlueprintReadOnly)
+		TArray<FString> PlayerList;
+};
+
 UCLASS()
 class PROJEKT994_API AProjekt994BeaconHostObject : public AOnlineBeaconHostObject
 {
@@ -16,6 +26,13 @@ class PROJEKT994_API AProjekt994BeaconHostObject : public AOnlineBeaconHostObjec
 	
 public:
 	AProjekt994BeaconHostObject();
+
+protected:
+	FProjekt994LobbyInfo LobbyInfo;
+
+	UFUNCTION(BlueprintCallable)
+		void UpdateLobbyInfo(FProjekt994LobbyInfo NewLobbyInfo);
+
 
 protected:
 
