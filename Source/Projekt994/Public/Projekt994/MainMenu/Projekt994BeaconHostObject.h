@@ -24,6 +24,8 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 		void ShutdownServer();
-		
+
 		void DisconnectAllClients();
+
+		virtual void DisconnectClient(AOnlineBeaconClient* ClientActor) override;
 };

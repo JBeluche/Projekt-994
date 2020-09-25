@@ -35,3 +35,8 @@ void AProjekt994BeaconClient::LeaveLobby()
 {
     DestroyBeacon();
 }
+
+void AProjekt994BeaconClient::Client_OnDisconnected_Implementation()
+{
+    UE_LOG(LogTemp, Warning, TEXT("Disconnected"));
+}

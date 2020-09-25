@@ -40,8 +40,3 @@ AProjekt994BeaconHostObject* AProjekt994MainMenuGameMode::GetBeaconHost()
 {
     return HostObject;
 }
-
-AOnlineBeaconHost* AProjekt994MainMenuGameMode::GetHost()
-{
-    return Host;
-}

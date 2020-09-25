@@ -41,15 +41,12 @@ void AProjekt994BeaconHostObject::ShutdownServer()
     //Unregister Server From Database Via Web API
     DisconnectAllClients();
 
-      if (AProjekt994MainMenuGameMode* GM = GetWorld()->GetAuthGameMode<AProjekt994MainMenuGameMode>())
-        {
-            if (AOnlineBeaconHost* Host = GM->GetHost())
-            {
-                UE_LOG(LogTemp, Warning, TEXT("Host has been destroyed"));
-                Host->UnregisterHost(BeaconTypeName);
-                Host->DestroyBeacon();
-            }
-        }
+    if (AOnlineBeaconHost* Host = Cast<AOnlineBeaconHost>(GetOwner()))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Host has been destroyed"));
+        Host->UnregisterHost(BeaconTypeName);
+        Host->DestroyBeacon();
+    }
 }
 
 void AProjekt994BeaconHostObject::DisconnectAllClients()
@@ -62,4 +59,20 @@ void AProjekt994BeaconHostObject::DisconnectAllClients()
                 DisconnectClient(Client);
             }
         }
+}
+
+
+void AProjekt994BeaconHostObject::DisconnectClient(AOnlineBeaconClient* ClientActor)
+{
+
+    AOnlineBeaconHost* BeaconHost = Cast<AOnlineBeaconHost>(GetOwner());
+    if(BeaconHost)
+    {
+        if (AProjekt994BeaconClient* Client = Cast<AProjekt994BeaconClient>(ClientActor))
+        {
+        UE_LOG(LogTemp, Warning, TEXT("Disconecting client: %s"), *ClientActor->GetName());
+            Client->Client_OnDisconnected();
+        }
+        BeaconHost->DisconnectClient(ClientActor);
+    }
 }
