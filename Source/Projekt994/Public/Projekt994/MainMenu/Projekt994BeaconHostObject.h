@@ -19,6 +19,9 @@ public:
 		TArray<FString> PlayerList;
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHostLobbyUpdated, FProjekt994LobbyInfo, FOnHostLobbyUpdated);
+
+
 UCLASS()
 class PROJEKT994_API AProjekt994BeaconHostObject : public AOnlineBeaconHostObject
 {
@@ -30,6 +33,9 @@ public:
 protected:
 	FProjekt994LobbyInfo LobbyInfo;
 
+		UPROPERTY(BlueprintAssignable)
+		FHostLobbyUpdated FOnHostLobbyUpdated;
+
 	UFUNCTION(BlueprintCallable)
 		void UpdateLobbyInfo(FProjekt994LobbyInfo NewLobbyInfo);
 
@@ -37,6 +43,7 @@ protected:
 
 
 protected:
+	virtual void BeginPlay() override;
 
 	virtual void OnClientConnected(AOnlineBeaconClient * NewClientActor,UNetConnection * ClientConnection) override;
 	virtual void NotifyClientDisconnected(AOnlineBeaconClient * LeavingClientActor) override;

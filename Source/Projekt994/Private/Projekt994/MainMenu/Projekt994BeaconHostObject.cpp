@@ -19,11 +19,14 @@ void AProjekt994BeaconHostObject::OnClientConnected(AOnlineBeaconClient* NewClie
 
     if (NewClientActor)
     {
+        FString PlayerName = FString("Player ");
+        PlayerName.Append(FString::FromInt(LobbyInfo.PlayerList.Num()));
+        LobbyInfo.PlayerList.Add(PlayerName);
+
+        FOnHostLobbyUpdated.Broadcast(LobbyInfo);
+
         UE_LOG(LogTemp, Warning, TEXT("Connect to client VALID"))
-        if(AProjekt994BeaconClient* Client = Cast<AProjekt994BeaconClient>(NewClientActor))
-        {
-            Client->Client_OnLobbyUpdated(LobbyInfo);
-        }
+        UpdateClientLobbyInfo();
     }
     else 
     {
@@ -85,6 +88,7 @@ void AProjekt994BeaconHostObject::UpdateLobbyInfo(FProjekt994LobbyInfo NewLobbyI
 {
     LobbyInfo.MapImage = NewLobbyInfo.MapImage;
     UpdateClientLobbyInfo();
+    FOnHostLobbyUpdated.Broadcast(LobbyInfo);
 }
 
 void AProjekt994BeaconHostObject::UpdateClientLobbyInfo()
@@ -96,4 +100,9 @@ void AProjekt994BeaconHostObject::UpdateClientLobbyInfo()
             Client->Client_OnLobbyUpdated(LobbyInfo);
         }
     }
+}
+
+void AProjekt994BeaconHostObject::BeginPlay()
+{
+    LobbyInfo.PlayerList.Add(FString("Host"));
 }
