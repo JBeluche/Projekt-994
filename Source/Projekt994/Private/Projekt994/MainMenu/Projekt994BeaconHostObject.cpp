@@ -19,19 +19,23 @@ void AProjekt994BeaconHostObject::OnClientConnected(AOnlineBeaconClient* NewClie
 
     if (NewClientActor)
     {
+
         FString PlayerName = FString("Player ");
-        PlayerName.Append(FString::FromInt(LobbyInfo.PlayerList.Num()));
+        uint8 Index = LobbyInfo.PlayerList.Num();
+        PlayerName.Append(FString::FromInt(Index));
         LobbyInfo.PlayerList.Add(PlayerName);
 
-        FOnHostLobbyUpdated.Broadcast(LobbyInfo);
+        if (AProjekt994BeaconClient* Client = Cast<AProjekt994BeaconClient>(NewClientActor))
+            Client->SetPlayerIndex(Index);
 
         UE_LOG(LogTemp, Warning, TEXT("Connect to client VALID"))
+        FOnHostLobbyUpdated.Broadcast(LobbyInfo);
+
         UpdateClientLobbyInfo();
     }
     else 
     {
         UE_LOG(LogTemp, Warning, TEXT("Connect to client INVALID"))
-
     }
 }
 
@@ -40,6 +44,15 @@ void AProjekt994BeaconHostObject::NotifyClientDisconnected(AOnlineBeaconClient* 
     Super::NotifyClientDisconnected(LeavingClientActor);
 
         UE_LOG(LogTemp, Warning, TEXT("Client has disconnected"));
+
+        if (AProjekt994BeaconClient* Client = Cast<AProjekt994BeaconClient>(LeavingClientActor))
+        {
+            uint8 Index = Client->GetPlayerIndex();
+            LobbyInfo.PlayerList.RemoveAt(Index);
+        }
+        FOnHostLobbyUpdated.Broadcast(LobbyInfo);
+
+        UpdateClientLobbyInfo();
 
 }
 

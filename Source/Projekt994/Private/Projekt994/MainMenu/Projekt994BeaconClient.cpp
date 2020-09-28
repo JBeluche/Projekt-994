@@ -5,7 +5,7 @@
 
 AProjekt994BeaconClient::AProjekt994BeaconClient()
 {
-    
+    PlayerIndex = 0;
 }
 
 
@@ -46,4 +46,14 @@ void AProjekt994BeaconClient::Client_OnLobbyUpdated_Implementation(FProjekt994Lo
 {
     FOnLobbyUpdated.Broadcast(LobbyInfo);
 
+}
+
+void AProjekt994BeaconClient::SetPlayerIndex(uint8 Index)
+{
+    PlayerIndex = Index;
+}
+
+uint8 AProjekt994BeaconClient::GetPlayerIndex()
+{
+    return PlayerIndex;
 }
