@@ -6,6 +6,7 @@
 #include "Projekt994/Public/Projekt994/MainMenu/Projekt994MainMenuGameMode.h"
 
 #include "OnlineBeaconHost.h"
+#include "TimerManager.h"
 
 AProjekt994BeaconHostObject::AProjekt994BeaconHostObject()
 {
@@ -121,6 +122,7 @@ void AProjekt994BeaconHostObject::UpdateClientLobbyInfo()
 void AProjekt994BeaconHostObject::BeginPlay()
 {
     LobbyInfo.PlayerList.Add(FString("Host"));
+    GetWorld()->GetTimerManager().SetTimer(TInitialLobbyHandle, this, &AProjekt994BeaconHostObject::InitialLobbyHandling, 0.2f, false);
 }
 
 void AProjekt994BeaconHostObject::SendChatToLobby(const FText& ChatMessage)
@@ -134,3 +136,9 @@ void AProjekt994BeaconHostObject::SendChatToLobby(const FText& ChatMessage)
             }
         }
 }
+
+void AProjekt994BeaconHostObject::InitialLobbyHandling()
+{
+    UpdateLobbyInfo(LobbyInfo);
+}
+

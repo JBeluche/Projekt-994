@@ -42,6 +42,9 @@ protected:
 	UPROPERTY(BlueprintAssignable)
 		FHostChatRecieved FOnHostChatRecieved;
 
+	FTimerHandle TInitialLobbyHandle;
+		void InitialLobbyHandling();
+
 	UFUNCTION(BlueprintCallable)
 		void UpdateLobbyInfo(FProjekt994LobbyInfo NewLobbyInfo);
 
