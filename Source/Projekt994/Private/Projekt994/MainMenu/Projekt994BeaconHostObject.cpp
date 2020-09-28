@@ -119,3 +119,14 @@ void AProjekt994BeaconHostObject::BeginPlay()
 {
     LobbyInfo.PlayerList.Add(FString("Host"));
 }
+
+void AProjekt994BeaconHostObject::SendChatToLobby(const FText& ChatMessage)
+{
+       for(AOnlineBeaconClient* ClientBeacon : ClientActors)
+        {
+            if( AProjekt994BeaconClient* Client = Cast<AProjekt994BeaconClient>(ClientBeacon))
+            {
+                Client->Client_OnChatMessageRecieved(ChatMessage);
+            }
+        }
+}

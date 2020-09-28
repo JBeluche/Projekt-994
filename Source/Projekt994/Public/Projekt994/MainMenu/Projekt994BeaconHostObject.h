@@ -54,4 +54,7 @@ protected:
 		void DisconnectAllClients();
 
 		virtual void DisconnectClient(AOnlineBeaconClient* ClientActor) override;
+
+public:
+	void SendChatToLobby(const FText& ChatMessage);	
 };

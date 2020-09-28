@@ -15,6 +15,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDisconnected);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLobbyUpdated, FProjekt994LobbyInfo, FOnLobbyUpdated);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChatRecieved, const FText&, FOnChatRecieved);
+
 
 UCLASS()
 class PROJEKT994_API AProjekt994BeaconClient : public AOnlineBeaconClient
@@ -32,6 +34,9 @@ protected:
 		
 	UPROPERTY(BlueprintAssignable)
 		FLobbyUpdated FOnLobbyUpdated;
+
+	UPROPERTY(BlueprintAssignable)
+		FChatRecieved FOnChatRecieved;
 
 		uint8 PlayerIndex;
 
@@ -62,6 +67,11 @@ public:
 	UFUNCTION(Client, Reliable)
 		void Client_OnLobbyUpdated(FProjekt994LobbyInfo LobbyInfo);
 	void Client_OnLobbyUpdated_Implementation(FProjekt994LobbyInfo LobbyInfo);
+
+	UFUNCTION(Client, Reliable)
+		void Client_OnChatMessageRecieved(const FText& ChatMessage);
+		void Client_OnChatMessageRecieved_Implementation(const FText& ChatMessage);
+
 
 	void SetPlayerIndex(uint8 Index);
 
