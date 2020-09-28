@@ -21,6 +21,7 @@ public:
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHostLobbyUpdated, FProjekt994LobbyInfo, FOnHostLobbyUpdated);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHostChatRecieved, const FText&, FOnHostChatRecieved);
 
 UCLASS()
 class PROJEKT994_API AProjekt994BeaconHostObject : public AOnlineBeaconHostObject
@@ -30,18 +31,23 @@ class PROJEKT994_API AProjekt994BeaconHostObject : public AOnlineBeaconHostObjec
 public:
 	AProjekt994BeaconHostObject();
 
+//Lobby 
 protected:
 	FProjekt994LobbyInfo LobbyInfo;
 
-		UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable)
 		FHostLobbyUpdated FOnHostLobbyUpdated;
+
+		
+	UPROPERTY(BlueprintAssignable)
+		FHostChatRecieved FOnHostChatRecieved;
 
 	UFUNCTION(BlueprintCallable)
 		void UpdateLobbyInfo(FProjekt994LobbyInfo NewLobbyInfo);
 
 	void UpdateClientLobbyInfo();
 
-
+//Connections
 protected:
 	virtual void BeginPlay() override;
 
@@ -56,5 +62,6 @@ protected:
 		virtual void DisconnectClient(AOnlineBeaconClient* ClientActor) override;
 
 public:
+	UFUNCTION(BlueprintCallable)
 	void SendChatToLobby(const FText& ChatMessage);	
 };

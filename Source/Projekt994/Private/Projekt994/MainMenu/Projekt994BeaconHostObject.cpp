@@ -122,6 +122,7 @@ void AProjekt994BeaconHostObject::BeginPlay()
 
 void AProjekt994BeaconHostObject::SendChatToLobby(const FText& ChatMessage)
 {
+    FOnHostChatRecieved.Broadcast(ChatMessage);
        for(AOnlineBeaconClient* ClientBeacon : ClientActors)
         {
             if( AProjekt994BeaconClient* Client = Cast<AProjekt994BeaconClient>(ClientBeacon))
