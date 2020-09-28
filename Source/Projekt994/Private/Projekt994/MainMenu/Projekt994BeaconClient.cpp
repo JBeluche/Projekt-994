@@ -57,3 +57,22 @@ uint8 AProjekt994BeaconClient::GetPlayerIndex()
 {
     return PlayerIndex;
 }
+
+
+void AProjekt994BeaconClient::SendChatMessage(const FText& ChatMessage)
+{
+      FString Message = ChatMessage.ToString();
+    UE_LOG(LogTemp, Warning, TEXT("Chat: %s"), *Message);
+    Server_SendChatMessage(ChatMessage);
+}
+
+bool AProjekt994BeaconClient::Server_SendChatMessage_Validate(const FText& ChatMessage)
+{
+    return true;
+}
+
+void AProjekt994BeaconClient::Server_SendChatMessage_Implementation(const FText& ChatMessage)
+{
+  
+}
+
