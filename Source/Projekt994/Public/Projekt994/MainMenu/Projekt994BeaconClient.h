@@ -39,6 +39,7 @@ protected:
 		FChatRecieved FOnChatRecieved;
 
 		uint8 PlayerIndex;
+		FString PlayerName;
 
 protected:
 	UFUNCTION(BlueprintCallable)
@@ -74,7 +75,9 @@ public:
 
 
 	void SetPlayerIndex(uint8 Index);
-
 	uint8 GetPlayerIndex();
+
+	void SetPlayerName(const FString& NewPlayerName);
+	FString GetPlayerName();
 	
 };

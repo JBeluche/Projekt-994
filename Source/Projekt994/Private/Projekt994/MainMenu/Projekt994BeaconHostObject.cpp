@@ -26,7 +26,10 @@ void AProjekt994BeaconHostObject::OnClientConnected(AOnlineBeaconClient* NewClie
         LobbyInfo.PlayerList.Add(PlayerName);
 
         if (AProjekt994BeaconClient* Client = Cast<AProjekt994BeaconClient>(NewClientActor))
+        {
             Client->SetPlayerIndex(Index);
+            Client->SetPlayerName(PlayerName);
+        }
 
         UE_LOG(LogTemp, Warning, TEXT("Connect to client VALID"))
         FOnHostLobbyUpdated.Broadcast(LobbyInfo);

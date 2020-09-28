@@ -71,11 +71,11 @@ bool AProjekt994BeaconClient::Server_SendChatMessage_Validate(const FText& ChatM
 
 void AProjekt994BeaconClient::Server_SendChatMessage_Implementation(const FText& ChatMessage)
 {
-    FString Message = ChatMessage.ToString();
+    FString Message = PlayerName + ": " + ChatMessage.ToString();
     UE_LOG(LogTemp, Warning, TEXT("Chat: %s"), *Message);
     if (AProjekt994BeaconHostObject* Host = Cast<AProjekt994BeaconHostObject>(BeaconOwner))
     {
-        Host->SendChatToLobby(ChatMessage);
+        Host->SendChatToLobby(FText::FromString(Message));
     }
 }
 
@@ -83,4 +83,15 @@ void  AProjekt994BeaconClient::Client_OnChatMessageRecieved_Implementation(const
 {
     FOnChatRecieved.Broadcast(ChatMessage);
 }
+
+
+void AProjekt994BeaconClient::SetPlayerName(const FString& NewPlayerName)
+{
+    PlayerName = NewPlayerName;
+}
+
+	FString AProjekt994BeaconClient::GetPlayerName()
+    {
+        return PlayerName;
+    }
 
