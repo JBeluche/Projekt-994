@@ -158,7 +158,7 @@ void AProjekt994BeaconHostObject::InitialLobbyHandling()
 
     TSharedPtr<FJsonObject> JsonObject= MakeShareable(new FJsonObject);
     JsonObject->SetNumberField("ServerID", 0);
-    JsonObject->SetStringField("IPAddress", "127.0.0.1");
+    JsonObject->SetStringField("IPAddress", "127.69");
     JsonObject->SetStringField("ServerName", "Test Server Name");
     JsonObject->SetStringField("MapName", "Zombies tes");
     JsonObject->SetNumberField("CurrentPlayers", 1);

@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "Http.h"
+
 #include "GameInstanceBase.generated.h"
 
 
@@ -23,9 +25,8 @@ public:
 		class UTexture2D* MapImage;
 };
 
-/**
- * 
- */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FServersReceived);
+
 UCLASS()
 class PROJEKT994_API UGameInstanceBase : public UGameInstance
 {
@@ -35,6 +36,17 @@ public:
 
 	UGameInstanceBase();
 
+//Http
+protected:
+	FHttpModule* Http;	
+
+		UPROPERTY(BlueprintAssignable)
+			FServersReceived FOnServersReceived;
+
+	UFUNCTION(BlueprintCallable)
+		void GetServerList();
+
+	void OnServerListRequestComplete(FHttpRequestPtr Request,FHttpResponsePtr Response, bool Success);
 
 protected:
 	UFUNCTION(BlueprintCallable)
