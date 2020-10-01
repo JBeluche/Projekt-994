@@ -74,6 +74,18 @@ void AProjekt994BeaconHostObject::ShutdownServer()
         Host->UnregisterHost(BeaconTypeName);
         Host->DestroyBeacon();
     }
+
+    if(ServerID != -1)
+    {
+
+        //Remove server db entry
+        TSharedRef<IHttpRequest> Request = Http->CreateRequest();
+
+        Request->SetURL("https://localhost:44344/api/Host/" + FString::FromInt(ServerID));
+        Request->SetVerb("DELETE");
+        Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+        Request->ProcessRequest();
+    }
 }
 
 void AProjekt994BeaconHostObject::DisconnectAllClients()
