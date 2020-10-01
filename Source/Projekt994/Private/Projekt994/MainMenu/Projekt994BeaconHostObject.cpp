@@ -171,7 +171,8 @@ void AProjekt994BeaconHostObject::OnProcessRequestComplete(FHttpRequestPtr Reque
 {
     if (Success)
     {
-        UE_LOG(LogTemp, Warning, TEXT("HttpRequest Success: %s"), *Response->GetContentAsString());
+        ServerID = FCString::Atoi(*Response->GetContentAsString());
+        UE_LOG(LogTemp, Warning, TEXT("HttpRequest Success: %d"), ServerID);
     }
     else
     {
