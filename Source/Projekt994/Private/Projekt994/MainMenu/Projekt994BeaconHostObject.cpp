@@ -12,6 +12,8 @@ AProjekt994BeaconHostObject::AProjekt994BeaconHostObject()
 {
     ClientBeaconActorClass = AProjekt994BeaconClient::StaticClass();
     BeaconTypeName = ClientBeaconActorClass->GetName();
+
+    Http = &FHttpModule::Get();
 }
 
 void AProjekt994BeaconHostObject::OnClientConnected(AOnlineBeaconClient* NewClientActor, UNetConnection* ClientConnection)
@@ -140,5 +142,39 @@ void AProjekt994BeaconHostObject::SendChatToLobby(const FText& ChatMessage)
 void AProjekt994BeaconHostObject::InitialLobbyHandling()
 {
     UpdateLobbyInfo(LobbyInfo);
+
+    TSharedPtr<FJsonObject> JsonObject= MakeShareable(new FJsonObject);
+    JsonObject->SetNumberField("ServerID", 0);
+    JsonObject->SetStringField("IPAddress", "127.0.0.1");
+    JsonObject->SetStringField("ServerName", "Test Server Name");
+    JsonObject->SetStringField("MapName", "Zombies tes");
+    JsonObject->SetNumberField("CurrentPlayers", 1);
+    JsonObject->SetNumberField("MaxPlayers", 5);
+
+    FString JsonSTring;
+    TSharedRef<TJsonWriter<TChar>> JsonWriter = TJsonWriterFactory<>::create(&JsonString);
+
+    TSharedRef<IHttpRequest> Request = Http->CreateRequst();
+
+    Request->OnProcessRequestComplete().BindUObject(this, &AProjekt994BeaconHostObject::OnProcessRequestComplete);
+
+    Request->SetURL("https://localhost:44344/api/Host");
+    Request->SetVerb("POST");
+    Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+    Request->SetContentAsString(JsonString);
+    Request->ProcessRequest();
 }
+
+void AProjekt994BeaconHostObject::OnProcessRequestComplete(FHttpRequestPtr Request,FHttpResponsePtr Response, bool Success)
+{
+    if (Success)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("HttpRequest Success: %s"), *Response->GetContentAsString());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("HttpRequest FAILED, Haha noob));
+    }
+}
+
 

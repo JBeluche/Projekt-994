@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Http.h"
 #include "CoreMinimal.h"
 #include "OnlineBeaconHostObject.h"
 #include "Projekt994BeaconHostObject.generated.h"
@@ -30,6 +31,11 @@ class PROJEKT994_API AProjekt994BeaconHostObject : public AOnlineBeaconHostObjec
 	
 public:
 	AProjekt994BeaconHostObject();
+
+//Http
+protected:
+	FHttpModule* Http;	
+	void OnProcessRequestComplete(FHttpRequestPtr Request,FHttpResponsePtr Response, bool Success);
 
 //Lobby 
 protected:
