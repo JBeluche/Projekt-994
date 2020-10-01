@@ -14,6 +14,7 @@ AProjekt994BeaconHostObject::AProjekt994BeaconHostObject()
     BeaconTypeName = ClientBeaconActorClass->GetName();
 
     Http = &FHttpModule::Get();
+    ServerID = -1;
 }
 
 void AProjekt994BeaconHostObject::OnClientConnected(AOnlineBeaconClient* NewClientActor, UNetConnection* ClientConnection)
@@ -151,10 +152,11 @@ void AProjekt994BeaconHostObject::InitialLobbyHandling()
     JsonObject->SetNumberField("CurrentPlayers", 1);
     JsonObject->SetNumberField("MaxPlayers", 5);
 
-    FString JsonSTring;
-    TSharedRef<TJsonWriter<TChar>> JsonWriter = TJsonWriterFactory<>::create(&JsonString);
+    FString JsonString;
+    TSharedRef<TJsonWriter<TCHAR>> JsonWriter = TJsonWriterFactory<>::Create(&JsonString);
+    FJsonSerializer::Serialize(JsonObject.ToSharedRef(), JsonWriter);
 
-    TSharedRef<IHttpRequest> Request = Http->CreateRequst();
+    TSharedRef<IHttpRequest> Request = Http->CreateRequest();
 
     Request->OnProcessRequestComplete().BindUObject(this, &AProjekt994BeaconHostObject::OnProcessRequestComplete);
 
@@ -173,7 +175,7 @@ void AProjekt994BeaconHostObject::OnProcessRequestComplete(FHttpRequestPtr Reque
     }
     else
     {
-        UE_LOG(LogTemp, Warning, TEXT("HttpRequest FAILED, Haha noob));
+        UE_LOG(LogTemp, Warning, TEXT("HttpRequest FAILED, Haha noob"));
     }
 }
 

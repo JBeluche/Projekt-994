@@ -35,6 +35,7 @@ public:
 //Http
 protected:
 	FHttpModule* Http;	
+	int ServerID;
 	void OnProcessRequestComplete(FHttpRequestPtr Request,FHttpResponsePtr Response, bool Success);
 
 //Lobby 
