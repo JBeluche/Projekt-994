@@ -25,6 +25,25 @@ public:
 		class UTexture2D* MapImage;
 };
 
+USTRUCT(BlueprintType)
+struct FServerData
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		int ServerID;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		FString IPAddress;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		FString ServerName;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		FString MapName;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		FString CurrentPlayers;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		FString MaxPlayers;
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FServersReceived);
 
 UCLASS()
