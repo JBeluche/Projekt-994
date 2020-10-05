@@ -1,9 +1,9 @@
 // Copyright by Creating Mountains
 
-
 #include "Projekt994/Public/Projekt994/MainMenu/Projekt994BeaconHostObject.h"
 #include "Projekt994/Public/Projekt994/MainMenu/Projekt994BeaconClient.h"
 #include "Projekt994/Public/Projekt994/MainMenu/Projekt994MainMenuGameMode.h"
+#include "Projekt994/Public/Projekt994/Game/GameInstanceBase.h"
 
 #include "OnlineBeaconHost.h"
 #include "TimerManager.h"
@@ -17,7 +17,7 @@ AProjekt994BeaconHostObject::AProjekt994BeaconHostObject()
     ServerID = -1;
 }
 
-void AProjekt994BeaconHostObject::OnClientConnected(AOnlineBeaconClient* NewClientActor, UNetConnection* ClientConnection)
+void AProjekt994BeaconHostObject::OnClientConnected(AOnlineBeaconClient *NewClientActor, UNetConnection *ClientConnection)
 {
     Super::OnClientConnected(NewClientActor, ClientConnection);
 
@@ -29,7 +29,7 @@ void AProjekt994BeaconHostObject::OnClientConnected(AOnlineBeaconClient* NewClie
         PlayerName.Append(FString::FromInt(Index));
         LobbyInfo.PlayerList.Add(PlayerName);
 
-        if (AProjekt994BeaconClient* Client = Cast<AProjekt994BeaconClient>(NewClientActor))
+        if (AProjekt994BeaconClient *Client = Cast<AProjekt994BeaconClient>(NewClientActor))
         {
             Client->SetPlayerIndex(Index);
             Client->SetPlayerName(PlayerName);
@@ -39,28 +39,30 @@ void AProjekt994BeaconHostObject::OnClientConnected(AOnlineBeaconClient* NewClie
         FOnHostLobbyUpdated.Broadcast(LobbyInfo);
 
         UpdateClientLobbyInfo();
+
+        UpdateServerData(ServerData);
     }
-    else 
+    else
     {
         UE_LOG(LogTemp, Warning, TEXT("Connect to client INVALID"))
     }
 }
 
-void AProjekt994BeaconHostObject::NotifyClientDisconnected(AOnlineBeaconClient* LeavingClientActor)
+void AProjekt994BeaconHostObject::NotifyClientDisconnected(AOnlineBeaconClient *LeavingClientActor)
 {
     Super::NotifyClientDisconnected(LeavingClientActor);
 
-        UE_LOG(LogTemp, Warning, TEXT("Client has disconnected"));
+    UE_LOG(LogTemp, Warning, TEXT("Client has disconnected"));
 
-        if (AProjekt994BeaconClient* Client = Cast<AProjekt994BeaconClient>(LeavingClientActor))
-        {
-            uint8 Index = Client->GetPlayerIndex();
-            LobbyInfo.PlayerList.RemoveAt(Index);
-        }
-        FOnHostLobbyUpdated.Broadcast(LobbyInfo);
+    if (AProjekt994BeaconClient *Client = Cast<AProjekt994BeaconClient>(LeavingClientActor))
+    {
+        uint8 Index = Client->GetPlayerIndex();
+        LobbyInfo.PlayerList.RemoveAt(Index);
+    }
+    FOnHostLobbyUpdated.Broadcast(LobbyInfo);
 
-        UpdateClientLobbyInfo();
-
+    UpdateServerData(ServerData);
+    UpdateClientLobbyInfo();
 }
 
 void AProjekt994BeaconHostObject::ShutdownServer()
@@ -68,14 +70,14 @@ void AProjekt994BeaconHostObject::ShutdownServer()
     //Unregister Server From Database Via Web API
     DisconnectAllClients();
 
-    if (AOnlineBeaconHost* Host = Cast<AOnlineBeaconHost>(GetOwner()))
+    if (AOnlineBeaconHost *Host = Cast<AOnlineBeaconHost>(GetOwner()))
     {
         UE_LOG(LogTemp, Warning, TEXT("Host has been destroyed"));
         Host->UnregisterHost(BeaconTypeName);
         Host->DestroyBeacon();
     }
 
-    if(ServerID != -1)
+    if (ServerID != -1)
     {
 
         //Remove server db entry
@@ -90,30 +92,32 @@ void AProjekt994BeaconHostObject::ShutdownServer()
 
 void AProjekt994BeaconHostObject::DisconnectAllClients()
 {
-        UE_LOG(LogTemp, Warning, TEXT("Disconecting all clients"));
+    UE_LOG(LogTemp, Warning, TEXT("Disconecting all clients"));
 
-        for(AOnlineBeaconClient* Client : ClientActors)
+    for (AOnlineBeaconClient *Client : ClientActors)
+    {
+        if (Client)
         {
-            if(Client){
-                DisconnectClient(Client);
-            }
+            DisconnectClient(Client);
         }
+    }
 }
 
-
-void AProjekt994BeaconHostObject::DisconnectClient(AOnlineBeaconClient* ClientActor)
+void AProjekt994BeaconHostObject::DisconnectClient(AOnlineBeaconClient *ClientActor)
 {
 
-    AOnlineBeaconHost* BeaconHost = Cast<AOnlineBeaconHost>(GetOwner());
-    if(BeaconHost)
+    AOnlineBeaconHost *BeaconHost = Cast<AOnlineBeaconHost>(GetOwner());
+    if (BeaconHost)
     {
-        if (AProjekt994BeaconClient* Client = Cast<AProjekt994BeaconClient>(ClientActor))
+        if (AProjekt994BeaconClient *Client = Cast<AProjekt994BeaconClient>(ClientActor))
         {
-        UE_LOG(LogTemp, Warning, TEXT("Disconecting client: %s"), *ClientActor->GetName());
+            UE_LOG(LogTemp, Warning, TEXT("Disconecting client: %s"), *ClientActor->GetName());
             Client->Client_OnDisconnected();
         }
         BeaconHost->DisconnectClient(ClientActor);
     }
+        UpdateServerData(ServerData);
+
 }
 
 void AProjekt994BeaconHostObject::UpdateLobbyInfo(FProjekt994LobbyInfo NewLobbyInfo)
@@ -125,9 +129,9 @@ void AProjekt994BeaconHostObject::UpdateLobbyInfo(FProjekt994LobbyInfo NewLobbyI
 
 void AProjekt994BeaconHostObject::UpdateClientLobbyInfo()
 {
-    for (AOnlineBeaconClient* ClientBeacon : ClientActors)
+    for (AOnlineBeaconClient *ClientBeacon : ClientActors)
     {
-        if (AProjekt994BeaconClient* Client = Cast<AProjekt994BeaconClient>(ClientBeacon))
+        if (AProjekt994BeaconClient *Client = Cast<AProjekt994BeaconClient>(ClientBeacon))
         {
             Client->Client_OnLobbyUpdated(LobbyInfo);
         }
@@ -140,25 +144,24 @@ void AProjekt994BeaconHostObject::BeginPlay()
     GetWorld()->GetTimerManager().SetTimer(TInitialLobbyHandle, this, &AProjekt994BeaconHostObject::InitialLobbyHandling, 0.2f, false);
 }
 
-void AProjekt994BeaconHostObject::SendChatToLobby(const FText& ChatMessage)
+void AProjekt994BeaconHostObject::SendChatToLobby(const FText &ChatMessage)
 {
     FOnHostChatRecieved.Broadcast(ChatMessage);
-       for(AOnlineBeaconClient* ClientBeacon : ClientActors)
+    for (AOnlineBeaconClient *ClientBeacon : ClientActors)
+    {
+        if (AProjekt994BeaconClient *Client = Cast<AProjekt994BeaconClient>(ClientBeacon))
         {
-            if( AProjekt994BeaconClient* Client = Cast<AProjekt994BeaconClient>(ClientBeacon))
-            {
-                Client->Client_OnChatMessageRecieved(ChatMessage);
-            }
+            Client->Client_OnChatMessageRecieved(ChatMessage);
         }
+    }
 }
 
 void AProjekt994BeaconHostObject::InitialLobbyHandling()
 {
     UpdateLobbyInfo(LobbyInfo);
-
 }
 
-void AProjekt994BeaconHostObject::OnProcessRequestComplete(FHttpRequestPtr Request,FHttpResponsePtr Response, bool Success)
+void AProjekt994BeaconHostObject::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool Success)
 {
     if (Success)
     {
@@ -172,15 +175,18 @@ void AProjekt994BeaconHostObject::OnProcessRequestComplete(FHttpRequestPtr Reque
 }
 
 //SET SERVER DATA
-void AProjekt994BeaconHostObject::SetServerData(const FString ServerName, const FString MapName, int CurrentPlayers, int MaxPlayers)
+void AProjekt994BeaconHostObject::SetServerData(FServerData NewServerData)
 {
-      TSharedPtr<FJsonObject> JsonObject= MakeShareable(new FJsonObject);
+    TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
+    ServerData = NewServerData;
+    ServerData.CurrentPlayers = GetCurrentPlayerCount();
+
     JsonObject->SetNumberField("ServerID", 0);
     JsonObject->SetStringField("IPAddress", "127.69");
-    JsonObject->SetStringField("ServerName", ServerName);
-    JsonObject->SetStringField("MapName", MapName);
-    JsonObject->SetNumberField("CurrentPlayers", CurrentPlayers);
-    JsonObject->SetNumberField("MaxPlayers", MaxPlayers);
+    JsonObject->SetStringField("ServerName", ServerData.ServerName);
+    JsonObject->SetStringField("MapName", ServerData.MapName);
+    JsonObject->SetNumberField("CurrentPlayers", ServerData.CurrentPlayers);
+    JsonObject->SetNumberField("MaxPlayers", ServerData.MaxPlayers);
 
     FString JsonString;
     TSharedRef<TJsonWriter<TCHAR>> JsonWriter = TJsonWriterFactory<>::Create(&JsonString);
@@ -198,15 +204,18 @@ void AProjekt994BeaconHostObject::SetServerData(const FString ServerName, const 
 }
 
 //SET SERVER DATA
-void AProjekt994BeaconHostObject::UpdateServerData(const FString ServerName, const FString MapName, int CurrentPlayers, int MaxPlayers)
+void AProjekt994BeaconHostObject::UpdateServerData(FServerData NewServerData)
 {
-      TSharedPtr<FJsonObject> JsonObject= MakeShareable(new FJsonObject);
+    TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
+    ServerData = NewServerData;
+    ServerData.CurrentPlayers = GetCurrentPlayerCount();
+
     JsonObject->SetNumberField("ServerID", 0);
     JsonObject->SetStringField("IPAddress", "127.69");
-    JsonObject->SetStringField("ServerName", ServerName);
-    JsonObject->SetStringField("MapName", MapName);
-    JsonObject->SetNumberField("CurrentPlayers", CurrentPlayers);
-    JsonObject->SetNumberField("MaxPlayers", MaxPlayers);
+    JsonObject->SetStringField("ServerName", ServerData.ServerName);
+    JsonObject->SetStringField("MapName", ServerData.MapName);
+    JsonObject->SetNumberField("CurrentPlayers", ServerData.CurrentPlayers);
+    JsonObject->SetNumberField("MaxPlayers", ServerData.MaxPlayers);
 
     FString JsonString;
     TSharedRef<TJsonWriter<TCHAR>> JsonWriter = TJsonWriterFactory<>::Create(&JsonString);
@@ -227,5 +236,3 @@ int AProjekt994BeaconHostObject::GetCurrentPlayerCount()
 {
     return LobbyInfo.PlayerList.Num();
 }
-
-

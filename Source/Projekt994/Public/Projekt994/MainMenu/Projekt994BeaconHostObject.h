@@ -5,6 +5,7 @@
 #include "Http.h"
 #include "CoreMinimal.h"
 #include "OnlineBeaconHostObject.h"
+#include "Projekt994/Public/Projekt994/Game/GameInstanceBase.h"
 #include "Projekt994BeaconHostObject.generated.h"
 
 
@@ -40,13 +41,15 @@ protected:
 
 //Lobby 
 protected:
+ 	FServerData ServerData;
+
 	FProjekt994LobbyInfo LobbyInfo;
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateServerData(const FString ServerName, const FString MapName, int CurrentPlayers, int MaxPlayers);
+	void UpdateServerData(FServerData NewServerData);
 
 	UFUNCTION(BlueprintCallable)
-		void SetServerData(const FString ServerName, const FString MapName, int CurrentPlayers, int MaxPlayers);
+		void SetServerData(FServerData NewServerData);
 
 	UFUNCTION(BlueprintCallable)
 		int GetCurrentPlayerCount();
