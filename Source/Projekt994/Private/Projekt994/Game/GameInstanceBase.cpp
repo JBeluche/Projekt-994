@@ -47,10 +47,7 @@ void UGameInstanceBase::OnServerListRequestComplete(FHttpRequestPtr Request,FHtt
         {
             TArray<TSharedPtr<FJsonValue>> JsonValues = JsonObject->GetArrayField(TEXT("Response"));
 
-            if (JsonValues.Num() > 0)
-            {
-                ServerList.Empty();
-            }
+            ServerList.Empty();
 
             for (TSharedPtr<FJsonValue> Value : JsonValues)
             {
