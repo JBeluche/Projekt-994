@@ -18,7 +18,7 @@ void UGameInstanceBase::GoToMap(FString MAPURL)
     
 }
 
-void UGameInstanceBase::GetServerList()
+void UGameInstanceBase::GenerateServerList()
 {
     //Remove server db entry
     TSharedRef<IHttpRequest> Request = Http->CreateRequest();
@@ -46,36 +46,39 @@ void UGameInstanceBase::OnServerListRequestComplete(FHttpRequestPtr Request,FHtt
         if (FJsonSerializer::Deserialize(JsonReader, JsonObject) && JsonObject.IsValid())
         {
             TArray<TSharedPtr<FJsonValue>> JsonValues = JsonObject->GetArrayField(TEXT("Response"));
-            TArray<FServerData> ServerList;
+
+            if (JsonValues.Num() > 0)
+            {
+                ServerList.Empty();
+            }
+
             for (TSharedPtr<FJsonValue> Value : JsonValues)
             {
                 FServerData ServerData = FServerData();
                 TSharedPtr<FJsonObject> JsonObj = Value->AsObject();
 
-                ServerData.ServerID = JsonObj->GetIntegerField("ServerID");
                 ServerData.ServerName = JsonObj->GetStringField("ServerName");
-               // if (FJsonObjectConverter::JsonObjectToUStruct(JsonObject.ToSharedRef(), &ServerData, 0, 0))
-               // {
-                   // UE_LOG(LogTemp, Warning, TEXT("Json Object to u struck SUCCESS!"));
-                    ServerList.Add(ServerData);
-                //}
-                //else
-                //{
-               //     UE_LOG(LogTemp, Error, TEXT("Json Object to u struck FAILED"));
-               // }
+                ServerData.IPAddress = JsonObj->GetStringField("IPAddress");
+                ServerData.MapName = JsonObj->GetStringField("MapName");
+                ServerData.CurrentPlayers = JsonObj->GetIntegerField("CurrentPlayers");
+                ServerData.MaxPlayers = JsonObj->GetIntegerField("MaxPlayers");
+
+                ServerList.Add(ServerData);
+              
             }
 
-            for (FServerData ServerData : ServerList)
+            FOnServersReceived.Broadcast();
+
+           /* for (FServerData ServerData : ServerList)
             {
-                    UE_LOG(LogTemp, Warning, TEXT("ServerID: %d"), ServerData.ServerID);
-                    //UE_LOG(LogTemp, Warning, TEXT("IP: %s"), *ServerData.IPAddress);
+                    UE_LOG(LogTemp, Warning, TEXT("IP: %s"), *ServerData.IPAddress);
                     UE_LOG(LogTemp, Warning, TEXT("ServerName: %s"), *ServerData.ServerName);
-                    //UE_LOG(LogTemp, Warning, TEXT("MapNAme: %s"), *ServerData.MapName);
-                    //UE_LOG(LogTemp, Warning, TEXT("CurrentPlayers: %d"), ServerData.CurrentPlayers);
-                    //UE_LOG(LogTemp, Warning, TEXT("MaxPlayers: %d"), ServerData.MaxPlayers);
-                    //UE_LOG(LogTemp, Warning, TEXT("End of server entry"));
+                    UE_LOG(LogTemp, Warning, TEXT("MapNAme: %s"), *ServerData.MapName);
+                    UE_LOG(LogTemp, Warning, TEXT("CurrentPlayers: %d"), ServerData.CurrentPlayers);
+                    UE_LOG(LogTemp, Warning, TEXT("MaxPlayers: %d"), ServerData.MaxPlayers);
+                    UE_LOG(LogTemp, Warning, TEXT("End of server entry"));
 
-            }
+            }*/
         }
     }
     else
@@ -83,6 +86,13 @@ void UGameInstanceBase::OnServerListRequestComplete(FHttpRequestPtr Request,FHtt
         UE_LOG(LogTemp, Error, TEXT("Instance base could not GET on api, GetServerList"));
     }
 }
+
+
+TArray<FServerData>& UGameInstanceBase::GetServerList()
+{
+    return ServerList;
+}
+
 
 
 

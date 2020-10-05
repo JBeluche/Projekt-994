@@ -39,9 +39,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		FString MapName;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		FString CurrentPlayers;
+		int CurrentPlayers;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		FString MaxPlayers;
+		int MaxPlayers;
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FServersReceived);
@@ -59,11 +59,16 @@ public:
 protected:
 	FHttpModule* Http;	
 
-		UPROPERTY(BlueprintAssignable)
-			FServersReceived FOnServersReceived;
+	TArray<FServerData> ServerList;
 
 	UFUNCTION(BlueprintCallable)
-		void GetServerList();
+		TArray<FServerData>& GetServerList();
+
+	UPROPERTY(BlueprintAssignable)
+		FServersReceived FOnServersReceived;
+
+	UFUNCTION(BlueprintCallable)
+		void GenerateServerList();
 
 	void OnServerListRequestComplete(FHttpRequestPtr Request,FHttpResponsePtr Response, bool Success);
 
