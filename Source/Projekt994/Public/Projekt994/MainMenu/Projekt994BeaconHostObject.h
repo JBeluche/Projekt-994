@@ -43,6 +43,9 @@ protected:
 	FProjekt994LobbyInfo LobbyInfo;
 
 	UFUNCTION(BlueprintCallable)
+	void UpdateServerData(const FString ServerName, const FString MapName, int CurrentPlayers, int MaxPlayers);
+
+	UFUNCTION(BlueprintCallable)
 		void SetServerData(const FString ServerName, const FString MapName, int CurrentPlayers, int MaxPlayers);
 
 	UFUNCTION(BlueprintCallable)

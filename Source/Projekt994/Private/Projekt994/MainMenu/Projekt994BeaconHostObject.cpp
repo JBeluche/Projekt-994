@@ -197,6 +197,32 @@ void AProjekt994BeaconHostObject::SetServerData(const FString ServerName, const 
     Request->ProcessRequest();
 }
 
+//SET SERVER DATA
+void AProjekt994BeaconHostObject::UpdateServerData(const FString ServerName, const FString MapName, int CurrentPlayers, int MaxPlayers)
+{
+      TSharedPtr<FJsonObject> JsonObject= MakeShareable(new FJsonObject);
+    JsonObject->SetNumberField("ServerID", 0);
+    JsonObject->SetStringField("IPAddress", "127.69");
+    JsonObject->SetStringField("ServerName", ServerName);
+    JsonObject->SetStringField("MapName", MapName);
+    JsonObject->SetNumberField("CurrentPlayers", CurrentPlayers);
+    JsonObject->SetNumberField("MaxPlayers", MaxPlayers);
+
+    FString JsonString;
+    TSharedRef<TJsonWriter<TCHAR>> JsonWriter = TJsonWriterFactory<>::Create(&JsonString);
+    FJsonSerializer::Serialize(JsonObject.ToSharedRef(), JsonWriter);
+
+    TSharedRef<IHttpRequest> Request = Http->CreateRequest();
+
+    Request->OnProcessRequestComplete().BindUObject(this, &AProjekt994BeaconHostObject::OnProcessRequestComplete);
+
+    Request->SetURL("https://localhost:44344/api/Host/1");
+    Request->SetVerb("PUT");
+    Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+    Request->SetContentAsString(JsonString);
+    Request->ProcessRequest();
+}
+
 int AProjekt994BeaconHostObject::GetCurrentPlayerCount()
 {
     return LobbyInfo.PlayerList.Num();
