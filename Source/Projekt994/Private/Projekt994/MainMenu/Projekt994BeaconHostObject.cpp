@@ -156,13 +156,31 @@ void AProjekt994BeaconHostObject::InitialLobbyHandling()
 {
     UpdateLobbyInfo(LobbyInfo);
 
-    TSharedPtr<FJsonObject> JsonObject= MakeShareable(new FJsonObject);
+}
+
+void AProjekt994BeaconHostObject::OnProcessRequestComplete(FHttpRequestPtr Request,FHttpResponsePtr Response, bool Success)
+{
+    if (Success)
+    {
+        ServerID = FCString::Atoi(*Response->GetContentAsString());
+        UE_LOG(LogTemp, Warning, TEXT("HttpRequest Success: %d"), ServerID);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("HttpRequest FAILED, Haha noob"));
+    }
+}
+
+//SET SERVER DATA
+void AProjekt994BeaconHostObject::SetServerData(const FString ServerName, const FString MapName, int CurrentPlayers, int MaxPlayers)
+{
+      TSharedPtr<FJsonObject> JsonObject= MakeShareable(new FJsonObject);
     JsonObject->SetNumberField("ServerID", 0);
     JsonObject->SetStringField("IPAddress", "127.69");
-    JsonObject->SetStringField("ServerName", "Test Server Name");
-    JsonObject->SetStringField("MapName", "Zombies tes");
-    JsonObject->SetNumberField("CurrentPlayers", 1);
-    JsonObject->SetNumberField("MaxPlayers", 5);
+    JsonObject->SetStringField("ServerName", ServerName);
+    JsonObject->SetStringField("MapName", MapName);
+    JsonObject->SetNumberField("CurrentPlayers", CurrentPlayers);
+    JsonObject->SetNumberField("MaxPlayers", MaxPlayers);
 
     FString JsonString;
     TSharedRef<TJsonWriter<TCHAR>> JsonWriter = TJsonWriterFactory<>::Create(&JsonString);
@@ -179,17 +197,9 @@ void AProjekt994BeaconHostObject::InitialLobbyHandling()
     Request->ProcessRequest();
 }
 
-void AProjekt994BeaconHostObject::OnProcessRequestComplete(FHttpRequestPtr Request,FHttpResponsePtr Response, bool Success)
+int AProjekt994BeaconHostObject::GetCurrentPlayerCount()
 {
-    if (Success)
-    {
-        ServerID = FCString::Atoi(*Response->GetContentAsString());
-        UE_LOG(LogTemp, Warning, TEXT("HttpRequest Success: %d"), ServerID);
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("HttpRequest FAILED, Haha noob"));
-    }
+    return LobbyInfo.PlayerList.Num();
 }
 
 
