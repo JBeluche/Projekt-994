@@ -9,6 +9,7 @@
 UGameInstanceBase::UGameInstanceBase()
 {
     Http = &FHttpModule::Get();
+    
 
 }
 

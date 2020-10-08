@@ -80,31 +80,6 @@ void AProjekt994BeaconHostObject::NotifyClientDisconnected(AOnlineBeaconClient *
     UpdateClientLobbyInfo();
 }
 
-void AProjekt994BeaconHostObject::ShutdownServer()
-{
-    //Unregister Server From Database Via Web API
-    DisconnectAllClients();
-
-    if (AOnlineBeaconHost *Host = Cast<AOnlineBeaconHost>(GetOwner()))
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Host has been destroyed"));
-        Host->UnregisterHost(BeaconTypeName);
-        Host->DestroyBeacon();
-    }
-
-    if (ServerID != -1)
-    {
-
-        //Remove server db entry
-        TSharedRef<IHttpRequest> Request = Http->CreateRequest();
-
-        Request->SetURL("https://localhost:44344/api/Host/" + FString::FromInt(ServerID));
-        Request->SetVerb("DELETE");
-        Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-        Request->ProcessRequest();
-    }
-}
-
 void AProjekt994BeaconHostObject::DisconnectAllClients()
 {
     UE_LOG(LogTemp, Warning, TEXT("Disconecting all clients"));
@@ -250,4 +225,45 @@ void AProjekt994BeaconHostObject::UpdateServerData(FServerData NewServerData)
 int AProjekt994BeaconHostObject::GetCurrentPlayerCount()
 {
     return LobbyInfo.PlayerList.Num();
+}
+
+
+
+void AProjekt994BeaconHostObject::ShutdownServer()
+{
+    //Unregister Server From Database Via Web API
+    DisconnectAllClients();
+
+    if (AOnlineBeaconHost *Host = Cast<AOnlineBeaconHost>(GetOwner()))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Host has been destroyed"));
+        Host->UnregisterHost(BeaconTypeName);
+        Host->DestroyBeacon();
+    }
+
+    if (ServerID != -1)
+    {
+
+        //Remove server db entry
+        TSharedRef<IHttpRequest> Request = Http->CreateRequest();
+
+        Request->SetURL("https://localhost:44344/api/Host/" + FString::FromInt(ServerID));
+        Request->SetVerb("DELETE");
+        Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+        Request->ProcessRequest();
+    }
+}
+
+void AProjekt994BeaconHostObject:: StartServer(const FString& MapURL)
+{
+    for (AOnlineBeaconClient *ClientBeacon : ClientActors)
+    {
+        if (AProjekt994BeaconClient *Client = Cast<AProjekt994BeaconClient>(ClientBeacon))
+        {
+            Client->Client_FullConnect();
+        }
+    }
+    ShutdownServer();
+
+    GetWorld()->ServerTravel(MapURL + "?listen");
 }

@@ -12,6 +12,8 @@ AProjekt994MainMenuGameMode::AProjekt994MainMenuGameMode()
 {
     HostObject = nullptr;
     Host = nullptr;
+    bUseSeamlessTravel = false;
+
 }
 
 

@@ -14,4 +14,6 @@ AProjekt994GameMode::AProjekt994GameMode()
 
 	// use our custom HUD class
 	HUDClass = AProjekt994HUD::StaticClass();
+    bUseSeamlessTravel = false;
+
 }

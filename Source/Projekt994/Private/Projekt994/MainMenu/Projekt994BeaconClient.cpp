@@ -90,8 +90,26 @@ void AProjekt994BeaconClient::SetPlayerName(const FString& NewPlayerName)
     PlayerName = NewPlayerName;
 }
 
-	FString AProjekt994BeaconClient::GetPlayerName()
+FString AProjekt994BeaconClient::GetPlayerName()
+{
+    return PlayerName;
+}
+
+void AProjekt994BeaconClient::Client_FullConnect_Implementation()
+{
+    FOnFullConnect.Broadcast();
+
+}
+
+void AProjekt994BeaconClient::FullConnectToServer(const FString& JoinAddress)
+{
+
+    if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
     {
-        return PlayerName;
+        UE_LOG(LogTemp, Error, TEXT("I SHOULD be able to be here"));
+
+       PC->ClientTravel(JoinAddress, ETravelType::TRAVEL_Absolute);
     }
+    LeaveLobby();
+}
 
