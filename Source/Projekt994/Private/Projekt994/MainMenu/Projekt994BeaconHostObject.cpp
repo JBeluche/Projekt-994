@@ -26,8 +26,12 @@ void AProjekt994BeaconHostObject::OnClientConnected(AOnlineBeaconClient *NewClie
 
         if (GetCurrentPlayerCount() >= ServerData.MaxPlayers)
         {
-            DisconnectClient(NewClientActor);
+            if (AProjekt994BeaconClient *Client = Cast<AProjekt994BeaconClient>(NewClientActor))
+            {
+                Client->SetPlayerIndex(240);
+                DisconnectClient(NewClientActor);
             return;
+            }
         }
 
         FString PlayerName = FString("Player ");
@@ -63,6 +67,11 @@ void AProjekt994BeaconHostObject::NotifyClientDisconnected(AOnlineBeaconClient *
     if (AProjekt994BeaconClient *Client = Cast<AProjekt994BeaconClient>(LeavingClientActor))
     {
         uint8 Index = Client->GetPlayerIndex();
+        if (Index == 240)
+        {
+            return;
+        }
+
         LobbyInfo.PlayerList.RemoveAt(Index);
     }
     FOnHostLobbyUpdated.Broadcast(LobbyInfo);
