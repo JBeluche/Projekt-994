@@ -25,6 +25,21 @@ void AProjekt994GameModeBase::PostLogin(APlayerController *NewPlayer)
     {
         SetSpawnPoints();
     }
+
+    for (AProjekt994PlayerSpawnPoint* SpawnPoint : PlayerSpawnPoints)
+    {
+        if(!SpawnPoint->IsUsed())
+        {
+            FVector SpawnLocation = SpawnPoint->GetActorLocation();
+            if (APawn* Pawn = GetWorld()->SpawnActor<APawn>(DefaultPawnClass, SpawnLocation, FRotator::ZeroRotator))
+            {
+                UE_LOG(LogTemp, Warning, TEXT("HERE I AM: "));
+                NewPlayer->Possess(Pawn);
+                SpawnPoint->SetUsed(true);
+                return;
+            }
+        }
+    }
 }
 
 void AProjekt994GameModeBase::SetSpawnPoints()
