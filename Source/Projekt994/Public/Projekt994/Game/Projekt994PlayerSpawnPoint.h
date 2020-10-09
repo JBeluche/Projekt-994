@@ -13,5 +13,14 @@ UCLASS()
 class PROJEKT994_API AProjekt994PlayerSpawnPoint : public ATargetPoint
 {
 	GENERATED_BODY()
-	
+
+public: 
+	AProjekt994PlayerSpawnPoint();
+
+protected:
+	bool bIsUsed;
+
+public:
+	bool IsUsed();
+	void SetUsed(bool Used);
 };

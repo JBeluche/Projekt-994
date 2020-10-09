@@ -14,4 +14,17 @@ class PROJEKT994_API AProjekt994GameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+public: 
+	AProjekt994GameModeBase();
+
+//Variables
+protected:
+	TArray<class AProjekt994PlayerSpawnPoint*> PlayerSpawnPoints;
+	bool bHasLoadedSpawnPoints;
+
+//Functions
+protected:
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+
+	void SetSpawnPoints();
 };
