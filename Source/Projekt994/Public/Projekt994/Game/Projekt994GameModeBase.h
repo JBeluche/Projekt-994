@@ -22,6 +22,11 @@ protected:
 	TArray<class AProjekt994PlayerSpawnPoint*> PlayerSpawnPoints;
 	bool bHasLoadedSpawnPoints;
 
+
+	UPROPERTY(EditAnywhere, Category = "Projekt994Settings")
+		TSubclassOf<class AZombieBase> ZombieClass;
+ 
+
 //Functions
 protected:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
