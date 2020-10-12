@@ -19,8 +19,10 @@ public:
 
 //Variables
 protected:
-	TArray<class AProjekt994PlayerSpawnPoint*> PlayerSpawnPoints;
 	bool bHasLoadedSpawnPoints;
+	TArray<class AProjekt994PlayerSpawnPoint*> PlayerSpawnPoints;
+	TArray<class AProjekt994ZombieSpawnPoint*> ZombieSpawnPoints;
+
 
 
 	UPROPERTY(EditAnywhere, Category = "Projekt994Settings")
@@ -29,6 +31,7 @@ protected:
 
 //Functions
 protected:
+	virtual void BeginPlay() override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	void SetSpawnPoints();
