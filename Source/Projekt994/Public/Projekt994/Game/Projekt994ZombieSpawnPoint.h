@@ -16,4 +16,7 @@ class PROJEKT994_API AProjekt994ZombieSpawnPoint : public ATargetPoint
 	
 public:
 	AProjekt994ZombieSpawnPoint();
+
+
+
 };

@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Projekt994/Public/Projekt994/Zombie/ZombieBase.h"
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Projekt994GameModeBase.generated.h"
@@ -23,11 +24,14 @@ protected:
 	TArray<class AProjekt994PlayerSpawnPoint*> PlayerSpawnPoints;
 	TArray<class AProjekt994ZombieSpawnPoint*> ZombieSpawnPoints;
 
-
-
 	UPROPERTY(EditAnywhere, Category = "Projekt994Settings")
-		TSubclassOf<class AZombieBase> ZombieClass;
+	TSubclassOf<class AZombieBase> ZombieClass;
+
+	FTimerHandle TZombieSpawnHandle;	
  
+//Spawn zombies
+protected:
+	void SpawnZombie();
 
 //Functions
 protected:
@@ -35,4 +39,6 @@ protected:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	void SetSpawnPoints();
+
+	
 };

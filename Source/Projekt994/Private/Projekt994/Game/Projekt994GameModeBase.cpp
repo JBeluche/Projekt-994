@@ -4,9 +4,11 @@
 #include "Projekt994/Public/Projekt994/Game/Projekt994ZombieSpawnPoint.h"
 #include "Projekt994/Public/Projekt994/Game/Projekt994PlayerSpawnPoint.h"
 #include "Projekt994/Public/Player/CharacterBase.h"
+#include "Projekt994/Public/Projekt994/Zombie/ZombieBase.h"
 
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/GameplayStatics.h"
+#include "TimerManager.h"
 
 AProjekt994GameModeBase::AProjekt994GameModeBase()
 {
@@ -15,7 +17,7 @@ AProjekt994GameModeBase::AProjekt994GameModeBase()
     DefaultPawnClass = PlayerPawnClassFinder.Class;
     bHasLoadedSpawnPoints = false;
 
-    // use our custom HUD class
+
 }
 
 void AProjekt994GameModeBase::BeginPlay()
@@ -32,6 +34,8 @@ void AProjekt994GameModeBase::BeginPlay()
         }
     }
     UE_LOG(LogTemp, Warning, TEXT("Spawn point ZOMBIES count: %d"), ZombieSpawnPoints.Num());
+
+    GetWorld()->GetTimerManager().SetTimer(TZombieSpawnHandle, this, &AProjekt994GameModeBase::SpawnZombie, 2.0f, true);
 }
 
 void AProjekt994GameModeBase::PostLogin(APlayerController *NewPlayer)
@@ -73,4 +77,22 @@ void AProjekt994GameModeBase::SetSpawnPoints()
     }
     UE_LOG(LogTemp, Warning, TEXT("Spawn point count: %d"), PlayerSpawnPoints.Num());
     bHasLoadedSpawnPoints = true;
+}
+
+
+void AProjekt994GameModeBase::SpawnZombie()
+{
+    int RandomIndex = FMath::RandRange(0, ZombieSpawnPoints.Num() - 1);
+
+    if (AProjekt994ZombieSpawnPoint* SpawnPoint = ZombieSpawnPoints[RandomIndex])
+    {
+        
+        FVector Loc = SpawnPoint->GetActorLocation();
+        FRotator Rot = SpawnPoint->GetActorRotation();
+     
+       if (AZombieBase* Zombie = GetWorld()->SpawnActor<AZombieBase>(ZombieClass, Loc, Rot))
+        {
+            UE_LOG(LogTemp, Warning, TEXT("SPAWNING ZOMBIES BITCHES!"));
+        }
+    }
 }

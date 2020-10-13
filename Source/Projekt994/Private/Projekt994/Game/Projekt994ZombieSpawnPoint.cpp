@@ -6,5 +6,5 @@
 
 AProjekt994ZombieSpawnPoint::AProjekt994ZombieSpawnPoint()
 {
-    
+
 }
