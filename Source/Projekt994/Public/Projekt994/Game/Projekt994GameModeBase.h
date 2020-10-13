@@ -20,6 +20,8 @@ public:
 
 //Variables
 protected:
+
+	class AProjekt994GameState* ZombieGameState;
 	bool bHasLoadedSpawnPoints;
 	TArray<class AProjekt994PlayerSpawnPoint*> PlayerSpawnPoints;
 	TArray<class AProjekt994ZombieSpawnPoint*> ZombieSpawnPoints;
@@ -27,11 +29,15 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Projekt994Settings")
 	TSubclassOf<class AZombieBase> ZombieClass;
 
+
 	FTimerHandle TZombieSpawnHandle;	
+
+	uint16 ZombiesRemaining;
  
 //Spawn zombies
 protected:
 	void SpawnZombie();
+	void CalculateZombieCount();
 
 //Functions
 protected:

@@ -17,4 +17,15 @@ class PROJEKT994_API AProjekt994GameState : public AGameStateBase
 public:
 	AProjekt994GameState();
 
+
+//Variables
+protected:
+	uint16 RoundNumber;
+	uint8 ZombiesOnMap;
+
+//Getters
+public:
+	uint16 GetRoundNumber();
+	void IncrementRoundNumber();
+
 };

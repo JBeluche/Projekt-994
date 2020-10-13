@@ -3,6 +3,7 @@
 #include "Projekt994/Public/Projekt994/Game/Projekt994GameModeBase.h"
 #include "Projekt994/Public/Projekt994/Game/Projekt994ZombieSpawnPoint.h"
 #include "Projekt994/Public/Projekt994/Game/Projekt994PlayerSpawnPoint.h"
+#include "Projekt994/Public/Projekt994/Game/Projekt994GameState.h"
 #include "Projekt994/Public/Player/CharacterBase.h"
 #include "Projekt994/Public/Projekt994/Zombie/ZombieBase.h"
 
@@ -17,12 +18,15 @@ AProjekt994GameModeBase::AProjekt994GameModeBase()
     DefaultPawnClass = PlayerPawnClassFinder.Class;
     bHasLoadedSpawnPoints = false;
 
-
+    ZombiesRemaining = 0;
 }
 
 void AProjekt994GameModeBase::BeginPlay()
 {
     Super::BeginPlay();
+
+    ZombieGameState = GetGameState<AProjekt994GameState>();
+    CalculateZombieCount();
 
     TArray<AActor *> TempActors;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), AProjekt994ZombieSpawnPoint::StaticClass(), TempActors);
@@ -35,7 +39,7 @@ void AProjekt994GameModeBase::BeginPlay()
     }
     UE_LOG(LogTemp, Warning, TEXT("Spawn point ZOMBIES count: %d"), ZombieSpawnPoints.Num());
 
-    GetWorld()->GetTimerManager().SetTimer(TZombieSpawnHandle, this, &AProjekt994GameModeBase::SpawnZombie, 2.0f, true);
+    GetWorld()->GetTimerManager().SetTimer(TZombieSpawnHandle, this, &AProjekt994GameModeBase::SpawnZombie, .1f, true);
 }
 
 void AProjekt994GameModeBase::PostLogin(APlayerController *NewPlayer)
@@ -79,20 +83,37 @@ void AProjekt994GameModeBase::SetSpawnPoints()
     bHasLoadedSpawnPoints = true;
 }
 
-
 void AProjekt994GameModeBase::SpawnZombie()
 {
-    int RandomIndex = FMath::RandRange(0, ZombieSpawnPoints.Num() - 1);
-
-    if (AProjekt994ZombieSpawnPoint* SpawnPoint = ZombieSpawnPoints[RandomIndex])
+    if (ZombiesRemaining > 0)
     {
-        
-        FVector Loc = SpawnPoint->GetActorLocation();
-        FRotator Rot = SpawnPoint->GetActorRotation();
-     
-       if (AZombieBase* Zombie = GetWorld()->SpawnActor<AZombieBase>(ZombieClass, Loc, Rot))
+        int RandomIndex = FMath::RandRange(0, ZombieSpawnPoints.Num() - 1);
+
+        if (AProjekt994ZombieSpawnPoint *SpawnPoint = ZombieSpawnPoints[RandomIndex])
         {
-            UE_LOG(LogTemp, Warning, TEXT("SPAWNING ZOMBIES BITCHES!"));
+
+            FVector Loc = SpawnPoint->GetActorLocation();
+            FRotator Rot = SpawnPoint->GetActorRotation();
+
+            if (AZombieBase *Zombie = GetWorld()->SpawnActor<AZombieBase>(ZombieClass, Loc, Rot))
+            {
+                UE_LOG(LogTemp, Warning, TEXT("SPAWNING ZOMBIES BITCHES!"));
+                --ZombiesRemaining;
+            }
         }
+    }
+    else
+    {
+        GetWorld()->GetTimerManager().PauseTimer(TZombieSpawnHandle);
+    }
+}
+
+void AProjekt994GameModeBase::CalculateZombieCount()
+{
+    if (ZombieGameState)
+    {
+        uint16 RoundNumber = ZombieGameState->GetRoundNumber();
+        //Do calculation here
+        ZombiesRemaining = 5;
     }
 }
