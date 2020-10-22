@@ -1,5 +1,7 @@
-Content/StarterContent/
 
+# Content Packs
+Content/StarterContent/
+Content/MS_ConcreteV1/
 
 # Visual Studio 2015 user specific files
 .vs/
@@ -78,3 +80,4 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
