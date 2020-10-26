@@ -28,4 +28,5 @@ protected:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Use(class ACharacterBase* Player) override;
 };

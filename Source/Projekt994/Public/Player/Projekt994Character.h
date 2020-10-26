@@ -25,8 +25,12 @@ protected:
 	FTimerHandle TInteractTimerHandle;
 	class AInteractableBase* Interactable;
 
+	UPROPERTY(EditDefaultsOnly)
+		float InteractionRange;
+
 protected:
 	void Interact();
+	void SetInteractableObject();
 
 protected:
 	virtual void BeginPlay() override;

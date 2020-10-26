@@ -9,6 +9,7 @@
 AProjekt994Character::AProjekt994Character()
 {
     Interactable = nullptr;
+    InteractionRange = 200.0f;
 }
 
 // Called when the game starts or when spawned
@@ -19,7 +20,7 @@ void AProjekt994Character::BeginPlay()
     //Attach gun mesh component to Skeleton, doing it here because the skeleton is not yet created in the constructor
     FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
 
-    GetWorld()->GetTimerManager().SetTimer(TInteractTimerHandle, this, &AProjekt994Character::Interact, 0.2f, true);
+    GetWorld()->GetTimerManager().SetTimer(TInteractTimerHandle, this, &AProjekt994Character::SetInteractableObject, 0.2f, true);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -27,33 +28,25 @@ void AProjekt994Character::BeginPlay()
 // Called to bind functionality to input
 void AProjekt994Character::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
 {
-    //Super::SetupPlayerInputComponent(PlayerInputComponent);
+    Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-    // set up gameplay key bindings
     check(PlayerInputComponent);
 
-    // Bind jump events
-    PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-    PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-
-    // Bind fire event
-    PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AProjekt994Character::OnFire);
-
-    // Bind movement events
-    PlayerInputComponent->BindAxis("MoveForward", this, &AProjekt994Character::MoveForward);
-    PlayerInputComponent->BindAxis("MoveRight", this, &AProjekt994Character::MoveRight);
-
-    PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-    PlayerInputComponent->BindAxis("TurnRate", this, &AProjekt994Character::TurnAtRate);
-    PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-    PlayerInputComponent->BindAxis("LookUpRate", this, &AProjekt994Character::LookUpAtRate);
+    PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AProjekt994Character::Interact);
+}
+void AProjekt994Character::Interact()
+{
+        if (Interactable)
+        {
+            Interactable->Use(this);
+        }
 }
 
-void AProjekt994Character::Interact()
+void AProjekt994Character::SetInteractableObject()
 {
     FVector Start = GetFirstPersonCameraComponent()->GetComponentLocation();
     FVector Rot = GetFirstPersonCameraComponent()->GetComponentRotation().Vector();
-    FVector End = Start + Rot * 5000.0f;
+    FVector End = Start + Rot * InteractionRange;
 
     FHitResult HitResult;
     FCollisionObjectQueryParams CollisionQuery;
@@ -68,6 +61,7 @@ void AProjekt994Character::Interact()
         UE_LOG(LogTemp, Warning, TEXT("Is now a valid ptr"));
         Interactable = Temp;
         OnInteractChanged.Broadcast(Interactable->GetUIMessage());
+
     }
     else if (Interactable && Temp == nullptr)
     {
