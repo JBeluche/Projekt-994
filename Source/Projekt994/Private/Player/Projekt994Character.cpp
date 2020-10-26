@@ -2,9 +2,14 @@
 
 
 #include "Projekt994/Public/Player/Projekt994Character.h"
+#include "TimerManager.h"
+#include "Projekt994/Public/Projekt994//Useables/InteractableBase.h"
+#include "Camera/CameraComponent.h"
+#include "Engine/World.h"
 
 AProjekt994Character::AProjekt994Character()
 {
+	Interactable = nullptr;
 
 }
 
@@ -15,6 +20,8 @@ void AProjekt994Character::BeginPlay()
 	
 		//Attach gun mesh component to Skeleton, doing it here because the skeleton is not yet created in the constructor
 	FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+
+    GetWorld()->GetTimerManager().SetTimer(TInteractTimerHandle, this, &AProjekt994Character::Interact, 0.2f, true);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -43,4 +50,32 @@ void AProjekt994Character::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AProjekt994Character::LookUpAtRate);
 
+}
+
+void AProjekt994Character::Interact()
+{
+    FVector Start = GetFirstPersonCameraComponent()->GetComponentLocation();
+    FVector Rot = GetFirstPersonCameraComponent()->GetComponentRotation().Vector();
+    FVector End = Start + Rot * 5000.0f;
+
+
+    FHitResult HitResult;
+    FCollisionObjectQueryParams CollisionQuery;
+    FCollisionQueryParams CollisionParams;
+    CollisionParams.AddIgnoredActor(this);
+
+    GetWorld()->LineTraceSingleByObjectType(OUT HitResult, Start, End, CollisionQuery, CollisionParams);
+
+    if (AInteractableBase* Temp = Cast<AInteractableBase>(HitResult.GetActor()))
+    {
+        Interactable = Temp;
+        UE_LOG(LogTemp, Warning, TEXT("HIT ACTOR %s"), *HitResult.GetActor()->GetName());
+    }
+    else
+    {
+        Interactable = nullptr;
+
+        UE_LOG(LogTemp, Warning, TEXT("Did not hit anything"));
+
+    }
 }

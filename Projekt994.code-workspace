@@ -10,7 +10,12 @@
 		}
 	],
 	"settings": {
-		"typescript.tsc.autoDetect": "off"
+		"typescript.tsc.autoDetect": "off",
+		"files.associations": {
+			".blade.php": "html",
+			".tpl": "html",
+			"*.rh": "cpp"
+		}
 	},
 	"extensions": {
 		"recommendations": [

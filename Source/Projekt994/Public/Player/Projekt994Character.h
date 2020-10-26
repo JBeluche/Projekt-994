@@ -18,6 +18,13 @@ public:
 	AProjekt994Character();
 	
 protected:
+	FTimerHandle TInteractTimerHandle;
+	class AInteractableBase* Interactable;
+
+protected:
+	void Interact();
+
+protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
