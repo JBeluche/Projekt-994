@@ -4,7 +4,7 @@
 #include "Projekt994/Public/Projekt994/Game/Projekt994ZombieSpawnPoint.h"
 #include "Projekt994/Public/Projekt994/Game/Projekt994PlayerSpawnPoint.h"
 #include "Projekt994/Public/Projekt994/Game/Projekt994GameState.h"
-#include "Projekt994/Public/Player/CharacterBase.h"
+#include "Projekt994/Public/Player/Projekt994Character.h"
 #include "Projekt994/Public/Projekt994/Zombie/ZombieBase.h"
 
 #include "UObject/ConstructorHelpers.h"
@@ -56,7 +56,7 @@ void AProjekt994GameModeBase::PostLogin(APlayerController *NewPlayer)
         if (!SpawnPoint->IsUsed())
         {
             FVector SpawnLocation = SpawnPoint->GetActorLocation();
-            if (APawn *Pawn = GetWorld()->SpawnActor<APawn>(DefaultPawnClass, SpawnLocation, FRotator::ZeroRotator))
+            if (APawn *Pawn = GetWorld()->SpawnActor<APawn>(PlayerClass, SpawnLocation, FRotator::ZeroRotator))
             {
                 UE_LOG(LogTemp, Warning, TEXT("HERE I AM: "));
                 NewPlayer->Possess(Pawn);

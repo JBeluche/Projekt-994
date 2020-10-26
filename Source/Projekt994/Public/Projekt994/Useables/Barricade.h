@@ -23,4 +23,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
 		uint16 Cost;
+
+
+
+protected:
+	virtual void BeginPlay() override;
 };

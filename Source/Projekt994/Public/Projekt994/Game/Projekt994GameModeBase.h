@@ -27,6 +27,9 @@ protected:
 	TArray<class AProjekt994ZombieSpawnPoint*> ZombieSpawnPoints;
 
 	UPROPERTY(EditAnywhere, Category = "Projekt994Settings")
+	TSubclassOf<class AProjekt994Character> PlayerClass;
+
+	UPROPERTY(EditAnywhere, Category = "Projekt994Settings")
 	TSubclassOf<class AZombieBase> ZombieClass;
 
 

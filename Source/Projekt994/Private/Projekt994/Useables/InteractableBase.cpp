@@ -7,8 +7,8 @@
 // Sets default values
 AInteractableBase::AInteractableBase()
 {
-
-	UIMessage = ":Press and hold F to purchase";
+	ObjectName = "Default";
+	UIMessage = "Press F to buy " + ObjectName;
 
 }
 

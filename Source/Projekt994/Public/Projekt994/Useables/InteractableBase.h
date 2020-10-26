@@ -19,6 +19,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
 		FString UIMessage;
 
+	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
+		FString ObjectName;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
