@@ -14,7 +14,7 @@
 AProjekt994GameModeBase::AProjekt994GameModeBase()
 {
     // set default pawn class to our Blueprinted character
-    static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassFinder(TEXT("/Game/BlueprintClasses/Player/BP_CharacterBase.BP_CharacterBase_C"));
+    static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassFinder(TEXT("/Game/BlueprintClasses/Player/BP_Projekt994Character.BP_Projekt994Character_C"));
     DefaultPawnClass = PlayerPawnClassFinder.Class;
     bHasLoadedSpawnPoints = false;
 
