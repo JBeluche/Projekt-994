@@ -31,4 +31,5 @@ public:
 
 	virtual void Use(class ACharacterBase* Player);
 
+
 };
