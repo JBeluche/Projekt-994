@@ -36,10 +36,10 @@ void AProjekt994GameModeBase::BeginPlay()
     {
         if (AProjekt994ZombieSpawnPoint *SpawnPoint = Cast<AProjekt994ZombieSpawnPoint>(Actor))
         {
-            ZombieSpawnPoints.Add(SpawnPoint);
             if(ABarricade* LinkedBarricade = SpawnPoint->GetLinkedBarricade())
             {
                 SpawnPoint->SetZone(LinkedBarricade->GetAccessZone());
+                ZombieSpawnPoints.Add(SpawnPoint);
                 UE_LOG(LogTemp, Warning, TEXT("Barricade zone set to: %i"), LinkedBarricade->GetAccessZone());
             }
             else
@@ -51,7 +51,7 @@ void AProjekt994GameModeBase::BeginPlay()
     }
     UE_LOG(LogTemp, Warning, TEXT("Spawn point ZOMBIES count: %d"), ZombieSpawnPoints.Num());
 
-    GetWorld()->GetTimerManager().SetTimer(TZombieSpawnHandle, this, &AProjekt994GameModeBase::SpawnZombie, .1f, true);
+    GetWorld()->GetTimerManager().SetTimer(TZombieSpawnHandle, this, &AProjekt994GameModeBase::SpawnZombie, 2.0f, true);
 }
 
 void AProjekt994GameModeBase::PostLogin(APlayerController *NewPlayer)
@@ -108,7 +108,6 @@ void AProjekt994GameModeBase::SpawnZombie()
 
             if (AZombieBase *Zombie = GetWorld()->SpawnActor<AZombieBase>(ZombieClass, Loc, Rot))
             {
-                UE_LOG(LogTemp, Warning, TEXT("SPAWNING ZOMBIES BITCHES!"));
                 --ZombiesRemaining;
             }
         }
@@ -125,6 +124,27 @@ void AProjekt994GameModeBase::CalculateZombieCount()
     {
         uint16 RoundNumber = ZombieGameState->GetRoundNumber();
         //Do calculation here
-        ZombiesRemaining = 5;
+        ZombiesRemaining = 1000;
     }
+}
+
+void AProjekt994GameModeBase::NewZoneActive(uint8 ZoneNumber)
+{
+    int Control = 0;
+    for (int16 x = ZombieSpawnPoints.Num() - 1; x >= 0; --x)
+    {
+        AProjekt994ZombieSpawnPoint* SpawnPoint = ZombieSpawnPoints[x];
+
+        UE_LOG(LogTemp, Warning, TEXT("sETTING ACTIVE ZONE! %d"), Control);
+        ++Control;
+
+        if(SpawnPoint && ZoneNumber == SpawnPoint->GetZone() && !SpawnPoint->IsActive())
+        {
+            ActiveZombieSpawnPoints.Add(SpawnPoint);
+            SpawnPoint->Activate();
+            //Remove spawnpoiint from the zombiespawnpoint array
+            ZombieSpawnPoints.RemoveAt(x);
+        }
+    }
+
 }

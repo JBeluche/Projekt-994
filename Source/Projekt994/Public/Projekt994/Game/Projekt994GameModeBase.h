@@ -51,5 +51,8 @@ protected:
 
 	void SetSpawnPoints();
 
+public:
+	void NewZoneActive(uint8 ZoneNumber);
+
 	
 };

@@ -8,6 +8,7 @@
 AProjekt994ZombieSpawnPoint::AProjekt994ZombieSpawnPoint()
 {
     Zone = 0;
+    bIsActive = false;
 }
 
 
@@ -29,3 +30,14 @@ void AProjekt994ZombieSpawnPoint::SetZone(uint8 ZoneNumber)
 {
     Zone = ZoneNumber;
 }
+
+void AProjekt994ZombieSpawnPoint::Activate()
+{
+    bIsActive = true;
+}
+
+bool AProjekt994ZombieSpawnPoint::IsActive()
+{
+    return bIsActive;
+}
+

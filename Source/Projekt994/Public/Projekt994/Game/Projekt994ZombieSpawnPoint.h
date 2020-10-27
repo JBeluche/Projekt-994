@@ -22,6 +22,7 @@ protected:
 		class ABarricade* LinkedBarricade;
 
 		uint8 Zone;
+		bool bIsActive;
 
 		virtual void BeginPlay() override;
 
@@ -29,5 +30,7 @@ public:
 	class ABarricade* GetLinkedBarricade();
 	uint8 GetZone();
 	void SetZone(uint8 ZoneNumber);
+	bool IsActive();
+	void Activate();
 
 };
