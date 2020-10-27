@@ -30,6 +30,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
 		uint16 Cost;
 
+	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
+		uint8 AccessZone;
+
 	UPROPERTY(ReplicatedUsing = OnRep_BarricadeUsed)
 		bool bIsUsed;
 
@@ -40,5 +43,8 @@ protected:
 protected:
 	virtual void BeginPlay() override;
 	virtual void Use(class ACharacterBase* Player) override;
+
+public:
+	uint8 GetAccessZone();
 
 };

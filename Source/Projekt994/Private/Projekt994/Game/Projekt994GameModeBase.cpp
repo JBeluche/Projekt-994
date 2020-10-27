@@ -5,7 +5,9 @@
 #include "Projekt994/Public/Projekt994/Game/Projekt994PlayerSpawnPoint.h"
 #include "Projekt994/Public/Projekt994/Game/Projekt994GameState.h"
 #include "Projekt994/Public/Player/Projekt994Character.h"
+#include "Projekt994/Public/Projekt994//Useables/Barricade.h"
 #include "Projekt994/Public/Projekt994/Zombie/ZombieBase.h"
+
 
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/GameplayStatics.h"
@@ -35,6 +37,16 @@ void AProjekt994GameModeBase::BeginPlay()
         if (AProjekt994ZombieSpawnPoint *SpawnPoint = Cast<AProjekt994ZombieSpawnPoint>(Actor))
         {
             ZombieSpawnPoints.Add(SpawnPoint);
+            if(ABarricade* LinkedBarricade = SpawnPoint->GetLinkedBarricade())
+            {
+                SpawnPoint->SetZone(LinkedBarricade->GetAccessZone());
+                UE_LOG(LogTemp, Warning, TEXT("Barricade zone set to: %i"), LinkedBarricade->GetAccessZone());
+            }
+            else
+            {
+                ActiveZombieSpawnPoints.Add(SpawnPoint);
+            }
+            
         }
     }
     UE_LOG(LogTemp, Warning, TEXT("Spawn point ZOMBIES count: %d"), ZombieSpawnPoints.Num());
@@ -58,7 +70,6 @@ void AProjekt994GameModeBase::PostLogin(APlayerController *NewPlayer)
             FVector SpawnLocation = SpawnPoint->GetActorLocation();
             if (APawn *Pawn = GetWorld()->SpawnActor<APawn>(PlayerClass, SpawnLocation, FRotator::ZeroRotator))
             {
-                UE_LOG(LogTemp, Warning, TEXT("HERE I AM: "));
                 NewPlayer->Possess(Pawn);
                 SpawnPoint->SetUsed(true);
                 return;
@@ -87,9 +98,9 @@ void AProjekt994GameModeBase::SpawnZombie()
 {
     if (ZombiesRemaining > 0)
     {
-        int RandomIndex = FMath::RandRange(0, ZombieSpawnPoints.Num() - 1);
+        int RandomIndex = FMath::RandRange(0, ActiveZombieSpawnPoints.Num() - 1);
 
-        if (AProjekt994ZombieSpawnPoint *SpawnPoint = ZombieSpawnPoints[RandomIndex])
+        if (AProjekt994ZombieSpawnPoint *SpawnPoint = ActiveZombieSpawnPoints[RandomIndex])
         {
 
             FVector Loc = SpawnPoint->GetActorLocation();

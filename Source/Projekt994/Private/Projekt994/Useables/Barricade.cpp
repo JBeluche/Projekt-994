@@ -14,6 +14,7 @@ ABarricade::ABarricade()
     CollisionMesh = CreateDefaultSubobject<UStaticMeshComponent>("StaticMeshComponent");
 
     Cost = 500;
+    AccessZone = 0;
 
     UIMessage += ObjectName + " [Cost: " + FString::FromInt(Cost) + "]";
     bIsUsed = false;
@@ -45,4 +46,9 @@ void ABarricade::OnRep_BarricadeUsed()
         MeshComp->PlayAnimation(OpenAnimation, false);
     }
     
+}
+
+uint8 ABarricade::GetAccessZone()
+{
+    return AccessZone;
 }

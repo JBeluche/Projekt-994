@@ -24,6 +24,8 @@ protected:
 	class AProjekt994GameState* ZombieGameState;
 	bool bHasLoadedSpawnPoints;
 	TArray<class AProjekt994PlayerSpawnPoint*> PlayerSpawnPoints;
+
+	TArray<class AProjekt994ZombieSpawnPoint*> ActiveZombieSpawnPoints;
 	TArray<class AProjekt994ZombieSpawnPoint*> ZombieSpawnPoints;
 
 	UPROPERTY(EditAnywhere, Category = "Projekt994Settings")
