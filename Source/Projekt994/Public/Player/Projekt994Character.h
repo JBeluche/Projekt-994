@@ -28,6 +28,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 		float InteractionRange;
 
+	UPROPERTY(EditDefaultsOnly)//Set to replicate
+		uint32 Points;
+
 protected:
 	void Interact();
 	UFUNCTION(Server, Reliable, WithValidation)
@@ -36,6 +39,12 @@ protected:
 		void Server_Interact_Implementation(class AInteractableBase* InteractingObject);
 
 	void SetInteractableObject();
+
+	virtual void OnFire() override;
+
+public: 
+	void IncrementPoints(uint16 Value);
+	bool DecrementPoints(uint16 Value);
 
 protected:
 	virtual void BeginPlay() override;

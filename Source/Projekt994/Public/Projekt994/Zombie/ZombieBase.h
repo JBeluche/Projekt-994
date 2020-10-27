@@ -20,6 +20,7 @@ protected:
 	virtual void BeginPlay() override;
 
 
-
+public:
+	void Hit(class AProjekt994Character* Player);
 
 };

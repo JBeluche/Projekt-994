@@ -2,14 +2,20 @@
 
 #include "Projekt994/Public/Player/Projekt994Character.h"
 #include "TimerManager.h"
-#include "Projekt994/Public/Projekt994//Useables/InteractableBase.h"
+#include "Projekt994/Public/Projekt994/Useables/InteractableBase.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/World.h"
+#include "Projekt994/Public/Projekt994/Zombie/ZombieBase.h"
+#include "DrawDebugHelpers.h"
+
+
 
 AProjekt994Character::AProjekt994Character()
 {
     Interactable = nullptr;
     InteractionRange = 200.0f;
+    Points = 500;
+
 }
 
 // Called when the game starts or when spawned
@@ -92,4 +98,50 @@ void AProjekt994Character::Server_Interact_Implementation(AInteractableBase* Int
     {
         InteractingObject->Use(this);
     }
+}
+
+void AProjekt994Character::OnFire()
+{
+    FVector Start = GetFirstPersonCameraComponent()->GetComponentLocation();
+    FVector Rot = GetFirstPersonCameraComponent()->GetComponentRotation().Vector();
+    FVector End = Start + Rot * 2000.0f;
+
+    FHitResult HitResult;
+    FCollisionObjectQueryParams CollisionQuery;
+    FCollisionQueryParams CollisionParams;
+    CollisionParams.AddIgnoredActor(this);
+
+    if(GetWorld()->LineTraceSingleByObjectType(OUT HitResult, Start, End, CollisionQuery, CollisionParams))
+    {
+        if (AZombieBase* Zombie = Cast<AZombieBase>(HitResult.GetActor()))
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Zombie hit@!@ %s"), *Zombie->GetName());
+            Zombie->Hit(this);
+        }
+    }
+
+    DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.0f, 0, 3.0f);
+
+}
+
+void AProjekt994Character::IncrementPoints(uint16 Value)
+{
+    Points += Value;
+    UE_LOG(LogTemp, Warning, TEXT("Zombie hit@!@ %d"), Points);
+
+}
+
+bool AProjekt994Character::DecrementPoints(uint16 Value)
+{
+    if(Points - Value < 0)
+    {
+        return false;
+    }
+    else
+    {
+        Points -= Value;
+        return true;
+    }
+    UE_LOG(LogTemp, Warning, TEXT("Zombie hit@!@ %d"), Points);
+    
 }
