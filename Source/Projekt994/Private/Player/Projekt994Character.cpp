@@ -38,7 +38,15 @@ void AProjekt994Character::Interact()
 {
         if (Interactable)
         {
-            Interactable->Use(this);
+            if(HasAuthority())
+            {
+                Interactable->Use(this);
+            }
+            else
+            {
+                Server_Interact(Interactable);
+            }
+            
         }
 }
 
@@ -69,5 +77,19 @@ void AProjekt994Character::SetInteractableObject()
         Interactable = nullptr;
         OnInteractChanged.Broadcast(FString());
 
+    }
+}
+
+bool AProjekt994Character::Server_Interact_Validate(AInteractableBase* InteractingObject)
+{
+    return true;
+}
+
+void AProjekt994Character::Server_Interact_Implementation(AInteractableBase* InteractingObject)
+{
+    float Distance = GetDistanceTo(InteractingObject);
+    if(Distance < InteractionRange + 30.0f)
+    {
+        InteractingObject->Use(this);
     }
 }
