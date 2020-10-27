@@ -3,13 +3,16 @@
 #include "Projekt994/Public/Projekt994//Useables/Barricade.h"
 
 #include "Components/StaticMeshComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Net/UnrealNetwork.h"
 
 ABarricade::ABarricade()
 {
-    MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("StaticMeshComponent");
-
+    MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMeshComponent");
     RootComponent = MeshComp;
+
+    CollisionMesh = CreateDefaultSubobject<UStaticMeshComponent>("StaticMeshComponent");
+
     Cost = 500;
 
     UIMessage += ObjectName + " [Cost: " + FString::FromInt(Cost) + "]";
@@ -36,6 +39,10 @@ void ABarricade::Use(ACharacterBase *Player)
 
 void ABarricade::OnRep_BarricadeUsed()
 {
-    SetActorEnableCollision(false);
+    CollisionMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    if(OpenAnimation)
+    {
+        MeshComp->PlayAnimation(OpenAnimation, false);
+    }
     
 }

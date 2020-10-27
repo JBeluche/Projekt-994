@@ -19,7 +19,13 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
-		class UStaticMeshComponent* MeshComp;
+		class USkeletalMeshComponent* MeshComp;
+
+	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
+		class UStaticMeshComponent* CollisionMesh;
+
+	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
+		class UAnimationAsset* OpenAnimation;
 
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
 		uint16 Cost;
