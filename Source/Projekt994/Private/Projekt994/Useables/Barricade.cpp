@@ -33,7 +33,7 @@ void ABarricade::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 
 void ABarricade::Use(AProjekt994Character *Player)
 {
-    if(HasAuthority() && Player && Player->DecrementPoints(Cost))
+    if(HasAuthority() && !bIsUsed && Player && Player->DecrementPoints(Cost))
     {
         UE_LOG(LogTemp, Warning, TEXT("IN USE FUNCTION %s"), *GetName());
         bIsUsed = true;
@@ -53,6 +53,7 @@ void ABarricade::OnRep_BarricadeUsed()
     if(OpenAnimation)
     {
         MeshComp->PlayAnimation(OpenAnimation, false);
+        UIMessage = FString();
     }
     
 }
