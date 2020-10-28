@@ -29,7 +29,7 @@ protected:
 		float InteractionRange;
 
 	UPROPERTY(EditDefaultsOnly)//Set to replicate
-		uint32 Points;
+		int32 Points;
 
 protected:
 	void Interact();

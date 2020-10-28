@@ -28,7 +28,7 @@ protected:
 		class UAnimationAsset* OpenAnimation;
 
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
-		uint16 Cost;
+		int32 Cost;
 
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
 		uint8 AccessZone;
@@ -42,7 +42,7 @@ protected:
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void Use(class ACharacterBase* Player) override;
+	virtual void Use(class AProjekt994Character* Player) override;
 
 public:
 	uint8 GetAccessZone();

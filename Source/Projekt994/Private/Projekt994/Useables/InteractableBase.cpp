@@ -24,7 +24,7 @@ FString  AInteractableBase::GetUIMessage()
 	return UIMessage;
 }
 
-void AInteractableBase::Use(ACharacterBase* Player)
+void AInteractableBase::Use(AProjekt994Character* Player)
 {
 
 }

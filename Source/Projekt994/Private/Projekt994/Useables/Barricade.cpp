@@ -2,7 +2,6 @@
 
 #include "Projekt994/Public/Projekt994/Game/Projekt994GameModeBase.h"
 #include "Projekt994/Public/Projekt994//Useables/Barricade.h"
-
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -32,9 +31,9 @@ void ABarricade::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
     DOREPLIFETIME(ABarricade, bIsUsed);
 }
 
-void ABarricade::Use(ACharacterBase *Player)
+void ABarricade::Use(AProjekt994Character *Player)
 {
-    if(HasAuthority())
+    if(HasAuthority() && Player && Player->DecrementPoints(Cost))
     {
         UE_LOG(LogTemp, Warning, TEXT("IN USE FUNCTION %s"), *GetName());
         bIsUsed = true;

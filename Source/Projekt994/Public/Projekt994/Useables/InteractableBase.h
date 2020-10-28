@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Projekt994/Public/Player/Projekt994Character.h"
 #include "GameFramework/Actor.h"
 #include "InteractableBase.generated.h"
 
@@ -29,7 +30,7 @@ protected:
 public:
 	FString GetUIMessage();
 
-	virtual void Use(class ACharacterBase* Player);
+	virtual void Use(class AProjekt994Character* Player);
 
 
 };
