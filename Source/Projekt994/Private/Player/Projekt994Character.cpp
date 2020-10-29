@@ -23,9 +23,6 @@ void AProjekt994Character::BeginPlay()
 {
     Super::BeginPlay();
 
-    //Attach gun mesh component to Skeleton, doing it here because the skeleton is not yet created in the constructor
-    FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
-
     GetWorld()->GetTimerManager().SetTimer(TInteractTimerHandle, this, &AProjekt994Character::SetInteractableObject, 0.2f, true);
 }
 
