@@ -73,14 +73,14 @@ void AProjekt994Character::SetInteractableObject()
     {
         UE_LOG(LogTemp, Warning, TEXT("Is now a valid ptr"));
         Interactable = Temp;
-        OnInteractChanged.Broadcast(Interactable->GetUIMessage());
+        NewInteractMessage.Broadcast(Interactable->GetUIMessage());
 
     }
     else if (Interactable && Temp == nullptr)
     {
         UE_LOG(LogTemp, Warning, TEXT("Is now a nullptr"));
         Interactable = nullptr;
-        OnInteractChanged.Broadcast(FString());
+        NewInteractMessage.Broadcast(FString());
 
     }
 }
@@ -119,6 +119,7 @@ void AProjekt994Character::OnFire()
 void AProjekt994Character::IncrementPoints(uint16 Value)
 {
     Points += Value;
+    NewPoints.Broadcast(Points);
     UE_LOG(LogTemp, Warning, TEXT("Zombie hit@!@ %d"), Points);
 
 }
@@ -132,8 +133,15 @@ bool AProjekt994Character::DecrementPoints(uint16 Value)
     else
     {
         Points -= Value;
+        NewPoints.Broadcast(Points);
         return true;
     }
     UE_LOG(LogTemp, Warning, TEXT("Zombie hit@!@ %d"), Points);
     
 }
+
+int32 AProjekt994Character::GetPoints()
+{
+    return Points;
+}
+
