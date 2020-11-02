@@ -45,6 +45,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	TArray<FHitResult> PerformLineTrace(class AProjekt994Character* ShootingPlayer);
+
 public:	
 	virtual TArray<FHitResult> Fire(class AProjekt994Character* ShootingPlayer);
 	

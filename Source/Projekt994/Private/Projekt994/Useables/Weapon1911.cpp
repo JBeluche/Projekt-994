@@ -3,7 +3,6 @@
 
 #include "Projekt994/Public/Projekt994//Useables/Weapon1911.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "DrawDebugHelpers.h"
 #include "Projekt994/Public/Player/Projekt994Character.h"
 #include "Projekt994/Public/Projekt994/Zombie/ZombieBase.h"
 #include "Engine/World.h"
@@ -22,21 +21,10 @@ AWeapon1911::AWeapon1911()
 
 TArray<FHitResult>  AWeapon1911::Fire(AProjekt994Character* ShootingPlayer)
 {
-    UE_LOG(LogTemp, Warning, TEXT("Shooting 1991"));
 
-    FVector Start = WeaponMesh->GetSocketLocation(FName("muzzleSocket"));
-    FVector Rot =  WeaponMesh->GetSocketRotation(FName("muzzleSocket")).Vector();
+    TArray<FHitResult> HitResults = PerformLineTrace(ShootingPlayer);
 
-    FVector End = Start + Rot * 2000.0f;
-
-    TArray<FHitResult> HitResults;
-    FCollisionQueryParams CollisionParams;
-    CollisionParams.AddIgnoredActor(this);
-    CollisionParams.AddIgnoredActor(ShootingPlayer);
-
-    FCollisionResponseParams CollisionResponse;
-
-    if(GetWorld()->LineTraceMultiByChannel(OUT HitResults, Start, End, ECollisionChannel::ECC_GameTraceChannel2, CollisionParams, CollisionResponse))
+    if(HitResults.Num() > 0)
     {
 
         for (FHitResult& Result : HitResults)
@@ -53,7 +41,6 @@ TArray<FHitResult>  AWeapon1911::Fire(AProjekt994Character* ShootingPlayer)
       
     }
 
-    DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.0f, 0, 3.0f);
 
     return HitResults;
 }

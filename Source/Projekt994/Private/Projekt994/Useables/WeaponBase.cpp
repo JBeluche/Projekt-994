@@ -2,6 +2,7 @@
 
 
 #include "Projekt994/Public/Projekt994//Useables/WeaponBase.h"
+#include "DrawDebugHelpers.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Projekt994/Public/Player/Projekt994Character.h"
 
@@ -39,3 +40,27 @@ void AWeaponBase::Reload()
 {
 
 }
+
+TArray<FHitResult> AWeaponBase::PerformLineTrace(AProjekt994Character* ShootingPlayer)
+{
+	    UE_LOG(LogTemp, Warning, TEXT("Shooting 1991"));
+
+    FVector Start = WeaponMesh->GetSocketLocation(FName("muzzleSocket"));
+    FVector Rot =  WeaponMesh->GetSocketRotation(FName("muzzleSocket")).Vector();
+
+    FVector End = Start + Rot * 5000.0f;
+
+    TArray<FHitResult> HitResults;
+    FCollisionQueryParams CollisionParams;
+    CollisionParams.AddIgnoredActor(this);
+    CollisionParams.AddIgnoredActor(ShootingPlayer);
+
+    FCollisionResponseParams CollisionResponse;
+
+    GetWorld()->LineTraceMultiByChannel(OUT HitResults, Start, End, ECollisionChannel::ECC_GameTraceChannel2, CollisionParams, CollisionResponse);
+    DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.0f, 0, 3.0f);
+
+
+	return HitResults;
+}
+
