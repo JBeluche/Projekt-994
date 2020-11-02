@@ -4,6 +4,7 @@
 #include "Projekt994/Public/Projekt994//Useables/WeaponBase.h"
 #include "DrawDebugHelpers.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Animation/AnimInstance.h"
 #include "Projekt994/Public/Player/Projekt994Character.h"
 
 // Sets default values
@@ -63,4 +64,10 @@ TArray<FHitResult> AWeaponBase::PerformLineTrace(AProjekt994Character* ShootingP
 
 	return HitResults;
 }
+
+UAnimMontage* AWeaponBase::GetFireAnimMontage()
+{
+	return FPSArmsFireMontage;
+}
+
 

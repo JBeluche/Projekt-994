@@ -23,6 +23,9 @@ protected:
 		class UAnimationAsset* FireAnimation;
 
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
+		class UAnimMontage* FPSArmsFireMontage;
+
+	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
 		class UAnimationAsset* ReloadAnimation;
 
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
@@ -54,5 +57,7 @@ public:
 
 	//First element is Magazine Ammo, second element is total ammo
 	TArray<int32> GetCurrentAmmo();
+
+	class UAnimMontage* GetFireAnimMontage();
 
 };

@@ -8,6 +8,7 @@
 #include "Projekt994/Public/Projekt994/Zombie/ZombieBase.h"
 #include "DrawDebugHelpers.h"
 #include "Projekt994/Public/Projekt994//Useables/WeaponBase.h"
+#include "Animation/AnimInstance.h"
 
 
 
@@ -103,6 +104,14 @@ void AProjekt994Character::OnFire()
     if (CurrentWeapon)
     {
         CurrentWeapon->Fire(this);
+        if(UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance())
+        {
+            if(UAnimMontage* FireMontage = CurrentWeapon->GetFireAnimMontage())
+            {
+                UE_LOG(LogTemp, Warning, TEXT("Firinge montage"));
+                AnimInstance->Montage_Play(FireMontage);
+            }
+        }
     }
 
 }

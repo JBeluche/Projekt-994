@@ -21,6 +21,10 @@ AWeapon1911::AWeapon1911()
 
 TArray<FHitResult>  AWeapon1911::Fire(AProjekt994Character* ShootingPlayer)
 {
+    if(FireAnimation)
+    {
+        WeaponMesh->PlayAnimation(FireAnimation, false);
+    }
 
     TArray<FHitResult> HitResults = PerformLineTrace(ShootingPlayer);
 
