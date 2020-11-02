@@ -3,6 +3,7 @@
 
 #include "Projekt994/Public/Projekt994//Useables/WeaponBase.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Projekt994/Public/Player/Projekt994Character.h"
 
 // Sets default values
 AWeaponBase::AWeaponBase()
@@ -14,6 +15,7 @@ AWeaponBase::AWeaponBase()
 
 	CurrentTotalAmmo = WeaponMaxAmmo;
 	CurrentMagazineAmmo = MagazineMaxAmmo;
+	BaseDamage = 100;
 }
 
 // Called when the game starts or when spawned
@@ -28,9 +30,9 @@ TArray<int32> AWeaponBase::GetCurrentAmmo()
 	return {CurrentMagazineAmmo, CurrentTotalAmmo};
 }
 
-void AWeaponBase::Fire()
+TArray<FHitResult>  AWeaponBase::Fire(AProjekt994Character* ShootingPlayer)
 {
-
+	return TArray<FHitResult>();
 }
 	
 void AWeaponBase::Reload()

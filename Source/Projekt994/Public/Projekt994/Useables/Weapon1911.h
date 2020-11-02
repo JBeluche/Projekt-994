@@ -17,7 +17,7 @@ class PROJEKT994_API AWeapon1911 : public AWeaponBase
 public:
 	AWeapon1911();
 
-	virtual void Fire() override;
+	virtual TArray<FHitResult>  Fire(class AProjekt994Character* ShootingPlayer) override;
 	
 	virtual void Reload() override;
 };

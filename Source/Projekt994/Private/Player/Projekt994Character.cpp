@@ -7,6 +7,7 @@
 #include "Engine/World.h"
 #include "Projekt994/Public/Projekt994/Zombie/ZombieBase.h"
 #include "DrawDebugHelpers.h"
+#include "Projekt994/Public/Projekt994//Useables/WeaponBase.h"
 
 
 
@@ -99,33 +100,10 @@ void AProjekt994Character::Server_Interact_Implementation(AInteractableBase* Int
 
 void AProjekt994Character::OnFire()
 {
-    FVector Start = GetFirstPersonCameraComponent()->GetComponentLocation();
-    FVector Rot = GetFirstPersonCameraComponent()->GetComponentRotation().Vector();
-    FVector End = Start + Rot * 2000.0f;
-
-    TArray<FHitResult> HitResults;
-    FCollisionQueryParams CollisionParams;
-    FCollisionResponseParams CollisionResponse;
-    CollisionParams.AddIgnoredActor(this);
-
-    if(GetWorld()->LineTraceMultiByChannel(OUT HitResults, Start, End, ECollisionChannel::ECC_GameTraceChannel2, CollisionParams, CollisionResponse))
+    if (CurrentWeapon)
     {
-
-        for (FHitResult& Result : HitResults)
-        {
-            if (AActor* HitActor = Result.GetActor())
-            {
-                UE_LOG(LogTemp, Warning, TEXT("Hit Actor!! %s"), *HitActor->GetName());
-            }
-        }
-       /* if (AZombieBase* Zombie = Cast<AZombieBase>(HitResult.GetActor()))
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Zombie hit@!@ %s"), *Zombie->GetName());
-            Zombie->Hit(this);
-        }*/
+        CurrentWeapon->Fire(this);
     }
-
-    DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.0f, 0, 3.0f);
 
 }
 

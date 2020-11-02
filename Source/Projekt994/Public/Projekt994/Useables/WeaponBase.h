@@ -34,6 +34,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
 		int32 MagazineMaxAmmo;
 
+	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
+		int32 BaseDamage;
+
 		int32 CurrentTotalAmmo;
 		int32 CurrentMagazineAmmo;
 
@@ -43,7 +46,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	virtual void Fire();
+	virtual TArray<FHitResult> Fire(class AProjekt994Character* ShootingPlayer);
 	
 	virtual void Reload();
 
