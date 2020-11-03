@@ -28,7 +28,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
 		TSubclassOf<class AWeaponBase> StartingWeaponClass;
 
-	class AWeaponBase* CurrentWeapon;
+	UPROPERTY(ReplicatedUsing = OnRep_AttachWeapon)
+		class AWeaponBase* CurrentWeapon;
+	UFUNCTION()
+		void OnRep_AttachWeapon();	
+
 	int32 WeaponIndex;
 	TArray<AWeaponBase*> WeaponArray;
 

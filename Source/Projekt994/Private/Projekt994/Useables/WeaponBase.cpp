@@ -11,6 +11,9 @@
 AWeaponBase::AWeaponBase()
 {
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMeshComopent");
+
+    RootComponent = WeaponMesh;
+    SetReplicates(true);
 	WeaponMaxAmmo = 255;
     MagazineMaxAmmo = 30;
     WeaponName = "Default";

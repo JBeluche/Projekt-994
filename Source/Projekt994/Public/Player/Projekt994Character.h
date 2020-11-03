@@ -31,7 +31,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 		float InteractionRange;
 
-	UPROPERTY(EditDefaultsOnly)//Set to replicate
+	UPROPERTY(EditDefaultsOnly)//Set to replicate, move to plauer state when created
 		int32 Points;
 
 protected:

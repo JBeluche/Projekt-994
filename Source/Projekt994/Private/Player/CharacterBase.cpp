@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Projekt994/Public/Player/CharacterBase.h"
 #include "Projekt994/Projekt994Projectile.h"
 
@@ -11,20 +10,19 @@
 #include "GameFramework/InputSettings.h"
 #include "Kismet/GameplayStatics.h"
 #include "Projekt994/Public/Projekt994//Useables/WeaponBase.h"
-
-
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
 {
-// Set size for collision capsule
+	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 
-	// Create a CameraComponent	
+	// Create a CameraComponent
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
 	FirstPersonCameraComponent->SetRelativeLocation(FVector(-39.56f, 1.75f, 64.f)); // Position the camera
@@ -41,7 +39,6 @@ ACharacterBase::ACharacterBase()
 
 	WeaponIndex = 0;
 	bIsAiming = false;
-
 }
 
 // Called when the game starts or when spawned
@@ -49,28 +46,53 @@ void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CurrentWeapon = GetWorld()->SpawnActor<AWeaponBase>(StartingWeaponClass);
 
-	//Spawn Weapon using statringweaponclass
-	if(CurrentWeapon)
+	if (HasAuthority())
 	{
-            UE_LOG(LogTemp, Warning, TEXT("Spawned weapon and attempted to attach to hand socket"));
+		CurrentWeapon = GetWorld()->SpawnActor<AWeaponBase>(StartingWeaponClass);
+		//Spawn Weapon using statringweaponclass
+		if (CurrentWeapon)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Spawned weapon and attempted to attach to hand socket"));
 
-		CurrentWeapon->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetIncludingScale, FName("s_weaponSocket"));
-		WeaponArray.Add(CurrentWeapon);
+			WeaponArray.Add(CurrentWeapon);
+			OnRep_AttachWeapon();
+		}
 	}
 
 	//Attach spawn weapon to sockets_weaponSocket
 
-	
-		//Attach gun mesh component to Skeleton, doing it here because the skeleton is not yet created in the constructor
-//	FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+	//Attach gun mesh component to Skeleton, doing it here because the skeleton is not yet created in the constructor
+	//	FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
 }
+
+void ACharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ACharacterBase, CurrentWeapon);
+} 
+
+void ACharacterBase::OnRep_AttachWeapon()
+{
+	if (CurrentWeapon)
+	{
+		if (IsLocallyControlled())
+		{
+			CurrentWeapon->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocket"));
+		}
+		else
+		{
+			CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocket"));
+		}
+	}
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // Input
 // Called to bind functionality to input
-void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ACharacterBase::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
@@ -97,12 +119,10 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ACharacterBase::LookUpAtRate);
 
 	WeaponIndex = 0;
-
 }
 
 void ACharacterBase::OnFire()
 {
-	
 }
 
 void ACharacterBase::MoveForward(float Value)
@@ -148,3 +168,5 @@ void ACharacterBase::OnAimingEnd()
 {
 	bIsAiming = false;
 }
+
+
