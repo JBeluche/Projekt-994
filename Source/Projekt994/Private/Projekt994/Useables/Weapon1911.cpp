@@ -48,6 +48,24 @@ TArray<FHitResult>  AWeapon1911::Fire(AProjekt994Character* ShootingPlayer)
     }
     else
     {
+        
+    TArray<FHitResult> HitResults = PerformLineTrace(ShootingPlayer);
+
+        if(HitResults.Num() > 0)
+        {
+            for (FHitResult& Result : HitResults)
+            {
+                if (AActor* HitActor = Result.GetActor())
+                {
+                    if (AZombieBase* Zombie = Cast<AZombieBase>(Result.GetActor()))
+                        {
+                            Zombie->Hit(ShootingPlayer);
+                        }
+                    UE_LOG(LogTemp, Warning, TEXT("Hit Actor!! %s"), *HitActor->GetName());
+                }
+            }
+        }
+        
         Server_Fire(WeaponMesh->GetSocketLocation(FName("muzzleSocket")), WeaponMesh->GetSocketRotation(FName("muzzleSocket")));
 
     }

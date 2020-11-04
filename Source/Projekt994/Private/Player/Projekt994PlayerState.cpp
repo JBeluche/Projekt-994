@@ -24,12 +24,13 @@ void AProjekt994PlayerState::OnRep_PointsChanged()
 
 void AProjekt994PlayerState::IncrementPoints(uint16 Value)
 {
+    Points += Value;
     if (HasAuthority())
     {
-        Points += Value;
         OnRep_PointsChanged();
+    }        
+        NewPoints.Broadcast(Points);
         UE_LOG(LogTemp, Warning, TEXT("Zombie hit: %d"), Points);
-    }
 }
 
 bool AProjekt994PlayerState::DecrementPoints(uint16 Value)

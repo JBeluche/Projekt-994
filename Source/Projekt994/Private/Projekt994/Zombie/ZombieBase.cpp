@@ -20,7 +20,7 @@ void AZombieBase::BeginPlay()
 
 void AZombieBase::Hit(class AProjekt994Character* Player)
 {
-	if(HasAuthority() && Player)
+	if(Player)
 	{
 		if(AProjekt994PlayerState* PState = Player->GetPlayerState<AProjekt994PlayerState>())
 		{
