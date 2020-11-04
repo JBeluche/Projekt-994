@@ -18,10 +18,14 @@ public:
 protected:
 	int16 Health;
 
+	UPROPERTY(EditDefaultsOnly)
+		float CleanupDelay;
+
 	UPROPERTY(ReplicatedUsing = OnRep_Die, EditAnywhere)
 		bool bIsDead;
 	UFUNCTION()
 		void OnRep_Die();
+	void OnCleanup();
 
 protected:
 	// Called when the game starts or when spawned

@@ -6,12 +6,16 @@
 #include "Projekt994/Public/Projekt994/Zombie/ZombieBase.h"
 
 #include "Net/UnrealNetwork.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "TimerManager.h"
 
 // Sets default values
 AZombieBase::AZombieBase()
 {
 	Health = 150;
 	bIsDead = false;
+	CleanupDelay = 5.0f;
 }
 
 // Called when the game starts or when spawned
@@ -94,7 +98,6 @@ void AZombieBase::Die()
 	if(HasAuthority())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Zombie died"));
-		Destroy();
 		bIsDead = true;
 		OnRep_Die();
 	}
@@ -104,5 +107,23 @@ void AZombieBase::Die()
 void AZombieBase::OnRep_Die()
 {
 		UE_LOG(LogTemp, Warning, TEXT("Onrep died"));
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		GetMesh()->SetSimulatePhysics(true);
+		if(HasAuthority())
+		{
+			if(AController* AIController = GetController<AController>())
+			{
+				Controller->Destroy();
+			}
+			FTimerHandle TempHandle;
+			GetWorld()->GetTimerManager().SetTimer(TempHandle, this, &AZombieBase::OnCleanup, CleanupDelay, false);
+		}
 	
 }
+
+void AZombieBase::OnCleanup()
+{
+	Destroy();
+}
+
