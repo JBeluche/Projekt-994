@@ -1,6 +1,7 @@
 // Copyright by Creating Mountains
 
 
+#include "Projekt994/Public/Player/Projekt994PlayerState.h"
 #include "Projekt994/Public/Player/Projekt994Character.h"
 #include "Projekt994/Public/Projekt994/Zombie/ZombieBase.h"
 
@@ -21,6 +22,9 @@ void AZombieBase::Hit(class AProjekt994Character* Player)
 {
 	if(HasAuthority() && Player)
 	{
-		Player->IncrementPoints(100);
+		if(AProjekt994PlayerState* PState = Player->GetPlayerState<AProjekt994PlayerState>())
+		{
+			PState->IncrementPoints(100);
+		}
 	}
 }

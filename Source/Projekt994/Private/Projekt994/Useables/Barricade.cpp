@@ -1,5 +1,6 @@
 // Copyright by Creating Mountains
 
+#include "Projekt994/Public/Player/Projekt994PlayerState.h"
 #include "Projekt994/Public/Projekt994/Game/Projekt994GameModeBase.h"
 #include "Projekt994/Public/Projekt994//Useables/Barricade.h"
 #include "Components/StaticMeshComponent.h"
@@ -33,16 +34,25 @@ void ABarricade::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 
 void ABarricade::Use(AProjekt994Character *Player)
 {
-    if(HasAuthority() && !bIsUsed && Player && Player->DecrementPoints(Cost))
+    if(HasAuthority() && !bIsUsed && Player)
     {
-        UE_LOG(LogTemp, Warning, TEXT("IN USE FUNCTION %s"), *GetName());
-        bIsUsed = true;
-        OnRep_BarricadeUsed();
-
-        if (AProjekt994GameModeBase* GM = GetWorld()->GetAuthGameMode<AProjekt994GameModeBase>())
+		if(AProjekt994PlayerState* PState = Player->GetPlayerState<AProjekt994PlayerState>())
         {
-            GM->NewZoneActive(AccessZone);
+            if(!PState->DecrementPoints(Cost))
+            {   
+                return;
+            }
+
+            UE_LOG(LogTemp, Warning, TEXT("IN USE FUNCTION %s"), *GetName());
+            bIsUsed = true;
+            OnRep_BarricadeUsed();
+
+            if (AProjekt994GameModeBase* GM = GetWorld()->GetAuthGameMode<AProjekt994GameModeBase>())
+            {
+                GM->NewZoneActive(AccessZone);
+            }
         }
+
     }
    
 }

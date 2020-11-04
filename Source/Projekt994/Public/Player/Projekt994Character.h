@@ -8,7 +8,6 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractChanged, const FString&, NewInteractMessage);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPointsChanged, int32, NewPoints);
 
 UCLASS()
 class PROJEKT994_API AProjekt994Character : public ACharacterBase
@@ -22,17 +21,13 @@ protected:
 	UPROPERTY(BlueprintAssignable)
 		FInteractChanged NewInteractMessage;
 
-	UPROPERTY(BlueprintAssignable)
-		FPointsChanged NewPoints;
+
 
 	FTimerHandle TInteractTimerHandle;
 	class AInteractableBase* Interactable;
 
 	UPROPERTY(EditDefaultsOnly)
 		float InteractionRange;
-
-	UPROPERTY(EditDefaultsOnly)//Set to replicate, move to plauer state when created
-		int32 Points;
 
 protected:
 	void Interact();
@@ -44,12 +39,6 @@ protected:
 	void SetInteractableObject();
 
 	virtual void OnFire() override;
-
-public: 
-	void IncrementPoints(uint16 Value);
-	bool DecrementPoints(uint16 Value);
-	UFUNCTION(BlueprintCallable)
-		int32 GetPoints();
 
 protected:
 	virtual void BeginPlay() override;

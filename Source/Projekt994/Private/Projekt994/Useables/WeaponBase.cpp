@@ -73,4 +73,35 @@ UAnimMontage* AWeaponBase::GetFireAnimMontage()
 	return FPSArmsFireMontage;
 }
 
+bool AWeaponBase::Server_Fire_Validate(FVector MuzzleLocation, FRotator MuzzleRotation)
+{
+    return true;
+}
 
+void AWeaponBase::Server_Fire_Implementation(FVector MuzzleLocation, FRotator MuzzleRotation)
+{
+    
+}
+
+TArray<FHitResult> AWeaponBase::PerformLineTrace(FVector MuzzleLocation, FRotator MuzzleRotation)
+{
+    UE_LOG(LogTemp, Warning, TEXT("Shooting 1991"));
+
+    FVector End = MuzzleLocation + MuzzleRotation.Vector() * 5000.0f;
+
+    TArray<FHitResult> HitResults;
+    FCollisionQueryParams CollisionParams;
+    CollisionParams.AddIgnoredActor(this);
+    if(GetOwner())
+    {
+        CollisionParams.AddIgnoredActor(GetOwner());
+    }
+
+    FCollisionResponseParams CollisionResponse;
+
+    GetWorld()->LineTraceMultiByChannel(OUT HitResults, MuzzleLocation, End, ECollisionChannel::ECC_GameTraceChannel2, CollisionParams, CollisionResponse);
+    DrawDebugLine(GetWorld(), MuzzleLocation, End, FColor::Red, false, 2.0f, 0, 3.0f);
+
+
+	return HitResults;
+}

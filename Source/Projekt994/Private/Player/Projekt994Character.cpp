@@ -9,15 +9,12 @@
 #include "DrawDebugHelpers.h"
 #include "Projekt994/Public/Projekt994//Useables/WeaponBase.h"
 #include "Animation/AnimInstance.h"
-
-
+#include "Net/UnrealNetwork.h"
 
 AProjekt994Character::AProjekt994Character()
 {
     Interactable = nullptr;
     InteractionRange = 200.0f;
-    Points = 500;
-
 }
 
 // Called when the game starts or when spawned
@@ -28,6 +25,11 @@ void AProjekt994Character::BeginPlay()
     GetWorld()->GetTimerManager().SetTimer(TInteractTimerHandle, this, &AProjekt994Character::SetInteractableObject, 0.2f, true);
 }
 
+/*void AProjekt994PlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+}*/
 //////////////////////////////////////////////////////////////////////////
 // Input
 // Called to bind functionality to input
@@ -41,18 +43,17 @@ void AProjekt994Character::SetupPlayerInputComponent(UInputComponent *PlayerInpu
 }
 void AProjekt994Character::Interact()
 {
-        if (Interactable)
+    if (Interactable)
+    {
+        if (HasAuthority())
         {
-            if(HasAuthority())
-            {
-                Interactable->Use(this);
-            }
-            else
-            {
-                Server_Interact(Interactable);
-            }
-            
+            Interactable->Use(this);
         }
+        else
+        {
+            Server_Interact(Interactable);
+        }
+    }
 }
 
 void AProjekt994Character::SetInteractableObject()
@@ -74,26 +75,24 @@ void AProjekt994Character::SetInteractableObject()
         UE_LOG(LogTemp, Warning, TEXT("Is now a valid ptr"));
         Interactable = Temp;
         NewInteractMessage.Broadcast(Interactable->GetUIMessage());
-
     }
     else if (Interactable && Temp == nullptr)
     {
         UE_LOG(LogTemp, Warning, TEXT("Is now a nullptr"));
         Interactable = nullptr;
         NewInteractMessage.Broadcast(FString());
-
     }
 }
 
-bool AProjekt994Character::Server_Interact_Validate(AInteractableBase* InteractingObject)
+bool AProjekt994Character::Server_Interact_Validate(AInteractableBase *InteractingObject)
 {
     return true;
 }
 
-void AProjekt994Character::Server_Interact_Implementation(AInteractableBase* InteractingObject)
+void AProjekt994Character::Server_Interact_Implementation(AInteractableBase *InteractingObject)
 {
     float Distance = GetDistanceTo(InteractingObject);
-    if(Distance < InteractionRange + 30.0f)
+    if (Distance < InteractionRange + 30.0f)
     {
         InteractingObject->Use(this);
     }
@@ -104,44 +103,15 @@ void AProjekt994Character::OnFire()
     if (CurrentWeapon)
     {
         CurrentWeapon->Fire(this);
-        if(UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance())
+        if (UAnimInstance *AnimInstance = Mesh1P->GetAnimInstance())
         {
-            if(UAnimMontage* FireMontage = CurrentWeapon->GetFireAnimMontage())
+            if (UAnimMontage *FireMontage = CurrentWeapon->GetFireAnimMontage())
             {
                 UE_LOG(LogTemp, Warning, TEXT("Firinge montage"));
                 AnimInstance->Montage_Play(FireMontage);
             }
         }
     }
-
 }
 
-void AProjekt994Character::IncrementPoints(uint16 Value)
-{
-    Points += Value;
-    NewPoints.Broadcast(Points);
-    UE_LOG(LogTemp, Warning, TEXT("Zombie hit@!@ %d"), Points);
-
-}
-
-bool AProjekt994Character::DecrementPoints(uint16 Value)
-{
-    if(Points - Value < 0)
-    {
-        return false;
-    }
-    else
-    {
-        Points -= Value;
-        NewPoints.Broadcast(Points);
-        return true;
-    }
-    UE_LOG(LogTemp, Warning, TEXT("Zombie hit@!@ %d"), Points);
-    
-}
-
-int32 AProjekt994Character::GetPoints()
-{
-    return Points;
-}
 

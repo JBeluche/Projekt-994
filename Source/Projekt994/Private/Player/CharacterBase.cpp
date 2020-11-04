@@ -49,14 +49,17 @@ void ACharacterBase::BeginPlay()
 
 	if (HasAuthority())
 	{
-		CurrentWeapon = GetWorld()->SpawnActor<AWeaponBase>(StartingWeaponClass);
 		//Spawn Weapon using statringweaponclass
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		CurrentWeapon = GetWorld()->SpawnActor<AWeaponBase>(StartingWeaponClass, SpawnParams);
+
 		if (CurrentWeapon)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Spawned weapon and attempted to attach to hand socket"));
+			OnRep_AttachWeapon();
 
 			WeaponArray.Add(CurrentWeapon);
-			OnRep_AttachWeapon();
 		}
 	}
 
