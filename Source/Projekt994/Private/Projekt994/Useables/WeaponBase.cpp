@@ -47,7 +47,7 @@ void AWeaponBase::Reload()
 
 TArray<FHitResult> AWeaponBase::PerformLineTrace(AProjekt994Character* ShootingPlayer)
 {
-	    UE_LOG(LogTemp, Warning, TEXT("Shooting 1991"));
+	UE_LOG(LogTemp, Warning, TEXT("Shooting 1991"));
 
     FVector Start = WeaponMesh->GetSocketLocation(FName("muzzleSocket"));
     FVector Rot =  WeaponMesh->GetSocketRotation(FName("muzzleSocket")).Vector();
@@ -73,12 +73,12 @@ UAnimMontage* AWeaponBase::GetFireAnimMontage()
 	return FPSArmsFireMontage;
 }
 
-bool AWeaponBase::Server_Fire_Validate(FVector MuzzleLocation, FRotator MuzzleRotation)
+bool AWeaponBase::Server_Fire_Validate(const TArray<FHitResult>& HitResults)
 {
     return true;
 }
 
-void AWeaponBase::Server_Fire_Implementation(FVector MuzzleLocation, FRotator MuzzleRotation)
+void AWeaponBase::Server_Fire_Implementation(const TArray<FHitResult>& HitResults)
 {
     
 }

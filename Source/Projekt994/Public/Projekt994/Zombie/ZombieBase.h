@@ -16,8 +16,19 @@ public:
 	AZombieBase();
 
 protected:
+	int16 Health;
+
+	UPROPERTY(ReplicatedUsing = OnRep_Die, EditAnywhere)
+		bool bIsDead;
+	UFUNCTION()
+		void OnRep_Die();
+
+protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	void DecrementHealth(int16 Damage);
+	void Die();
 	uint8 GetPointsForKill(FString BoneName);
 
 

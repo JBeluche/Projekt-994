@@ -65,7 +65,7 @@ TArray<FHitResult>  AWeapon1911::Fire(AProjekt994Character* ShootingPlayer)
             }
         }
 
-        Server_Fire(WeaponMesh->GetSocketLocation(FName("muzzleSocket")), WeaponMesh->GetSocketRotation(FName("muzzleSocket")));
+        Server_Fire(HitResults);
 
     }
 
@@ -77,19 +77,17 @@ void AWeapon1911::Reload()
 
 }
 
-void AWeapon1911::Server_Fire_Implementation(FVector MuzzleLocation, FRotator MuzzleRotation)
+void AWeapon1911::Server_Fire_Implementation(const TArray<FHitResult>& HitResults)
 {
      if(FireAnimation)
     {
         WeaponMesh->PlayAnimation(FireAnimation, false);
     }
 
-    TArray<FHitResult> HitResults = PerformLineTrace(MuzzleLocation, MuzzleRotation);
-
     if(HitResults.Num() > 0)
     {
 
-        for (FHitResult& Result : HitResults)
+        for (FHitResult Result : HitResults)
         {
             if (AActor* HitActor = Result.GetActor())
             {

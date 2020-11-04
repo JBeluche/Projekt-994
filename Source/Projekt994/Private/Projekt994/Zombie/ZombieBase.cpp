@@ -5,10 +5,13 @@
 #include "Projekt994/Public/Player/Projekt994Character.h"
 #include "Projekt994/Public/Projekt994/Zombie/ZombieBase.h"
 
+#include "Net/UnrealNetwork.h"
+
 // Sets default values
 AZombieBase::AZombieBase()
 {
-
+	Health = 150;
+	bIsDead = false;
 }
 
 // Called when the game starts or when spawned
@@ -18,26 +21,34 @@ void AZombieBase::BeginPlay()
 	
 }
 
+void AZombieBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AZombieBase, bIsDead)
+}
+
+
 uint8 AZombieBase::GetPointsForKill(FString BoneName)
 {
 	if(BoneName.Contains(FString("l")) || BoneName.Contains(FString("r")))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("SHOT TO THE LIMB"));
+		DecrementHealth(30);
 		return 50;
 	}
 	else if(BoneName.Contains(FString("spine")) || BoneName.Contains(FString("pelvis")))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("SHOT TO THE TORSO"));
+		DecrementHealth(50);
 		return 60;
 	}
 	else if (BoneName.Equals(FString("neck_01")))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("SHOT TO THE NECK"));
+		DecrementHealth(70);
 		return 70;
 	}
 	else if (BoneName.Contains(FString("head")))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("SHOT TO THE HEAD"));
+		DecrementHealth(90);
 		return 100;
 	}
 
@@ -63,4 +74,35 @@ void AZombieBase::Hit(class AProjekt994Character* Player, FHitResult HitResult)
 			}
 		}
 	}
+}
+
+void AZombieBase::DecrementHealth(int16 Damage)
+{
+	if(HasAuthority())
+	{
+		Health -= Damage;
+		if(Health <= 0)
+		{
+			Die();
+		}
+	}
+
+}
+
+void AZombieBase::Die()
+{
+	if(HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Zombie died"));
+		Destroy();
+		bIsDead = true;
+		OnRep_Die();
+	}
+
+}
+
+void AZombieBase::OnRep_Die()
+{
+		UE_LOG(LogTemp, Warning, TEXT("Onrep died"));
+	
 }
