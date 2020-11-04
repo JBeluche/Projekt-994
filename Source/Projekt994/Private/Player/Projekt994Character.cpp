@@ -92,7 +92,7 @@ bool AProjekt994Character::Server_Interact_Validate(AInteractableBase *Interacti
 void AProjekt994Character::Server_Interact_Implementation(AInteractableBase *InteractingObject)
 {
     float Distance = GetDistanceTo(InteractingObject);
-    if (Distance < InteractionRange + 30.0f)
+    if (Distance < InteractionRange + 80.0f)
     {
         InteractingObject->Use(this);
     }
@@ -107,7 +107,6 @@ void AProjekt994Character::OnFire()
         {
             if (UAnimMontage *FireMontage = CurrentWeapon->GetFireAnimMontage())
             {
-                UE_LOG(LogTemp, Warning, TEXT("Firinge montage"));
                 AnimInstance->Montage_Play(FireMontage);
             }
         }

@@ -35,13 +35,13 @@ TArray<FHitResult>  AWeapon1911::Fire(AProjekt994Character* ShootingPlayer)
         {
             for (FHitResult& Result : HitResults)
             {
+                FString HitBone = Result.BoneName.ToString();
                 if (AActor* HitActor = Result.GetActor())
                 {
                     if (AZombieBase* Zombie = Cast<AZombieBase>(Result.GetActor()))
                         {
-                            Zombie->Hit(ShootingPlayer);
+                            Zombie->Hit(ShootingPlayer, Result);
                         }
-                    UE_LOG(LogTemp, Warning, TEXT("Hit Actor!! %s"), *HitActor->GetName());
                 }
             }
         }
@@ -59,13 +59,12 @@ TArray<FHitResult>  AWeapon1911::Fire(AProjekt994Character* ShootingPlayer)
                 {
                     if (AZombieBase* Zombie = Cast<AZombieBase>(Result.GetActor()))
                         {
-                            Zombie->Hit(ShootingPlayer);
+                            Zombie->Hit(ShootingPlayer, Result);
                         }
-                    UE_LOG(LogTemp, Warning, TEXT("Hit Actor!! %s"), *HitActor->GetName());
                 }
             }
         }
-        
+
         Server_Fire(WeaponMesh->GetSocketLocation(FName("muzzleSocket")), WeaponMesh->GetSocketRotation(FName("muzzleSocket")));
 
     }
@@ -80,7 +79,6 @@ void AWeapon1911::Reload()
 
 void AWeapon1911::Server_Fire_Implementation(FVector MuzzleLocation, FRotator MuzzleRotation)
 {
-    UE_LOG(LogTemp, Warning, TEXT("server fires function 1911"));
      if(FireAnimation)
     {
         WeaponMesh->PlayAnimation(FireAnimation, false);
@@ -99,10 +97,9 @@ void AWeapon1911::Server_Fire_Implementation(FVector MuzzleLocation, FRotator Mu
                     {
                         if(AProjekt994Character* Player = Cast<AProjekt994Character>(GetOwner()))
                         {
-                            Zombie->Hit(Player);
+                            Zombie->Hit(Player, Result);
                         }
                     }
-                UE_LOG(LogTemp, Warning, TEXT("Hit Actor!! %s"), *HitActor->GetName());
             }
         }
       

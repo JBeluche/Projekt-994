@@ -18,9 +18,10 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	uint8 GetPointsForKill(FString BoneName);
 
 
 public:
-	void Hit(class AProjekt994Character* Player);
+	void Hit(class AProjekt994Character* Player, FHitResult HitResult);
 
 };
