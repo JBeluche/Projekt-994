@@ -31,5 +31,6 @@ public:
 	void SetTotalZombiesRemaining(const uint16& ZombieCount);
 	uint16 GetTotalZombiesRemaining();
 	void ZombieKilled();
-
+	uint8 GetZombiesOnMap();
+	void ZombieSpawned();
 };
