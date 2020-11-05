@@ -56,7 +56,6 @@ void ACharacterBase::BeginPlay()
 
 		if (CurrentWeapon)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Spawned weapon and attempted to attach to hand socket"));
 			OnRep_AttachWeapon();
 
 			WeaponArray.Add(CurrentWeapon);

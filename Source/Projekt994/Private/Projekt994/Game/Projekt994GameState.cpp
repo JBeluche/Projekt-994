@@ -7,6 +7,7 @@ AProjekt994GameState::AProjekt994GameState()
 {
     RoundNumber = 1;
     ZombiesOnMap = 0;
+    TotalZombiesRemaining = 5;
     
 }
 
@@ -19,5 +20,17 @@ void AProjekt994GameState::IncrementRoundNumber()
     ++RoundNumber;
 }
 
+uint16 AProjekt994GameState::GetTotalZombiesRemaining()
+{
+    return TotalZombiesRemaining;
+}
 
+void AProjekt994GameState::SetTotalZombiesRemaining(const uint16& ZombieCount)
+{
+    TotalZombiesRemaining = ZombieCount;
+}
 
+void AProjekt994GameState::ZombieKilled()
+{
+    --TotalZombiesRemaining;
+}

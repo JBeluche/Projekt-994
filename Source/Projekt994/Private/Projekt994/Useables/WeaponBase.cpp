@@ -47,7 +47,6 @@ void AWeaponBase::Reload()
 
 TArray<FHitResult> AWeaponBase::PerformLineTrace(AProjekt994Character* ShootingPlayer)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Shooting 1991"));
 
     FVector Start = WeaponMesh->GetSocketLocation(FName("muzzleSocket"));
     FVector Rot =  WeaponMesh->GetSocketRotation(FName("muzzleSocket")).Vector();
@@ -85,7 +84,6 @@ void AWeaponBase::Server_Fire_Implementation(const TArray<FHitResult>& HitResult
 
 TArray<FHitResult> AWeaponBase::PerformLineTrace(FVector MuzzleLocation, FRotator MuzzleRotation)
 {
-    UE_LOG(LogTemp, Warning, TEXT("Shooting 1991"));
 
     FVector End = MuzzleLocation + MuzzleRotation.Vector() * 5000.0f;
 

@@ -30,10 +30,12 @@ protected:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	//0 = None, 1 = Limb, 2 = Torso, 3 = Neck,
+	uint8 GetHitPart(FString BoneName);
 
 	void DecrementHealth(int16 Damage);
 	void Die();
-	uint8 GetPointsForKill(FString BoneName);
+	uint8 GetPointsForHit(uint8 HitPart);
 
 
 public:

@@ -3,6 +3,7 @@
 
 #include "Projekt994/Public/Player/Projekt994PlayerState.h"
 #include "Projekt994/Public/Player/Projekt994Character.h"
+#include "Projekt994/Public/Projekt994/Game/Projekt994GameModeBase.h"
 #include "Projekt994/Public/Projekt994/Zombie/ZombieBase.h"
 
 #include "Net/UnrealNetwork.h"
@@ -32,29 +33,48 @@ void AZombieBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifet
 	DOREPLIFETIME(AZombieBase, bIsDead)
 }
 
-
-uint8 AZombieBase::GetPointsForKill(FString BoneName)
+uint8 AZombieBase::GetHitPart(FString BoneName)
 {
 	if(BoneName.Contains(FString("l")) || BoneName.Contains(FString("r")))
 	{
-		DecrementHealth(30);
-		return 50;
+		return 1;
 	}
 	else if(BoneName.Contains(FString("spine")) || BoneName.Contains(FString("pelvis")))
 	{
-		DecrementHealth(50);
-		return 60;
+		return 2;
 	}
 	else if (BoneName.Equals(FString("neck_01")))
 	{
-		DecrementHealth(70);
-		return 70;
+		return 3;
 	}
 	else if (BoneName.Contains(FString("head")))
 	{
-		DecrementHealth(90);
-		return 100;
+		return 4;
 	}
+	return 0;
+
+}
+
+
+uint8 AZombieBase::GetPointsForHit(uint8 HitPart)
+{
+	if(Health - 50 <= 0)
+	{
+		switch(HitPart)
+		{
+			case 1: {DecrementHealth(50);  return 50;}
+			case 2: {DecrementHealth(50); return 60;}
+			case 3: {DecrementHealth(50); return 70;}
+			case 4: {DecrementHealth(50); return 100;}
+			default: return 0;
+		}
+	}
+	else
+	{
+		DecrementHealth(50);
+		return 10;
+	}
+
 
 	return 0;
 
@@ -72,9 +92,13 @@ void AZombieBase::Hit(class AProjekt994Character* Player, FHitResult HitResult)
 			{
 				return;
 			}
-			else
+			if(uint8 HitPart = GetHitPart(BoneName))
 			{
-				PState->IncrementPoints(GetPointsForKill(BoneName));
+				if(uint8 PointsForHit = GetPointsForHit(HitPart))
+				{
+					PState->IncrementPoints(PointsForHit);
+
+				}
 			}
 		}
 	}
@@ -97,7 +121,11 @@ void AZombieBase::Die()
 {
 	if(HasAuthority())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Zombie died"));
+		//get game mode and do zombie decrementation
+		if(AProjekt994GameModeBase* GM = GetWorld()->GetAuthGameMode<AProjekt994GameModeBase>())
+		{
+			GM->ZombieKilled();
+		}
 		bIsDead = true;
 		OnRep_Die();
 	}
@@ -106,7 +134,6 @@ void AZombieBase::Die()
 
 void AZombieBase::OnRep_Die()
 {
-		UE_LOG(LogTemp, Warning, TEXT("Onrep died"));
 		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		GetMesh()->SetSimulatePhysics(true);
@@ -126,4 +153,6 @@ void AZombieBase::OnCleanup()
 {
 	Destroy();
 }
+
+
 

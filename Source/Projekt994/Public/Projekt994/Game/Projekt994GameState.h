@@ -20,12 +20,16 @@ public:
 
 //Variables
 protected:
-	uint16 RoundNumber;
-	uint8 ZombiesOnMap;
+	uint16 RoundNumber;//Set to rep
+	uint8 ZombiesOnMap;//Set to rep
+	uint16 TotalZombiesRemaining;//Set to rep
 
 //Getters
 public:
 	uint16 GetRoundNumber();
 	void IncrementRoundNumber();
+	void SetTotalZombiesRemaining(const uint16& ZombieCount);
+	uint16 GetTotalZombiesRemaining();
+	void ZombieKilled();
 
 };

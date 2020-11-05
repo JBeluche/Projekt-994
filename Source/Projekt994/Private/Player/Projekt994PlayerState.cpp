@@ -30,7 +30,6 @@ void AProjekt994PlayerState::IncrementPoints(uint16 Value)
         OnRep_PointsChanged();
     }        
         NewPoints.Broadcast(Points);
-        UE_LOG(LogTemp, Warning, TEXT("Zombie hit: %d"), Points);
 }
 
 bool AProjekt994PlayerState::DecrementPoints(uint16 Value)
@@ -46,7 +45,6 @@ bool AProjekt994PlayerState::DecrementPoints(uint16 Value)
             Points -= Value;
             OnRep_PointsChanged();
         }
-        UE_LOG(LogTemp, Warning, TEXT("Zombie hit@!@ %d"), Points);
     }
     return true;
 }

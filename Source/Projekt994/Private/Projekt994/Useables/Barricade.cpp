@@ -43,7 +43,6 @@ void ABarricade::Use(AProjekt994Character *Player)
                 return;
             }
 
-            UE_LOG(LogTemp, Warning, TEXT("IN USE FUNCTION %s"), *GetName());
             bIsUsed = true;
             OnRep_BarricadeUsed();
 
