@@ -83,7 +83,7 @@ uint8 AZombieBase::GetPointsForHit(uint8 HitPart)
 
 void AZombieBase::Hit(class AProjekt994Character* Player, FHitResult HitResult)
 {
-	if(Player)
+	if(Player && !bIsDead)
 	{
 		if(AProjekt994PlayerState* PState = Player->GetPlayerState<AProjekt994PlayerState>())
 		{
