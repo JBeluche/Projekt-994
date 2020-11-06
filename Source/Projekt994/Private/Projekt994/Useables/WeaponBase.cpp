@@ -6,6 +6,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Projekt994/Public/Player/Projekt994Character.h"
+#include "Projekt994/Public/Projekt994/Game/Projekt994GameState.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -48,7 +49,17 @@ void AWeaponBase::Server_Fire_Implementation(const TArray<FHitResult>& HitResult
 {
         if(CurrentMagazineAmmo > 0)
     {
-        --CurrentMagazineAmmo;
+        if(AProjekt994GameState* GS = GetWorld()->GetGameState<AProjekt994GameState>())
+        {
+            if(!GS->CheatIgnoreAmmo())
+            {
+                --CurrentMagazineAmmo;
+            }
+        }
+        else
+        {
+            --CurrentMagazineAmmo;
+        }
     }
     
     UE_LOG(LogTemp, Warning, TEXT("Current server magazine ammo %d"), CurrentMagazineAmmo);
@@ -58,7 +69,17 @@ bool  AWeaponBase::Fire(AProjekt994Character* ShootingPlayer)
 {
     if(CurrentMagazineAmmo > 0)
     {
-        --CurrentMagazineAmmo;
+        if(AProjekt994GameState* GS = GetWorld()->GetGameState<AProjekt994GameState>())
+        {
+            if(!GS->CheatIgnoreAmmo())
+            {
+                --CurrentMagazineAmmo;
+            }
+        }
+        else
+        {
+            --CurrentMagazineAmmo;
+        }
     }
 
     UE_LOG(LogTemp, Warning, TEXT("Current client magazine ammo %d"), CurrentMagazineAmmo);

@@ -2,6 +2,7 @@
 
 
 #include "Projekt994/Public/Projekt994/Game/Projekt994GameState.h"
+#include "Net/UnrealNetwork.h"
 
 AProjekt994GameState::AProjekt994GameState()
 {
@@ -10,6 +11,27 @@ AProjekt994GameState::AProjekt994GameState()
     TotalZombiesRemaining = 5;
     
 }
+
+void AProjekt994GameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME(AProjekt994GameState, bIgnoreAmmo);
+}
+
+void AProjekt994GameState::sf_use_ignoreAmmo(bool IgnoreAmmo)
+{
+    if(HasAuthority())
+    {
+        bIgnoreAmmo = IgnoreAmmo;
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("You are not the server bro..."));
+    }
+    
+}
+
 
 uint16 AProjekt994GameState::GetRoundNumber()
 {

@@ -17,21 +17,30 @@ class PROJEKT994_API AProjekt994GameState : public AGameStateBase
 public:
 	AProjekt994GameState();
 
-
-//Variables
+	//Variables
 protected:
 	UPROPERTY(EditAnywhere)
-		uint16 RoundNumber;//Set to rep
-	uint8 ZombiesOnMap;//Set to rep
-	uint16 TotalZombiesRemaining;//Set to rep
+	uint16 RoundNumber;			  //Set to rep
+	uint8 ZombiesOnMap;			  //Set to rep
+	uint16 TotalZombiesRemaining; //Set to rep
 
-//Getters
+	UPROPERTY(Replicated)
+	bool bIgnoreAmmo;
+
+protected:
+	UFUNCTION(Exec)
+	void sf_use_ignoreAmmo(bool IgnoreAmmo);
+
+	//Getters
 public:
 	uint16 GetRoundNumber();
 	void IncrementRoundNumber();
-	void SetTotalZombiesRemaining(const uint16& ZombieCount);
+	void SetTotalZombiesRemaining(const uint16 &ZombieCount);
 	uint16 GetTotalZombiesRemaining();
 	void ZombieKilled();
 	uint8 GetZombiesOnMap();
 	void ZombieSpawned();
+
+UFUNCTION(BlueprintCallable)
+	FORCEINLINE bool CheatIgnoreAmmo() { return bIgnoreAmmo; }
 };
