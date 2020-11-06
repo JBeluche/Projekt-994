@@ -39,6 +39,7 @@ protected:
 	void SetInteractableObject();
 
 	virtual void OnFire() override;
+	void OnReload();
 
 protected:
 	virtual void BeginPlay() override;

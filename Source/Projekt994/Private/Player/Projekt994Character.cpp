@@ -40,6 +40,7 @@ void AProjekt994Character::SetupPlayerInputComponent(UInputComponent *PlayerInpu
     check(PlayerInputComponent);
 
     PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AProjekt994Character::Interact);
+    PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &AProjekt994Character::OnReload);
 }
 void AProjekt994Character::Interact()
 {
@@ -102,25 +103,39 @@ void AProjekt994Character::OnFire()
 {
     if (CurrentWeapon)
     {
-        CurrentWeapon->Fire(this);
-        if (UAnimInstance *AnimInstance = Mesh1P->GetAnimInstance())
+        if (CurrentWeapon->Fire(this))
         {
-            if (UAnimMontage *FireMontage = CurrentWeapon->GetFireAnimMontage())
+            if (UAnimInstance *AnimInstance = Mesh1P->GetAnimInstance())
             {
-                AnimInstance->Montage_Play(FireMontage);
-                if(bIsAiming)
+                if (UAnimMontage *FireMontage = CurrentWeapon->GetFireAnimMontage())
                 {
-                    AnimInstance->Montage_JumpToSection(FName("FireADS"), FireMontage);
+                    AnimInstance->Montage_Play(FireMontage);
+                    if (bIsAiming)
+                    {
+                        AnimInstance->Montage_JumpToSection(FName("FireADS"), FireMontage);
+                    }
+                    else
+                    {
+                        AnimInstance->Montage_JumpToSection(FName("FireHip"), FireMontage);
+                    }
                 }
-                else
-                {
-                    AnimInstance->Montage_JumpToSection(FName("FireHip"), FireMontage);
-
-                }
-                
             }
         }
     }
 }
 
-
+void AProjekt994Character::OnReload()
+{
+    if(CurrentWeapon && CurrentWeapon->Reload())
+    {
+         if (UAnimInstance *AnimInstance = Mesh1P->GetAnimInstance())
+            {
+                if (UAnimMontage *FireMontage = CurrentWeapon->GetFireAnimMontage())
+                {
+                    AnimInstance->Montage_Play(FireMontage);
+                    AnimInstance->Montage_JumpToSection(FName("Reload"), FireMontage);
+                   
+                }
+            }
+    }
+}

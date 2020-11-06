@@ -21,9 +21,9 @@ protected:
 	virtual void Server_Fire_Implementation(const TArray<FHitResult>& HitResults) override;
 
 public:
-	virtual TArray<FHitResult>  Fire(class AProjekt994Character* ShootingPlayer) override;
+	virtual bool  Fire(class AProjekt994Character* ShootingPlayer) override;
 	
-	virtual void Reload() override;
+	virtual bool Reload() override;
 
-	
+
 };

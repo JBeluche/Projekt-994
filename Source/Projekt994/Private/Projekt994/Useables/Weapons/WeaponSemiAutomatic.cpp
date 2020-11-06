@@ -1,6 +1,5 @@
 // Copyright by Creating Mountains
 
-
 #include "Projekt994/Public/Projekt994//Useables/Weapons/WeaponSemiAutomatic.h"
 
 #include "Components/SkeletalMeshComponent.h"
@@ -16,91 +15,96 @@ AWeaponSemiAutomatic::AWeaponSemiAutomatic()
     WeaponName = "Default Name";
 
     CurrentTotalAmmo = WeaponMaxAmmo;
-	CurrentMagazineAmmo = MagazineMaxAmmo;
+    CurrentMagazineAmmo = MagazineMaxAmmo;
 }
 
-TArray<FHitResult>  AWeaponSemiAutomatic::Fire(AProjekt994Character* ShootingPlayer)
+bool AWeaponSemiAutomatic::Fire(AProjekt994Character *ShootingPlayer)
 {
-    if(FireAnimation)
+
+    if (CurrentMagazineAmmo > 0)
     {
-        WeaponMesh->PlayAnimation(FireAnimation, false);
-    }
+        Super::Fire(ShootingPlayer);
 
-    if(GetWorld()->IsServer())
-    {
-
-    TArray<FHitResult> HitResults = PerformLineTrace(ShootingPlayer);
-
-        if(HitResults.Num() > 0)
+        if (FireAnimation)
         {
-            for (FHitResult& Result : HitResults)
+            WeaponMesh->PlayAnimation(FireAnimation, false);
+        }
+
+        TArray<FHitResult> HitResults = PerformLineTrace(ShootingPlayer);
+
+        if (HitResults.Num() > 0)
+        {
+            for (FHitResult &Result : HitResults)
             {
                 FString HitBone = Result.BoneName.ToString();
-                if (AActor* HitActor = Result.GetActor())
+                if (AActor *HitActor = Result.GetActor())
                 {
-                    if (AZombieBase* Zombie = Cast<AZombieBase>(Result.GetActor()))
-                        {
-                            Zombie->Hit(ShootingPlayer, Result);
-                        }
-                }
-            }
-        }
-    }
-    else
-    {
-        
-    TArray<FHitResult> HitResults = PerformLineTrace(ShootingPlayer);
-
-        if(HitResults.Num() > 0)
-        {
-            for (FHitResult& Result : HitResults)
-            {
-                if (AActor* HitActor = Result.GetActor())
-                {
-                    if (AZombieBase* Zombie = Cast<AZombieBase>(Result.GetActor()))
-                        {
-                            Zombie->Hit(ShootingPlayer, Result);
-                        }
-                }
-            }
-        }
-
-        Server_Fire(HitResults);
-
-    }
-
-    return TArray<FHitResult>();
-}
-
-void AWeaponSemiAutomatic::Reload()
-{
-
-}
-
-void AWeaponSemiAutomatic::Server_Fire_Implementation(const TArray<FHitResult>& HitResults)
-{
-     if(FireAnimation)
-    {
-        WeaponMesh->PlayAnimation(FireAnimation, false);
-    }
-
-    if(HitResults.Num() > 0)
-    {
-
-        for (FHitResult Result : HitResults)
-        {
-            if (AActor* HitActor = Result.GetActor())
-            {
-                  if (AZombieBase* Zombie = Cast<AZombieBase>(Result.GetActor()))
+                    if (AZombieBase *Zombie = Cast<AZombieBase>(HitActor))
                     {
-                        if(AProjekt994Character* Player = Cast<AProjekt994Character>(GetOwner()))
+                        Zombie->Hit(ShootingPlayer, Result);
+                    }
+                }
+            }
+        }
+        if (!GetWorld()->IsServer())
+        {
+            Server_Fire(HitResults);
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+
+
+void AWeaponSemiAutomatic::Server_Fire_Implementation(const TArray<FHitResult> &HitResults)
+{
+    if (CurrentMagazineAmmo > 0)
+    {
+        Super::Server_Fire_Implementation(HitResults);
+
+        if (FireAnimation)
+        {
+            WeaponMesh->PlayAnimation(FireAnimation, false);
+        }
+
+        if (HitResults.Num() > 0)
+        {
+
+            for (FHitResult Result : HitResults)
+            {
+                if (AActor *HitActor = Result.GetActor())
+                {
+                    if (AZombieBase *Zombie = Cast<AZombieBase>(HitActor))
+                    {
+                        if (AProjekt994Character *Player = Cast<AProjekt994Character>(GetOwner()))
                         {
                             Zombie->Hit(Player, Result);
                         }
                     }
+                }
             }
         }
-      
     }
 }
 
+bool AWeaponSemiAutomatic::Reload()
+{
+    if(CurrentTotalAmmo > 0 && CurrentMagazineAmmo != MagazineMaxAmmo)
+    {
+         if (ReloadAnimation)
+        {
+            WeaponMesh->PlayAnimation(ReloadAnimation, false);
+        }
+        int Difference = MagazineMaxAmmo - CurrentMagazineAmmo;
+        CurrentTotalAmmo -= Difference;
+        CurrentMagazineAmmo = MagazineMaxAmmo;
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}

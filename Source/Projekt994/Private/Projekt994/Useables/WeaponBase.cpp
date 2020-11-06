@@ -6,6 +6,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Projekt994/Public/Player/Projekt994Character.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AWeaponBase::AWeaponBase()
@@ -29,19 +30,39 @@ void AWeaponBase::BeginPlay()
 	
 }
 
+void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME_CONDITION(AWeaponBase, CurrentTotalAmmo, COND_OwnerOnly);
+    DOREPLIFETIME_CONDITION(AWeaponBase, CurrentMagazineAmmo, COND_OwnerOnly);
+}
+
+
 TArray<int32> AWeaponBase::GetCurrentAmmo()
 {
 	return {CurrentMagazineAmmo, CurrentTotalAmmo};
 }
 
-TArray<FHitResult>  AWeaponBase::Fire(AProjekt994Character* ShootingPlayer)
+void AWeaponBase::Server_Fire_Implementation(const TArray<FHitResult>& HitResults)
 {
-	return TArray<FHitResult>();
+        if(CurrentMagazineAmmo > 0)
+    {
+        --CurrentMagazineAmmo;
+    }
+    
+    UE_LOG(LogTemp, Warning, TEXT("Current server magazine ammo %d"), CurrentMagazineAmmo);
 }
-	
-void AWeaponBase::Reload()
-{
 
+bool  AWeaponBase::Fire(AProjekt994Character* ShootingPlayer)
+{
+    if(CurrentMagazineAmmo > 0)
+    {
+        --CurrentMagazineAmmo;
+    }
+
+    UE_LOG(LogTemp, Warning, TEXT("Current client magazine ammo %d"), CurrentMagazineAmmo);
+	return true;
 }
 
 TArray<FHitResult> AWeaponBase::PerformLineTrace(AProjekt994Character* ShootingPlayer)
@@ -76,11 +97,6 @@ bool AWeaponBase::Server_Fire_Validate(const TArray<FHitResult>& HitResults)
     return true;
 }
 
-void AWeaponBase::Server_Fire_Implementation(const TArray<FHitResult>& HitResults)
-{
-    
-}
-
 TArray<FHitResult> AWeaponBase::PerformLineTrace(FVector MuzzleLocation, FRotator MuzzleRotation)
 {
 
@@ -111,4 +127,9 @@ FWeaponDamage AWeaponBase::GetWeaponDamage()
 TEnumAsByte<EWeaponID> AWeaponBase::GetWeaponID()
 {
     return WeaponID;
+}	
+
+bool AWeaponBase::Reload()
+{
+    return true;
 }

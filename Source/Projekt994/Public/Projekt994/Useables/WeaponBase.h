@@ -85,7 +85,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
 		FWeaponDamage WeaponDamage;
 
+	UPROPERTY(Replicated)
 		int32 CurrentTotalAmmo;
+
+	UPROPERTY(Replicated)
 		int32 CurrentMagazineAmmo;
 
 
@@ -103,10 +106,10 @@ protected:
 
 
 public:	
-	virtual TArray<FHitResult> Fire(class AProjekt994Character* ShootingPlayer);
+	virtual bool Fire(class AProjekt994Character* ShootingPlayer);
 	FWeaponDamage GetWeaponDamage();
 	
-	virtual void Reload();
+	virtual bool Reload();
 
 	//First element is Magazine Ammo, second element is total ammo
 	TArray<int32> GetCurrentAmmo();
