@@ -48,6 +48,8 @@ void AProjekt994GameModeBase::BeginPlay()
     }
     GetWorld()->GetTimerManager().SetTimer(TZombieSpawnHandle, this, &AProjekt994GameModeBase::SpawnZombie, 2.0f, true);
     GetWorld()->GetTimerManager().PauseTimer(TZombieSpawnHandle);
+    UE_LOG(LogTemp, Warning, TEXT("Pause the goddamn timer"));
+
     CalculateZombieCount();
 }
 
@@ -94,9 +96,9 @@ void AProjekt994GameModeBase::SpawnZombie()
 {
     if (ZombieGameState)
     {
-       uint8 PlayerCount = ZombieGameState->PlayerArray.Num();
+        uint8 PlayerCount = ZombieGameState->PlayerArray.Num();
         uint8 MaxZombiesOnMapAtOnce = 24;
-       if (PlayerCount > 1)
+        if (PlayerCount > 1)
         {
             MaxZombiesOnMapAtOnce += PlayerCount * 6;
         }
@@ -117,9 +119,9 @@ void AProjekt994GameModeBase::SpawnZombie()
                 }
             }
         }
-        else if(ZombiesRemaining <= 0)
+        else if (ZombiesRemaining <= 0)
         {
-           GetWorld()->GetTimerManager().PauseTimer(TZombieSpawnHandle);
+            GetWorld()->GetTimerManager().PauseTimer(TZombieSpawnHandle);
         }
     }
 }
@@ -148,6 +150,7 @@ void AProjekt994GameModeBase::ZombieKilled()
     if (ZombieGameState)
     {
         ZombieGameState->ZombieKilled();
+
         if (ZombieGameState->GetTotalZombiesRemaining() == 0)
         {
             //Start new round
@@ -156,6 +159,7 @@ void AProjekt994GameModeBase::ZombieKilled()
             GetWorld()->GetTimerManager().SetTimer(TempHandle, this, &AProjekt994GameModeBase::CalculateZombieCount, 10.0f, false);
         }
     }
+
 }
 
 void AProjekt994GameModeBase::CalculateZombieCount()
@@ -175,12 +179,12 @@ void AProjekt994GameModeBase::CalculateZombieCount()
         {
             UE_LOG(LogTemp, Warning, TEXT("Rounds 1-5"));
             ZombiesRemaining = FMath::FloorToInt((RoundNumber * .2f) * MaxZombiesOnMapAtOnce);
-            UE_LOG(LogTemp, Warning, TEXT("Zombies Remaining: %d"), ZombiesRemaining);
         }
         else
         {
             ZombiesRemaining = FMath::FloorToInt((RoundNumber * .15f) * MaxZombiesOnMapAtOnce);
         }
+        UE_LOG(LogTemp, Warning, TEXT("Zombies Total: %d"), ZombiesRemaining);
 
         ZombieGameState->SetTotalZombiesRemaining(ZombiesRemaining);
         GetWorld()->GetTimerManager().UnPauseTimer(TZombieSpawnHandle);

@@ -76,6 +76,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 		bool GetIsAiming();
 
+	UFUNCTION(BlueprintCallable)
+		class AWeaponBase* GetCurrentWeapon();
+
 public:	
 
 	// Called to bind functionality to input

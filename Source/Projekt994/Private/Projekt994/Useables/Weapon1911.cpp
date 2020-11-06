@@ -15,8 +15,6 @@ AWeapon1911::AWeapon1911()
 
     CurrentTotalAmmo = WeaponMaxAmmo;
 	CurrentMagazineAmmo = MagazineMaxAmmo;
-	BaseDamage = 100;
-
 }
 
 TArray<FHitResult>  AWeapon1911::Fire(AProjekt994Character* ShootingPlayer)

@@ -4,6 +4,7 @@
 #include "Projekt994/Public/Player/Projekt994PlayerState.h"
 #include "Projekt994/Public/Player/Projekt994Character.h"
 #include "Projekt994/Public/Projekt994/Game/Projekt994GameModeBase.h"
+#include "Projekt994/Public/Projekt994//Useables/WeaponBase.h"
 #include "Projekt994/Public/Projekt994/Zombie/ZombieBase.h"
 
 #include "Net/UnrealNetwork.h"
@@ -56,22 +57,22 @@ uint8 AZombieBase::GetHitPart(FString BoneName)
 }
 
 
-uint8 AZombieBase::GetPointsForHit(uint8 HitPart)
+uint8 AZombieBase::GetPointsForHit(uint8 HitPart, float Damage)
 {
-	if(Health - 50 <= 0)
+	if(Health - Damage <= 0)
 	{
 		switch(HitPart)
 		{
-			case 1: {DecrementHealth(50);  return 50;}
-			case 2: {DecrementHealth(50); return 60;}
-			case 3: {DecrementHealth(50); return 70;}
-			case 4: {DecrementHealth(50); return 100;}
+			case 1: {DecrementHealth(Damage);  return 50;}
+			case 2: {DecrementHealth(Damage); return 60;}
+			case 3: {DecrementHealth(Damage); return 70;}
+			case 4: {DecrementHealth(Damage); return 100;}
 			default: return 0;
 		}
 	}
 	else
 	{
-		DecrementHealth(50);
+		DecrementHealth(Damage);
 		return 10;
 	}
 
@@ -94,10 +95,23 @@ void AZombieBase::Hit(class AProjekt994Character* Player, FHitResult HitResult)
 			}
 			if(uint8 HitPart = GetHitPart(BoneName))
 			{
-				if(uint8 PointsForHit = GetPointsForHit(HitPart))
+				if(AWeaponBase* PlayerWeapon = Player->GetCurrentWeapon())
+				{
+				EHitLocation HitLocation = EHitLocation::None;
+				switch (HitPart)
+				{
+					case 2: HitLocation = EHitLocation::Torso;
+					case 3: HitLocation = EHitLocation::Head;
+					case 4: HitLocation = EHitLocation::Head;
+				}
+
+				float WeaponDamage = PlayerWeapon->GetWeaponDamage().GetDamage(HitLocation);
+				UE_LOG(LogTemp, Warning, TEXT("Weapon Damage: %f"), WeaponDamage);
+
+				if(uint8 PointsForHit = GetPointsForHit(HitPart, WeaponDamage))
 				{
 					PState->IncrementPoints(PointsForHit);
-
+				}
 				}
 			}
 		}

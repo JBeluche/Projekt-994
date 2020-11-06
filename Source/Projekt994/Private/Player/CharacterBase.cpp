@@ -171,4 +171,8 @@ void ACharacterBase::OnAimingEnd()
 	bIsAiming = false;
 }
 
+AWeaponBase* ACharacterBase::GetCurrentWeapon()
+{
+	return CurrentWeapon;
+}	
 

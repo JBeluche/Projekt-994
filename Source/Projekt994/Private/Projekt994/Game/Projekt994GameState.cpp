@@ -27,6 +27,7 @@ uint16 AProjekt994GameState::GetTotalZombiesRemaining()
 
 void AProjekt994GameState::SetTotalZombiesRemaining(const uint16& ZombieCount)
 {
+
     TotalZombiesRemaining = ZombieCount;
 }
 
@@ -34,11 +35,10 @@ void AProjekt994GameState::ZombieKilled()
 {
     --TotalZombiesRemaining;
     --ZombiesOnMap;
+    
 }
 uint8 AProjekt994GameState::GetZombiesOnMap()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Zombies on map: %d"), ZombiesOnMap);
-
     return ZombiesOnMap;
 }
 

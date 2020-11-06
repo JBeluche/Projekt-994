@@ -20,7 +20,6 @@ AWeaponBase::AWeaponBase()
 
 	CurrentTotalAmmo = WeaponMaxAmmo;
 	CurrentMagazineAmmo = MagazineMaxAmmo;
-	BaseDamage = 100;
 }
 
 // Called when the game starts or when spawned
@@ -103,3 +102,9 @@ TArray<FHitResult> AWeaponBase::PerformLineTrace(FVector MuzzleLocation, FRotato
 
 	return HitResults;
 }
+
+FWeaponDamage AWeaponBase::GetWeaponDamage()
+{
+    return WeaponDamage;
+}
+

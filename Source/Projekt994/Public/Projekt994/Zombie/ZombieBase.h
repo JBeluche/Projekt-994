@@ -35,7 +35,7 @@ protected:
 
 	void DecrementHealth(int16 Damage);
 	void Die();
-	uint8 GetPointsForHit(uint8 HitPart);
+	uint8 GetPointsForHit(uint8 HitPart, float Damage);
 
 
 public:

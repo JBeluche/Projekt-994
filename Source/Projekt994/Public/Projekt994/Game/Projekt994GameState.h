@@ -20,7 +20,8 @@ public:
 
 //Variables
 protected:
-	uint16 RoundNumber;//Set to rep
+	UPROPERTY(EditAnywhere)
+		uint16 RoundNumber;//Set to rep
 	uint8 ZombiesOnMap;//Set to rep
 	uint16 TotalZombiesRemaining;//Set to rep
 
