@@ -108,3 +108,7 @@ FWeaponDamage AWeaponBase::GetWeaponDamage()
     return WeaponDamage;
 }
 
+TEnumAsByte<EWeaponID> AWeaponBase::GetWeaponID()
+{
+    return WeaponID;
+}

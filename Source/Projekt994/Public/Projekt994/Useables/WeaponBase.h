@@ -41,6 +41,12 @@ public:
 			}
 		}
 };
+UENUM(BlueprintType)
+enum EWeaponID
+{
+	Colt1911 UMETA(DisplayName = "Colt1911"),
+	M1Carabine UMETA(DisplayName = "M1Carabine"),
+};
 
 UCLASS()
 class PROJEKT994_API AWeaponBase : public AActor
@@ -54,6 +60,9 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
 		class USkeletalMeshComponent* WeaponMesh;
+
+	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
+		TEnumAsByte<EWeaponID> WeaponID;
 
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
 		class UAnimationAsset* FireAnimation;
@@ -103,5 +112,8 @@ public:
 	TArray<int32> GetCurrentAmmo();
 
 	class UAnimMontage* GetFireAnimMontage();
+
+	UFUNCTION(BlueprintCallable)
+		TEnumAsByte<EWeaponID> GetWeaponID();
 
 };
