@@ -40,17 +40,21 @@ uint8 AZombieBase::GetHitPart(FString BoneName)
 	{
 		return 1;
 	}
-	else if(BoneName.Contains(FString("spine")) || BoneName.Contains(FString("pelvis")))
+	else if (BoneName.Equals(FString("spine_02")))
 	{
 		return 2;
 	}
-	else if (BoneName.Equals(FString("neck_01")))
+	else if (BoneName.Equals(FString("spine_01")) || BoneName.Equals(FString("pelvis")))
 	{
 		return 3;
 	}
-	else if (BoneName.Contains(FString("head")))
+	else if (BoneName.Equals(FString("neck_01")))
 	{
 		return 4;
+	}
+	else if (BoneName.Contains(FString("head")))
+	{
+		return 5;
 	}
 	return 0;
 
@@ -100,9 +104,10 @@ void AZombieBase::Hit(class AProjekt994Character* Player, FHitResult HitResult)
 				EHitLocation HitLocation = EHitLocation::None;
 				switch (HitPart)
 				{
-					case 2: HitLocation = EHitLocation::Torso;
-					case 3: HitLocation = EHitLocation::Head;
-					case 4: HitLocation = EHitLocation::Head;
+					case 2: HitLocation = EHitLocation::Chest; break;
+					case 3: HitLocation = EHitLocation::Abdomen; break;
+					case 4: HitLocation = EHitLocation::Head; break;
+					case 5: HitLocation = EHitLocation::Head; break;
 				}
 
 				float WeaponDamage = PlayerWeapon->GetWeaponDamage().GetDamage(HitLocation);

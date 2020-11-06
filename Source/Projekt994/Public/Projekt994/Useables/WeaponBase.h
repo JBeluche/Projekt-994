@@ -11,7 +11,9 @@ enum EHitLocation
 {
 	None UMETA(DisplayName = "None"),
 	Head UMETA(DisplayName = "Head"),
-	Torso UMETA(DisplayName = "Torso")
+	Neck UMETA(DisplayName = "Neck"),
+	Chest UMETA(DisplayName = "Chest"),
+	Abdomen UMETA(DisplayName = "Abdomen")
 };
 
 USTRUCT(BlueprintType)
@@ -24,22 +26,19 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 		float HeadMultiplier = 3.5f;
 	UPROPERTY(EditDefaultsOnly)
-		float TorsoMultiplier = 1.1f;		
+		float ChestMultiplier = 1.25f;	
+	UPROPERTY(EditDefaultsOnly)
+		float AbdomenMultiplier = 1.1f;			
+
 		float GetDamage(EHitLocation HitLocation)
 		{
-			if (HitLocation == EHitLocation::Head)
+			switch (HitLocation)
 			{
-				return BaseDamage * HeadMultiplier;
+				case Head: return BaseDamage * HeadMultiplier;
+				case Chest: return BaseDamage * ChestMultiplier;
+				case Abdomen: return BaseDamage * AbdomenMultiplier;
+				default: return BaseDamage;
 			}
-			else if (HitLocation == EHitLocation::Torso)
-			{
-				return BaseDamage * TorsoMultiplier;
-			}
-			else
-			{
-				return BaseDamage;
-			}
-			
 		}
 };
 
