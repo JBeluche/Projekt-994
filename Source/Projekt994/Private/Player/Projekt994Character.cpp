@@ -108,6 +108,16 @@ void AProjekt994Character::OnFire()
             if (UAnimMontage *FireMontage = CurrentWeapon->GetFireAnimMontage())
             {
                 AnimInstance->Montage_Play(FireMontage);
+                if(bIsAiming)
+                {
+                    AnimInstance->Montage_JumpToSection(FName("FireADS"), FireMontage);
+                }
+                else
+                {
+                    AnimInstance->Montage_JumpToSection(FName("FireHip"), FireMontage);
+
+                }
+                
             }
         }
     }
