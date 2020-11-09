@@ -148,8 +148,11 @@ void AZombieBase::Hit(class AProjekt994Character *Player, FHitResult HitResult)
 
 void AZombieBase::DecrementHealth(int16 Damage)
 {
+
 	if (HasAuthority())
 	{
+                        UE_LOG(LogTemp, Error, TEXT("Trying to kill zombie mommy!"));
+
 		Health -= Damage;
 		if (Health <= 0)
 		{

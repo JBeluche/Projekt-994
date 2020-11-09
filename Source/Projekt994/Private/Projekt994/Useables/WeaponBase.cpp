@@ -62,7 +62,6 @@ void AWeaponBase::Server_Fire_Implementation(const TArray<FHitResult>& HitResult
         }
     }
     
-    UE_LOG(LogTemp, Warning, TEXT("Current server magazine ammo %d"), CurrentMagazineAmmo);
 }
 
 bool  AWeaponBase::Fire(AProjekt994Character* ShootingPlayer)
@@ -82,7 +81,6 @@ bool  AWeaponBase::Fire(AProjekt994Character* ShootingPlayer)
         }
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("Current client magazine ammo %d"), CurrentMagazineAmmo);
 	return true;
 }
 
@@ -174,10 +172,24 @@ bool AWeaponBase::Reload()
         }
         
         UE_LOG(LogTemp, Error, TEXT("Current total ammo: %d"), CurrentTotalAmmo);
+        if(!GetWorld()->IsServer())
+        {
+            Server_Reload_Implementation();
+        }
         return true;
     }
     else
     {
         return false;
     }
+}
+
+bool AWeaponBase::Server_Reload_Validate()
+{
+    return true;
+}
+
+void AWeaponBase::Server_Reload_Implementation()
+{
+    Reload();
 }

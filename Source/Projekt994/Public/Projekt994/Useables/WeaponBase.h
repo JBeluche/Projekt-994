@@ -105,6 +105,13 @@ protected:
 	virtual void Server_Fire_Implementation(const TArray<FHitResult>& HitResults);
 
 
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_Reload();
+	bool Server_Reload_Validate();
+	virtual void Server_Reload_Implementation();
+
+
+
 public:	
 	virtual bool Fire(class AProjekt994Character* ShootingPlayer);
 	FWeaponDamage GetWeaponDamage();

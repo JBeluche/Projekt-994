@@ -77,9 +77,9 @@ void ACharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutL
 
 void ACharacterBase::OnRep_AttachWeapon()
 {
-	if (CurrentWeapon)
+	if (CurrentWeapon) //remove true
 	{
-		if (IsLocallyControlled())
+		if (true || IsLocallyControlled())
 		{
 			CurrentWeapon->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocket"));
 		}
