@@ -57,8 +57,6 @@ bool AWeaponSemiAutomatic::Fire(AProjekt994Character *ShootingPlayer)
     return false;
 }
 
-
-
 void AWeaponSemiAutomatic::Server_Fire_Implementation(const TArray<FHitResult> &HitResults)
 {
     if (CurrentMagazineAmmo > 0)
@@ -92,15 +90,28 @@ void AWeaponSemiAutomatic::Server_Fire_Implementation(const TArray<FHitResult> &
 
 bool AWeaponSemiAutomatic::Reload()
 {
-    if(CurrentTotalAmmo > 0 && CurrentMagazineAmmo != MagazineMaxAmmo)
+    if (CurrentTotalAmmo > 0 && CurrentMagazineAmmo != MagazineMaxAmmo)
     {
-         if (ReloadAnimation)
+        if (ReloadAnimation)
         {
             WeaponMesh->PlayAnimation(ReloadAnimation, false);
         }
+        UE_LOG(LogTemp, Error, TEXT("Current total ammo: %d"), CurrentTotalAmmo);
+
+
         int Difference = MagazineMaxAmmo - CurrentMagazineAmmo;
-        CurrentTotalAmmo -= Difference;
-        CurrentMagazineAmmo = MagazineMaxAmmo;
+        if (CurrentTotalAmmo - Difference >= 0)
+        {
+            CurrentTotalAmmo -= Difference;
+            CurrentMagazineAmmo = MagazineMaxAmmo;
+        }
+        else
+        {
+            CurrentMagazineAmmo += CurrentTotalAmmo;
+            CurrentTotalAmmo = 0;
+        }
+        
+        UE_LOG(LogTemp, Error, TEXT("Current total ammo: %d"), CurrentTotalAmmo);
         return true;
     }
     else
