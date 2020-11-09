@@ -13,7 +13,11 @@ AWeaponSemiAutomatic::AWeaponSemiAutomatic()
     WeaponMaxAmmo = 98;
     MagazineMaxAmmo = 7;
     WeaponName = "Default Name";
+}
 
+void AWeaponSemiAutomatic::BeginPlay()
+{
+    Super::BeginPlay();
     CurrentTotalAmmo = WeaponMaxAmmo;
     CurrentMagazineAmmo = MagazineMaxAmmo;
 }
@@ -90,32 +94,5 @@ void AWeaponSemiAutomatic::Server_Fire_Implementation(const TArray<FHitResult> &
 
 bool AWeaponSemiAutomatic::Reload()
 {
-    if (CurrentTotalAmmo > 0 && CurrentMagazineAmmo != MagazineMaxAmmo)
-    {
-        if (ReloadAnimation)
-        {
-            WeaponMesh->PlayAnimation(ReloadAnimation, false);
-        }
-        UE_LOG(LogTemp, Error, TEXT("Current total ammo: %d"), CurrentTotalAmmo);
-
-
-        int Difference = MagazineMaxAmmo - CurrentMagazineAmmo;
-        if (CurrentTotalAmmo - Difference >= 0)
-        {
-            CurrentTotalAmmo -= Difference;
-            CurrentMagazineAmmo = MagazineMaxAmmo;
-        }
-        else
-        {
-            CurrentMagazineAmmo += CurrentTotalAmmo;
-            CurrentTotalAmmo = 0;
-        }
-        
-        UE_LOG(LogTemp, Error, TEXT("Current total ammo: %d"), CurrentTotalAmmo);
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return Super::Reload();
 }
