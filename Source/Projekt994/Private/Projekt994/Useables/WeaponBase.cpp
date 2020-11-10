@@ -200,13 +200,8 @@ bool AWeaponBase::Server_Reload_Validate()
 
 void AWeaponBase::Server_Reload_Implementation()
 {
-    if (APawn *Pawn = Cast<APawn>(GetOwner()))
-        {
-            if (!Pawn->IsLocallyControlled() && ReloadAnimation)
-            {
-                WeaponMesh->PlayAnimation(ReloadAnimation, false);
-            }
-        }
+    Reload();
+    Multi_Reload();
 }
 
 bool AWeaponBase::Multi_Reload_Validate()
@@ -216,8 +211,13 @@ bool AWeaponBase::Multi_Reload_Validate()
 
 void AWeaponBase::Multi_Reload_Implementation()
 {
-    if (ReloadAnimation)
+
+    if (APawn *Pawn = Cast<APawn>(GetOwner()))
     {
-        WeaponMesh->PlayAnimation(ReloadAnimation, false);
+        if (!Pawn->IsLocallyControlled() && ReloadAnimation)
+        {
+            
+            WeaponMesh->PlayAnimation(ReloadAnimation, false);
+        }
     }
 }
