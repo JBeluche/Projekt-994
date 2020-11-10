@@ -79,13 +79,13 @@ void ACharacterBase::OnRep_AttachWeapon()
 {
 	if (CurrentWeapon) //remove true
 	{
-		if (true || IsLocallyControlled())
+		if (IsLocallyControlled())
 		{
 			CurrentWeapon->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocket"));
 		}
 		else
 		{
-			CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocket"));
+			CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocketThirdPerson"));
 		}
 	}
 }
