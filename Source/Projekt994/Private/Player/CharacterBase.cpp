@@ -46,7 +46,6 @@ void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-
 	if (HasAuthority())
 	{
 		//Spawn Weapon using statringweaponclass
@@ -68,12 +67,13 @@ void ACharacterBase::BeginPlay()
 	//	FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
 }
 
-void ACharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
+void ACharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ACharacterBase, CurrentWeapon);
-} 
+	DOREPLIFETIME_CONDITION(ACharacterBase, bIsAiming, COND_SkipOwner);
+}
 
 void ACharacterBase::OnRep_AttachWeapon()
 {
@@ -89,7 +89,6 @@ void ACharacterBase::OnRep_AttachWeapon()
 		}
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // Input
@@ -165,14 +164,31 @@ bool ACharacterBase::GetIsAiming()
 void ACharacterBase::OnAimingStart()
 {
 	bIsAiming = true;
+	if (!HasAuthority())
+	{
+		Server_SetAiming(bIsAiming);
+	}
 }
 void ACharacterBase::OnAimingEnd()
 {
 	bIsAiming = false;
+	if (!HasAuthority())
+	{
+		Server_SetAiming(bIsAiming);
+	}
 }
 
-AWeaponBase* ACharacterBase::GetCurrentWeapon()
+AWeaponBase *ACharacterBase::GetCurrentWeapon()
 {
 	return CurrentWeapon;
-}	
+}
 
+bool ACharacterBase::Server_SetAiming_Validate(bool WantsToAim)
+{
+	return true;
+}
+
+void ACharacterBase::Server_SetAiming_Implementation(bool WantsToAim)
+{
+	bIsAiming = WantsToAim;
+}

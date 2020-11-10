@@ -37,7 +37,13 @@ protected:
 	TArray<AWeaponBase*> WeaponArray;
 
 	//Set to replicate, skip owner
+	UPROPERTY(Replicated)
 	bool bIsAiming;
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetAiming(bool WantsToAim);
+		bool Server_SetAiming_Validate(bool WantsToAim);
+		void Server_SetAiming_Implementation(bool WantsToAim);
 
 protected:
 	// Called when the game starts or when spawned

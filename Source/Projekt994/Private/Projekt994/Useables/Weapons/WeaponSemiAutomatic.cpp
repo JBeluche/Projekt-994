@@ -93,11 +93,27 @@ void AWeaponSemiAutomatic::Server_Fire_Implementation(const TArray<FHitResult> &
 
 void AWeaponSemiAutomatic::Multi_Fire_Implementation(const FHitResult &HitResult)
 {
-    if (APawn * Pawn = Cast<APawn>(GetOwner()))
+    if (AProjekt994Character *Character = Cast<AProjekt994Character>(GetOwner()))
     {
-        if (!Pawn->IsLocallyControlled() && FireAnimation)
+        if (!Character->IsLocallyControlled() && FireAnimation)
         {
-            UE_LOG(LogTemp, Error, TEXT("Made it to the multi fire implementaion"));
+             if (UAnimInstance *AnimInstance = Character->GetMesh1P()->GetAnimInstance())
+            {
+                if (FPSArmsFireMontage)
+                {
+                    AnimInstance->Montage_Play(FPSArmsFireMontage);
+                    if(Character->GetIsAiming())
+                    {
+                        AnimInstance->Montage_JumpToSection(FName("FireADS"), FPSArmsFireMontage);
+                    }
+                    else
+                    {
+                        AnimInstance->Montage_JumpToSection(FName("FireHip"), FPSArmsFireMontage);
+                    }
+                    
+                   
+                }
+            }
             WeaponMesh->PlayAnimation(FireAnimation, false);
         }
     }

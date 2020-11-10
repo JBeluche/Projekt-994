@@ -211,12 +211,19 @@ bool AWeaponBase::Multi_Reload_Validate()
 
 void AWeaponBase::Multi_Reload_Implementation()
 {
-
-    if (APawn *Pawn = Cast<APawn>(GetOwner()))
+    if (AProjekt994Character *Character = Cast<AProjekt994Character>(GetOwner()))
     {
-        if (!Pawn->IsLocallyControlled() && ReloadAnimation)
+        if (!Character->IsLocallyControlled() && ReloadAnimation)
         {
-            
+             if (UAnimInstance *AnimInstance = Character->GetMesh1P()->GetAnimInstance())
+            {
+                if (FPSArmsFireMontage)
+                {
+                    AnimInstance->Montage_Play(FPSArmsFireMontage);
+                    AnimInstance->Montage_JumpToSection(FName("Reload"), FPSArmsFireMontage);
+                   
+                }
+            }
             WeaponMesh->PlayAnimation(ReloadAnimation, false);
         }
     }
