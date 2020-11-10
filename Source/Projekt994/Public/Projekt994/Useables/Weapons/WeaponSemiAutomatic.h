@@ -18,8 +18,11 @@ public:
 	AWeaponSemiAutomatic();
 
 protected:
-	virtual void Server_Fire_Implementation(const TArray<FHitResult>& HitResults) override;
 	virtual void BeginPlay() override;
+	virtual void Server_Fire_Implementation(const TArray<FHitResult>& HitResults) override;
+	virtual void Multi_Fire_Implementation(const FHitResult& HitResult) override;
+
+
 
 public:
 	virtual bool  Fire(class AProjekt994Character* ShootingPlayer) override;

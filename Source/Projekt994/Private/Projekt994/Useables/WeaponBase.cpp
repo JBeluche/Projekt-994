@@ -1,6 +1,5 @@
 // Copyright by Creating Mountains
 
-
 #include "Projekt994/Public/Projekt994//Useables/WeaponBase.h"
 #include "DrawDebugHelpers.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -12,23 +11,22 @@
 // Sets default values
 AWeaponBase::AWeaponBase()
 {
-	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMeshComopent");
+    WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMeshComopent");
 
     RootComponent = WeaponMesh;
     SetReplicates(true);
-	WeaponMaxAmmo = 255;
+    WeaponMaxAmmo = 255;
     MagazineMaxAmmo = 30;
     WeaponName = "Default";
 
-	CurrentTotalAmmo = WeaponMaxAmmo;
-	CurrentMagazineAmmo = MagazineMaxAmmo;
+    CurrentTotalAmmo = WeaponMaxAmmo;
+    CurrentMagazineAmmo = MagazineMaxAmmo;
 }
 
 // Called when the game starts or when spawned
 void AWeaponBase::BeginPlay()
 {
-	Super::BeginPlay();
-	
+    Super::BeginPlay();
 }
 
 void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -39,19 +37,18 @@ void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifet
     DOREPLIFETIME_CONDITION(AWeaponBase, CurrentMagazineAmmo, COND_OwnerOnly);
 }
 
-
 TArray<int32> AWeaponBase::GetCurrentAmmo()
 {
-	return {CurrentMagazineAmmo, CurrentTotalAmmo};
+    return {CurrentMagazineAmmo, CurrentTotalAmmo};
 }
 
-void AWeaponBase::Server_Fire_Implementation(const TArray<FHitResult>& HitResults)
+void AWeaponBase::Server_Fire_Implementation(const TArray<FHitResult> &HitResults)
 {
-        if(CurrentMagazineAmmo > 0)
+    if (CurrentMagazineAmmo > 0)
     {
-        if(AProjekt994GameState* GS = GetWorld()->GetGameState<AProjekt994GameState>())
+        if (AProjekt994GameState *GS = GetWorld()->GetGameState<AProjekt994GameState>())
         {
-            if(!GS->CheatIgnoreAmmo())
+            if (!GS->CheatIgnoreAmmo())
             {
                 --CurrentMagazineAmmo;
             }
@@ -61,16 +58,15 @@ void AWeaponBase::Server_Fire_Implementation(const TArray<FHitResult>& HitResult
             --CurrentMagazineAmmo;
         }
     }
-    
 }
 
-bool  AWeaponBase::Fire(AProjekt994Character* ShootingPlayer)
+bool AWeaponBase::Fire(AProjekt994Character *ShootingPlayer)
 {
-    if(CurrentMagazineAmmo > 0)
+    if (CurrentMagazineAmmo > 0)
     {
-        if(AProjekt994GameState* GS = GetWorld()->GetGameState<AProjekt994GameState>())
+        if (AProjekt994GameState *GS = GetWorld()->GetGameState<AProjekt994GameState>())
         {
-            if(!GS->CheatIgnoreAmmo())
+            if (!GS->CheatIgnoreAmmo())
             {
                 --CurrentMagazineAmmo;
             }
@@ -81,14 +77,23 @@ bool  AWeaponBase::Fire(AProjekt994Character* ShootingPlayer)
         }
     }
 
-	return true;
+    return true;
 }
 
-TArray<FHitResult> AWeaponBase::PerformLineTrace(AProjekt994Character* ShootingPlayer)
+bool AWeaponBase::Multi_Fire_Validate(const FHitResult &HitResult)
+{
+    return true;
+}
+
+void AWeaponBase::Multi_Fire_Implementation(const FHitResult &HitResult)
+{
+}
+
+TArray<FHitResult> AWeaponBase::PerformLineTrace(AProjekt994Character *ShootingPlayer)
 {
 
     FVector Start = WeaponMesh->GetSocketLocation(FName("muzzleSocket"));
-    FVector Rot =  WeaponMesh->GetSocketRotation(FName("muzzleSocket")).Vector();
+    FVector Rot = WeaponMesh->GetSocketRotation(FName("muzzleSocket")).Vector();
 
     FVector End = Start + Rot * 5000.0f;
 
@@ -102,16 +107,15 @@ TArray<FHitResult> AWeaponBase::PerformLineTrace(AProjekt994Character* ShootingP
     GetWorld()->LineTraceMultiByChannel(OUT HitResults, Start, End, ECollisionChannel::ECC_GameTraceChannel2, CollisionParams, CollisionResponse);
     DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.0f, 0, 3.0f);
 
-
-	return HitResults;
+    return HitResults;
 }
 
-UAnimMontage* AWeaponBase::GetFireAnimMontage()
+UAnimMontage *AWeaponBase::GetFireAnimMontage()
 {
-	return FPSArmsFireMontage;
+    return FPSArmsFireMontage;
 }
 
-bool AWeaponBase::Server_Fire_Validate(const TArray<FHitResult>& HitResults)
+bool AWeaponBase::Server_Fire_Validate(const TArray<FHitResult> &HitResults)
 {
     return true;
 }
@@ -124,7 +128,7 @@ TArray<FHitResult> AWeaponBase::PerformLineTrace(FVector MuzzleLocation, FRotato
     TArray<FHitResult> HitResults;
     FCollisionQueryParams CollisionParams;
     CollisionParams.AddIgnoredActor(this);
-    if(GetOwner())
+    if (GetOwner())
     {
         CollisionParams.AddIgnoredActor(GetOwner());
     }
@@ -134,8 +138,7 @@ TArray<FHitResult> AWeaponBase::PerformLineTrace(FVector MuzzleLocation, FRotato
     GetWorld()->LineTraceMultiByChannel(OUT HitResults, MuzzleLocation, End, ECollisionChannel::ECC_GameTraceChannel2, CollisionParams, CollisionResponse);
     DrawDebugLine(GetWorld(), MuzzleLocation, End, FColor::Red, false, 2.0f, 0, 3.0f);
 
-
-	return HitResults;
+    return HitResults;
 }
 
 FWeaponDamage AWeaponBase::GetWeaponDamage()
@@ -146,19 +149,21 @@ FWeaponDamage AWeaponBase::GetWeaponDamage()
 TEnumAsByte<EWeaponID> AWeaponBase::GetWeaponID()
 {
     return WeaponID;
-}	
+}
 
 bool AWeaponBase::Reload()
 {
-       if (CurrentTotalAmmo > 0 && CurrentMagazineAmmo != MagazineMaxAmmo)
+    if (CurrentTotalAmmo > 0 && CurrentMagazineAmmo != MagazineMaxAmmo)
     {
-        if (ReloadAnimation)
+        if (APawn *Pawn = Cast<APawn>(GetOwner()))
         {
-            WeaponMesh->PlayAnimation(ReloadAnimation, false);
+            if (Pawn->IsLocallyControlled() && ReloadAnimation)
+            {
+                WeaponMesh->PlayAnimation(ReloadAnimation, false);
+            }
         }
-        UE_LOG(LogTemp, Error, TEXT("Current total ammo: %d"), CurrentTotalAmmo);
 
-
+        //Set ammo difference
         int Difference = MagazineMaxAmmo - CurrentMagazineAmmo;
         if (CurrentTotalAmmo - Difference >= 0)
         {
@@ -170,12 +175,16 @@ bool AWeaponBase::Reload()
             CurrentMagazineAmmo += CurrentTotalAmmo;
             CurrentTotalAmmo = 0;
         }
-        
-        UE_LOG(LogTemp, Error, TEXT("Current total ammo: %d"), CurrentTotalAmmo);
-        if(!GetWorld()->IsServer())
+
+        if (GetWorld()->IsServer())
         {
-            Server_Reload_Implementation();
+            Multi_Reload();
         }
+        else
+        {
+            Server_Reload();
+        }
+
         return true;
     }
     else
@@ -191,5 +200,24 @@ bool AWeaponBase::Server_Reload_Validate()
 
 void AWeaponBase::Server_Reload_Implementation()
 {
-    Reload();
+    if (APawn *Pawn = Cast<APawn>(GetOwner()))
+        {
+            if (!Pawn->IsLocallyControlled() && ReloadAnimation)
+            {
+                WeaponMesh->PlayAnimation(ReloadAnimation, false);
+            }
+        }
+}
+
+bool AWeaponBase::Multi_Reload_Validate()
+{
+    return true;
+}
+
+void AWeaponBase::Multi_Reload_Implementation()
+{
+    if (ReloadAnimation)
+    {
+        WeaponMesh->PlayAnimation(ReloadAnimation, false);
+    }
 }

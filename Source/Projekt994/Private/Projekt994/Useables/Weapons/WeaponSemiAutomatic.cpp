@@ -50,7 +50,11 @@ bool AWeaponSemiAutomatic::Fire(AProjekt994Character *ShootingPlayer)
                 }
             }
         }
-        if (!GetWorld()->IsServer())
+        if (GetWorld()->IsServer())
+        {
+            Multi_Fire(HitResults[0]);
+        }
+        else
         {
             Server_Fire(HitResults);
         }
@@ -67,14 +71,8 @@ void AWeaponSemiAutomatic::Server_Fire_Implementation(const TArray<FHitResult> &
     {
         Super::Server_Fire_Implementation(HitResults);
 
-        if (FireAnimation)
-        {
-            WeaponMesh->PlayAnimation(FireAnimation, false);
-        }
-
         if (HitResults.Num() > 0)
         {
-
             for (FHitResult Result : HitResults)
             {
                 if (AActor *HitActor = Result.GetActor())
@@ -88,6 +86,19 @@ void AWeaponSemiAutomatic::Server_Fire_Implementation(const TArray<FHitResult> &
                     }
                 }
             }
+        }
+        Multi_Fire(HitResults[0]);
+    }
+}
+
+void AWeaponSemiAutomatic::Multi_Fire_Implementation(const FHitResult &HitResult)
+{
+    if (APawn * Pawn = Cast<APawn>(GetOwner()))
+    {
+        if (!Pawn->IsLocallyControlled() && FireAnimation)
+        {
+            UE_LOG(LogTemp, Error, TEXT("Made it to the multi fire implementaion"));
+            WeaponMesh->PlayAnimation(FireAnimation, false);
         }
     }
 }
