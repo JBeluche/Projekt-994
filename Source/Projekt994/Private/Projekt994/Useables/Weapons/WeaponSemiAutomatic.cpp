@@ -52,7 +52,14 @@ bool AWeaponSemiAutomatic::Fire(AProjekt994Character *ShootingPlayer)
         }
         if (GetWorld()->IsServer())
         {
-            Multi_Fire(HitResults[0]);
+            if(HitResults.Num() > 0)
+            {
+                Multi_Fire(HitResults[0]);
+            }
+            else
+            {
+                Multi_Fire(FHitResult());
+            }
         }
         else
         {
@@ -86,8 +93,16 @@ void AWeaponSemiAutomatic::Server_Fire_Implementation(const TArray<FHitResult> &
                     }
                 }
             }
-            Multi_Fire(HitResults[0]);
         }
+            if(HitResults.Num() > 0)
+            {
+                Multi_Fire(HitResults[0]);
+            }
+            else
+            {
+                Multi_Fire(FHitResult());
+            }
+            
     }
 }
 
