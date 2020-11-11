@@ -26,7 +26,7 @@ void UGameInstanceBase::GenerateServerList()
 
     Request->OnProcessRequestComplete().BindUObject(this, &UGameInstanceBase::OnServerListRequestComplete);
 
-    Request->SetURL("https://localhost:44344/api/Host");
+    Request->SetURL(WebAPIURL);
     Request->SetVerb("GET");
     Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
     Request->ProcessRequest();

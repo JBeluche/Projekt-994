@@ -8,7 +8,6 @@
 
 #include "GameInstanceBase.generated.h"
 
-
 USTRUCT(BlueprintType)
 struct FMapInfo
 {
@@ -16,13 +15,13 @@ struct FMapInfo
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		FString MapURL;
+	FString MapURL;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		FString MapName;
+	FString MapName;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		FString MapDescription;
+	FString MapDescription;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		class UTexture2D* MapImage;
+	class UTexture2D *MapImage;
 };
 
 USTRUCT(BlueprintType)
@@ -31,17 +30,17 @@ struct FServerData
 	GENERATED_BODY()
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		int ServerID;
+	int ServerID;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		FString IPAddress;
+	FString IPAddress;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		FString ServerName;
+	FString ServerName;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		FString MapName;
+	FString MapName;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		int CurrentPlayers;
+	int CurrentPlayers;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		int MaxPlayers;
+	int MaxPlayers;
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FServersReceived);
@@ -50,31 +49,32 @@ UCLASS()
 class PROJEKT994_API UGameInstanceBase : public UGameInstance
 {
 	GENERATED_BODY()
-	
-public:
 
+public:
 	UGameInstanceBase();
 
-//Http
+	//Http
 protected:
-	FHttpModule* Http;	
+	FHttpModule *Http;
+	const FString WebAPIURL = FString("http://projekt994.gear.host/api/host/");
 
 	TArray<FServerData> ServerList;
 
 	UFUNCTION(BlueprintCallable)
-		TArray<FServerData>& GetServerList();
+	TArray<FServerData> &GetServerList();
 
 	UPROPERTY(BlueprintAssignable)
-		FServersReceived FOnServersReceived;
+	FServersReceived FOnServersReceived;
 
 	UFUNCTION(BlueprintCallable)
-		void GenerateServerList();
+	void GenerateServerList();
 
-	void OnServerListRequestComplete(FHttpRequestPtr Request,FHttpResponsePtr Response, bool Success);
+	void OnServerListRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool Success);
 
 protected:
 	UFUNCTION(BlueprintCallable)
-		void GoToMap(FString MAPURL);
+	void GoToMap(FString MAPURL);
 
-
+public:
+	const FString &GetWebAPIURL() { return WebAPIURL; }
 };

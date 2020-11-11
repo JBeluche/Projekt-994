@@ -30,7 +30,7 @@ void AProjekt994BeaconHostObject::OnClientConnected(AOnlineBeaconClient *NewClie
             {
                 Client->SetPlayerIndex(240);
                 DisconnectClient(NewClientActor);
-            return;
+                return;
             }
         }
 
@@ -106,8 +106,7 @@ void AProjekt994BeaconHostObject::DisconnectClient(AOnlineBeaconClient *ClientAc
         }
         BeaconHost->DisconnectClient(ClientActor);
     }
-        UpdateServerData(ServerData);
-
+    UpdateServerData(ServerData);
 }
 
 void AProjekt994BeaconHostObject::UpdateLobbyInfo(FProjekt994LobbyInfo NewLobbyInfo)
@@ -186,11 +185,19 @@ void AProjekt994BeaconHostObject::SetServerData(FServerData NewServerData)
 
     Request->OnProcessRequestComplete().BindUObject(this, &AProjekt994BeaconHostObject::OnProcessRequestComplete);
 
-    Request->SetURL("https://localhost:44344/api/Host");
+   if (UGameInstanceBase * GI = GetGameInstance<UGameInstanceBase>())
+    {
+
+    Request->SetURL(GI->GetWebAPIURL() );
     Request->SetVerb("POST");
     Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
     Request->SetContentAsString(JsonString);
     Request->ProcessRequest();
+      }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("FAILED TO CAST GAME INSTANCE!!!"));
+    }
 }
 
 //SET SERVER DATA
@@ -200,7 +207,7 @@ void AProjekt994BeaconHostObject::UpdateServerData(FServerData NewServerData)
     ServerData = NewServerData;
     ServerData.CurrentPlayers = GetCurrentPlayerCount();
 
-    JsonObject->SetNumberField("ServerID", 0);
+    JsonObject->SetNumberField("ServerID", ServerID);
     JsonObject->SetStringField("IPAddress", "127.69");
     JsonObject->SetStringField("ServerName", ServerData.ServerName);
     JsonObject->SetStringField("MapName", ServerData.MapName);
@@ -215,19 +222,25 @@ void AProjekt994BeaconHostObject::UpdateServerData(FServerData NewServerData)
 
     Request->OnProcessRequestComplete().BindUObject(this, &AProjekt994BeaconHostObject::OnProcessRequestComplete);
 
-    Request->SetURL("https://localhost:44344/api/Host/1");
-    Request->SetVerb("PUT");
-    Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-    Request->SetContentAsString(JsonString);
-    Request->ProcessRequest();
+    if (UGameInstanceBase * GI = GetGameInstance<UGameInstanceBase>())
+    {
+
+        Request->SetURL(GI->GetWebAPIURL() + FString("1"));
+        Request->SetVerb("PUT");
+        Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+        Request->SetContentAsString(JsonString);
+        Request->ProcessRequest();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("FAILED TO CAST GAME INSTANCE!!!"));
+    }
 }
 
 int AProjekt994BeaconHostObject::GetCurrentPlayerCount()
 {
     return LobbyInfo.PlayerList.Num();
 }
-
-
 
 void AProjekt994BeaconHostObject::ShutdownServer()
 {
@@ -243,18 +256,26 @@ void AProjekt994BeaconHostObject::ShutdownServer()
 
     if (ServerID != -1)
     {
+        UE_LOG(LogTemp, Warning, TEXT("Trying to delete server"));
 
         //Remove server db entry
         TSharedRef<IHttpRequest> Request = Http->CreateRequest();
 
-        Request->SetURL("https://localhost:44344/api/Host/" + FString::FromInt(ServerID));
-        Request->SetVerb("DELETE");
-        Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-        Request->ProcessRequest();
+        if (UGameInstanceBase * GI = GetGameInstance<UGameInstanceBase>())
+        {
+            Request->SetURL(GI->GetWebAPIURL() + FString::FromInt(ServerID));
+            Request->SetVerb("DELETE");
+            Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+            Request->ProcessRequest();
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("FAILED TO CAST GAME INSTANCE!!!"));
+        }
     }
 }
 
-void AProjekt994BeaconHostObject:: StartServer(const FString& MapURL)
+void AProjekt994BeaconHostObject::StartServer(const FString &MapURL)
 {
     for (AOnlineBeaconClient *ClientBeacon : ClientActors)
     {
