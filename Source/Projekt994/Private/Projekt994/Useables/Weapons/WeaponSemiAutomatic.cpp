@@ -20,6 +20,7 @@ void AWeaponSemiAutomatic::BeginPlay()
     Super::BeginPlay();
     CurrentTotalAmmo = WeaponMaxAmmo;
     CurrentMagazineAmmo = MagazineMaxAmmo;
+    
 }
 
 bool AWeaponSemiAutomatic::Fire(AProjekt994Character *ShootingPlayer)
