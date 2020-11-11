@@ -46,6 +46,7 @@ enum EWeaponID
 {
 	Colt1911 UMETA(DisplayName = "Colt1911"),
 	M1Carabine UMETA(DisplayName = "M1Carabine"),
+	STG44 UMETA(DisplayName = "STG44")
 };
 
 UCLASS()
@@ -68,7 +69,10 @@ protected:
 		class UAnimationAsset* FireAnimation;
 
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
-		class UAnimMontage* FPSArmsFireMontage;
+		class UAnimMontage* FPSArmsMontage;
+
+	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
+		class UAnimMontage* ThirdPersonMontage;
 
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
 		class UAnimationAsset* ReloadAnimation;
@@ -133,7 +137,7 @@ public:
 	//First element is Magazine Ammo, second element is total ammo
 	TArray<int32> GetCurrentAmmo();
 
-	class UAnimMontage* GetFireAnimMontage();
+	class UAnimMontage* GetFPSAnimMontage();
 
 	UFUNCTION(BlueprintCallable)
 		TEnumAsByte<EWeaponID> GetWeaponID();

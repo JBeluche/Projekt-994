@@ -107,7 +107,7 @@ void AProjekt994Character::OnFire()
         {
             if (UAnimInstance *AnimInstance = Mesh1P->GetAnimInstance())
             {
-                if (UAnimMontage *FireMontage = CurrentWeapon->GetFireAnimMontage())
+                if (UAnimMontage *FireMontage = CurrentWeapon->GetFPSAnimMontage())
                 {
                     AnimInstance->Montage_Play(FireMontage);
                     if (bIsAiming)
@@ -130,7 +130,7 @@ void AProjekt994Character::OnReload()
     {
          if (UAnimInstance *AnimInstance = Mesh1P->GetAnimInstance())
             {
-                if (UAnimMontage *FireMontage = CurrentWeapon->GetFireAnimMontage())
+                if (UAnimMontage *FireMontage = CurrentWeapon->GetFPSAnimMontage())
                 {
                     AnimInstance->Montage_Play(FireMontage);
                     AnimInstance->Montage_JumpToSection(FName("Reload"), FireMontage);
