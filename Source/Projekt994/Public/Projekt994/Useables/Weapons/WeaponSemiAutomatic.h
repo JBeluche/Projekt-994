@@ -27,7 +27,7 @@ protected:
 public:
 	virtual bool  Fire(class AProjekt994Character* ShootingPlayer) override;
 	
-	virtual bool Reload() override;
+	virtual int8 Reload() override;
 
 
 };

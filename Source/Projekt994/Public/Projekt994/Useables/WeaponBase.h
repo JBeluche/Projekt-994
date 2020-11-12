@@ -69,13 +69,19 @@ protected:
 		class UAnimationAsset* FireAnimation;
 
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
+		class UAnimationAsset* FireEmptyAnimation;
+
+	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
+		class UAnimationAsset* ReloadAnimation;
+
+	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
+		class UAnimationAsset* ReloadEmptyAnimation;
+
+	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
 		class UAnimMontage* FPSArmsMontage;
 
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
 		class UAnimMontage* ThirdPersonMontage;
-
-	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
-		class UAnimationAsset* ReloadAnimation;
 
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
 		FString WeaponName;
@@ -132,10 +138,12 @@ public:
 	virtual bool Fire(class AProjekt994Character* ShootingPlayer);
 	FWeaponDamage GetWeaponDamage();
 	
-	virtual bool Reload();
+	//0 = cant reload, 1 = reload with mag, 2 = reload with empty mag
+	virtual int8 Reload();
 
 	//First element is Magazine Ammo, second element is total ammo
 	TArray<int32> GetCurrentAmmo();
+	int GetMagazineAmmo();
 
 	class UAnimMontage* GetFPSAnimMontage();
 

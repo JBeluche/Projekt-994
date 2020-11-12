@@ -126,16 +126,25 @@ void AProjekt994Character::OnFire()
 
 void AProjekt994Character::OnReload()
 {
-    if(CurrentWeapon && CurrentWeapon->Reload())
+    if (CurrentWeapon)
     {
-         if (UAnimInstance *AnimInstance = Mesh1P->GetAnimInstance())
+        if (int8 ReloadValue = CurrentWeapon->Reload())
+        {
+            if (UAnimInstance *AnimInstance = Mesh1P->GetAnimInstance())
             {
                 if (UAnimMontage *FireMontage = CurrentWeapon->GetFPSAnimMontage())
                 {
                     AnimInstance->Montage_Play(FireMontage);
-                    AnimInstance->Montage_JumpToSection(FName("Reload"), FireMontage);
-                   
+                    if (ReloadValue == 2)
+                    {
+                        AnimInstance->Montage_JumpToSection(FName("ReloadEmpty"), FireMontage);
+                    }
+                    else
+                    {
+                        AnimInstance->Montage_JumpToSection(FName("Reload"), FireMontage);
+                    }
                 }
             }
+        }
     }
 }

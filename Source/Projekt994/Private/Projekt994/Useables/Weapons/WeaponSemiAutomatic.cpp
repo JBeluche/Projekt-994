@@ -30,7 +30,11 @@ bool AWeaponSemiAutomatic::Fire(AProjekt994Character *ShootingPlayer)
     {
         Super::Fire(ShootingPlayer);
 
-        if (FireAnimation)
+         if(CurrentMagazineAmmo <= 0 && FireEmptyAnimation)
+        {
+            WeaponMesh->PlayAnimation(FireEmptyAnimation, false);
+        }
+        else if(FireAnimation)
         {
             WeaponMesh->PlayAnimation(FireAnimation, false);
         }
@@ -135,7 +139,7 @@ void AWeaponSemiAutomatic::Multi_Fire_Implementation(const FHitResult &HitResult
     }
 }
 
-bool AWeaponSemiAutomatic::Reload()
+int8 AWeaponSemiAutomatic::Reload()
 {
     return Super::Reload();
 }

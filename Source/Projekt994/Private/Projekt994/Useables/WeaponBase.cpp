@@ -32,7 +32,6 @@ void AWeaponBase::BeginPlay()
     WeaponMesh->HideBoneByName(FName("emptyCase_3"), EPhysBodyOp::PBO_None);
     WeaponMesh->HideBoneByName(FName("emptyCase_4"), EPhysBodyOp::PBO_None);
     WeaponMesh->HideBoneByName(FName("Magazine2"), EPhysBodyOp::PBO_None);
-
 }
 
 void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -157,15 +156,23 @@ TEnumAsByte<EWeaponID> AWeaponBase::GetWeaponID()
     return WeaponID;
 }
 
-bool AWeaponBase::Reload()
+int8 AWeaponBase::Reload()
 {
     if (CurrentTotalAmmo > 0 && CurrentMagazineAmmo != MagazineMaxAmmo)
     {
+        bool bIsSlideLockReload = CurrentMagazineAmmo <= 0;
         if (APawn *Pawn = Cast<APawn>(GetOwner()))
         {
-            if (Pawn->IsLocallyControlled() && ReloadAnimation)
+            if (Pawn->IsLocallyControlled())
             {
-                WeaponMesh->PlayAnimation(ReloadAnimation, false);
+                if (CurrentMagazineAmmo <= 0 && ReloadEmptyAnimation)
+                {
+                    WeaponMesh->PlayAnimation(ReloadEmptyAnimation, false);
+                }
+                else if (ReloadAnimation)
+                {
+                    WeaponMesh->PlayAnimation(ReloadAnimation, false);
+                }
             }
         }
 
@@ -191,12 +198,17 @@ bool AWeaponBase::Reload()
             Server_Reload();
         }
 
-        return true;
+        if (bIsSlideLockReload)
+        {
+            return 2;
+        }
+        else
+        {
+            return 1;
+        }
     }
-    else
-    {
-        return false;
-    }
+
+    return 0;
 }
 
 bool AWeaponBase::Server_Reload_Validate()
@@ -221,16 +233,20 @@ void AWeaponBase::Multi_Reload_Implementation()
     {
         if (!Character->IsLocallyControlled() && ReloadAnimation)
         {
-             if (UAnimInstance *AnimInstance = Character->GetMesh()->GetAnimInstance())
+            if (UAnimInstance *AnimInstance = Character->GetMesh()->GetAnimInstance())
             {
                 if (ThirdPersonMontage)
                 {
                     AnimInstance->Montage_Play(ThirdPersonMontage);
                     AnimInstance->Montage_JumpToSection(FName("Reload"), ThirdPersonMontage);
-                   
                 }
             }
             WeaponMesh->PlayAnimation(ReloadAnimation, false);
         }
     }
+}
+
+int AWeaponBase::GetMagazineAmmo()
+{
+    return CurrentMagazineAmmo;
 }
