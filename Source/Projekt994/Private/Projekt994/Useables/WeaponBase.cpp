@@ -250,3 +250,8 @@ int AWeaponBase::GetMagazineAmmo()
 {
     return CurrentMagazineAmmo;
 }
+
+void AWeaponBase::StopFiring() 
+{
+    
+}

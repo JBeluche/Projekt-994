@@ -109,6 +109,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent *PlayerInputCompo
 
 	// Bind fire event
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ACharacterBase::OnFire);
+	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ACharacterBase::OnStopFire);
 
 	// Bind movement events
 	PlayerInputComponent->BindAxis("MoveForward", this, &ACharacterBase::MoveForward);
@@ -123,6 +124,10 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent *PlayerInputCompo
 }
 
 void ACharacterBase::OnFire()
+{
+}
+
+void ACharacterBase::OnStopFire()
 {
 }
 

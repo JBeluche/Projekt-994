@@ -136,6 +136,7 @@ protected:
 
 public:	
 	virtual bool Fire(class AProjekt994Character* ShootingPlayer);
+	virtual void StopFiring();
 	FWeaponDamage GetWeaponDamage();
 	
 	//0 = cant reload, 1 = reload with mag, 2 = reload with empty mag

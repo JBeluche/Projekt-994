@@ -148,3 +148,11 @@ void AProjekt994Character::OnReload()
         }
     }
 }
+
+void AProjekt994Character::OnStopFire()
+{
+    if(CurrentWeapon)
+    {
+        CurrentWeapon->StopFiring();
+    }
+}

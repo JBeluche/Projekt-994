@@ -62,6 +62,7 @@ protected:
 	
 	/** Fires a projectile. */
 	virtual void OnFire();
+	virtual void OnStopFire();
 
 	virtual void OnAimingStart();
 	virtual void OnAimingEnd();
