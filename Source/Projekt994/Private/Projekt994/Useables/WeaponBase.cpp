@@ -7,6 +7,7 @@
 #include "Projekt994/Public/Player/Projekt994Character.h"
 #include "Projekt994/Public/Projekt994/Game/Projekt994GameState.h"
 #include "Net/UnrealNetwork.h"
+#include "Projekt994/Public/Projekt994/Zombie/ZombieBase.h"
 
 // Sets default values
 AWeaponBase::AWeaponBase()
@@ -62,11 +63,37 @@ void AWeaponBase::Server_Fire_Implementation(const TArray<FHitResult> &HitResult
         {
             --CurrentMagazineAmmo;
         }
+
+        if (HitResults.Num() > 0)
+        {
+            for (FHitResult Result : HitResults)
+            {
+                if (AActor *HitActor = Result.GetActor())
+                {
+                    if (AZombieBase *Zombie = Cast<AZombieBase>(HitActor))
+                    {
+                        if (AProjekt994Character *Player = Cast<AProjekt994Character>(GetOwner()))
+                        {
+                            Zombie->Hit(Player, Result);
+                        }
+                    }
+                }
+            }
+        }
+        if (HitResults.Num() > 0)
+        {
+            Multi_Fire(HitResults[0]);
+        }
+        else
+        {
+            Multi_Fire(FHitResult());
+        }
     }
 }
 
 bool AWeaponBase::Fire(AProjekt994Character *ShootingPlayer)
 {
+
     if (CurrentMagazineAmmo > 0)
     {
         if (AProjekt994GameState *GS = GetWorld()->GetGameState<AProjekt994GameState>())
@@ -80,9 +107,70 @@ bool AWeaponBase::Fire(AProjekt994Character *ShootingPlayer)
         {
             --CurrentMagazineAmmo;
         }
+
+        //Play animation
+        if (UAnimInstance *AnimInstance = ShootingPlayer->GetMesh1P()->GetAnimInstance())
+        {
+            if (FPSArmsMontage)
+            {
+                AnimInstance->Montage_Play(FPSArmsMontage);
+                if (ShootingPlayer->GetIsAiming())
+                {
+                    AnimInstance->Montage_JumpToSection(FName("FireADS"), FPSArmsMontage);
+                }
+                else
+                {
+                    AnimInstance->Montage_JumpToSection(FName("FireHip"), FPSArmsMontage);
+                }
+            }
+        }
+
+        //Unlimited ammo cheat
+        if (CurrentMagazineAmmo <= 0 && FireEmptyAnimation)
+        {
+            WeaponMesh->PlayAnimation(FireEmptyAnimation, false);
+        }
+        else if (FireAnimation)
+        {
+            WeaponMesh->PlayAnimation(FireAnimation, false);
+        }
+
+        TArray<FHitResult> HitResults = PerformLineTrace(ShootingPlayer);
+
+        if (HitResults.Num() > 0)
+        {
+            for (FHitResult &Result : HitResults)
+            {
+                FString HitBone = Result.BoneName.ToString();
+                if (AActor *HitActor = Result.GetActor())
+                {
+                    if (AZombieBase *Zombie = Cast<AZombieBase>(HitActor))
+                    {
+                        Zombie->Hit(ShootingPlayer, Result);
+                    }
+                }
+            }
+        }
+        if (GetWorld()->IsServer())
+        {
+            if (HitResults.Num() > 0)
+            {
+                Multi_Fire(HitResults[0]);
+            }
+            else
+            {
+                Multi_Fire(FHitResult());
+            }
+        }
+        else
+        {
+            Server_Fire(HitResults);
+        }
+
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 bool AWeaponBase::Multi_Fire_Validate(const FHitResult &HitResult)
@@ -92,6 +180,30 @@ bool AWeaponBase::Multi_Fire_Validate(const FHitResult &HitResult)
 
 void AWeaponBase::Multi_Fire_Implementation(const FHitResult &HitResult)
 {
+     if (AProjekt994Character *Character = Cast<AProjekt994Character>(GetOwner()))
+    {
+        if (!Character->IsLocallyControlled() && FireAnimation)
+        {
+             if (UAnimInstance *AnimInstance = Character->GetMesh1P()->GetAnimInstance())
+            {
+                if (FPSArmsMontage)
+                {
+                    AnimInstance->Montage_Play(FPSArmsMontage);
+                    if(Character->GetIsAiming())
+                    {
+                        AnimInstance->Montage_JumpToSection(FName("FireADS"), FPSArmsMontage);
+                    }
+                    else
+                    {
+                        AnimInstance->Montage_JumpToSection(FName("FireHip"), FPSArmsMontage);
+                    }
+                    
+                   
+                }
+            }
+            WeaponMesh->PlayAnimation(FireAnimation, false);
+        }
+    }
 }
 
 TArray<FHitResult> AWeaponBase::PerformLineTrace(AProjekt994Character *ShootingPlayer)
@@ -251,7 +363,6 @@ int AWeaponBase::GetMagazineAmmo()
     return CurrentMagazineAmmo;
 }
 
-void AWeaponBase::StopFiring() 
+void AWeaponBase::StopFiring()
 {
-    
 }

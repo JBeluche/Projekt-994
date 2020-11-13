@@ -18,6 +18,8 @@ AWeaponFullAutomatic::AWeaponFullAutomatic()
     WeaponMaxAmmo = 240;
     MagazineMaxAmmo = 30;
     WeaponName = "Default Name";
+    bIsInFullAuto = true;
+    bIsSelectFire = true;
 }
 
 void AWeaponFullAutomatic::BeginPlay()
@@ -167,7 +169,7 @@ void AWeaponFullAutomatic::Server_Fire_Implementation(const TArray<FHitResult> &
 
 bool AWeaponFullAutomatic::Fire(AProjekt994Character *ShootingPlayer)
 {
-    if (!bIsFiring)
+    if (!bIsFiring && bIsInFullAuto)
     {
         bIsFiring = true;
         OnClientFire();
@@ -178,6 +180,10 @@ bool AWeaponFullAutomatic::Fire(AProjekt994Character *ShootingPlayer)
         {
             Server_StartFullAutoFire(bIsFiring);
         }
+    }
+    else
+    {
+        Super::Fire(ShootingPlayer);
     }
 
     return true;

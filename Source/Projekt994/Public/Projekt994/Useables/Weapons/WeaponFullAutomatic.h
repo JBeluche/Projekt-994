@@ -15,6 +15,12 @@ class PROJEKT994_API AWeaponFullAutomatic : public AWeaponBase
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
+		bool bIsInFullAuto;
+
+	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
+		bool bIsSelectFire;
+
 	UPROPERTY(ReplicatedUsing = OnRep_StartFullAutoFire)//Replicated for using effects on other clients 
 		bool bIsFiring;
 
