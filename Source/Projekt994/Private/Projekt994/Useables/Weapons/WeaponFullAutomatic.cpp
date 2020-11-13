@@ -20,6 +20,8 @@ AWeaponFullAutomatic::AWeaponFullAutomatic()
     WeaponName = "Default Name";
     bIsInFullAuto = true;
     bIsSelectFire = true;
+    FireRate = 500;
+
 }
 
 void AWeaponFullAutomatic::BeginPlay()
@@ -27,6 +29,8 @@ void AWeaponFullAutomatic::BeginPlay()
     Super::BeginPlay();
     CurrentTotalAmmo = WeaponMaxAmmo;
     CurrentMagazineAmmo = MagazineMaxAmmo;
+
+    FireRate = 60 / FireRate;
 }
 
 void AWeaponFullAutomatic::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -55,7 +59,7 @@ void AWeaponFullAutomatic::OnRep_StartFullAutoFire()
 
     if (bIsFiring)
     {
-        GetWorld()->GetTimerManager().SetTimer(WeaponFireHandle, this, &AWeaponFullAutomatic::OnClientFire, .2f, true);
+        GetWorld()->GetTimerManager().SetTimer(WeaponFireHandle, this, &AWeaponFullAutomatic::OnClientFire, FireRate, true);
         PlayWeaponEffects();
     }
     else
@@ -200,7 +204,7 @@ void AWeaponFullAutomatic::Fire()
         bIsFiring = true;
         OnClientFire();
 
-        GetWorld()->GetTimerManager().SetTimer(WeaponFireHandle, this, &AWeaponFullAutomatic::OnClientFire, .2f, true);
+        GetWorld()->GetTimerManager().SetTimer(WeaponFireHandle, this, &AWeaponFullAutomatic::OnClientFire, FireRate, true);
 
         if (!GetWorld()->IsServer())
         {

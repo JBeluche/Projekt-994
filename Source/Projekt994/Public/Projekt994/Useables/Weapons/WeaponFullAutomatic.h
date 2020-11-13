@@ -20,6 +20,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
 		bool bIsSelectFire;
 
+	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
+		float FireRate;
+
 	UPROPERTY(ReplicatedUsing = OnRep_StartFullAutoFire)//Replicated for using effects on other clients 
 		bool bIsFiring;
 
