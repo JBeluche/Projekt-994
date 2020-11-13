@@ -199,9 +199,14 @@ void AWeaponFullAutomatic::Fire()
 {
         UE_LOG(LogTemp, Warning, TEXT("Fire"));
 
-    if (!bIsFiring && bIsInFullAuto)
+    if (!bIsFiring && bIsInFullAuto && bCanFire)
     {
         bIsFiring = true;
+        bCanFire = false;
+        
+        FTimerHandle FireRateHandle;
+        GetWorld()->GetTimerManager().SetTimer(FireRateHandle, this, &AWeaponFullAutomatic::ControlFireDelay, DelayBetweenShots, false);
+
         OnClientFire();
 
         GetWorld()->GetTimerManager().SetTimer(WeaponFireHandle, this, &AWeaponFullAutomatic::OnClientFire, FireRate, true);

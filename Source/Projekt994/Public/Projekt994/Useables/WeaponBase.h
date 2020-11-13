@@ -87,6 +87,9 @@ protected:
 		FString WeaponName;
 
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
+		float DelayBetweenShots;
+
+	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
 		int32 WeaponMaxAmmo;
 
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
@@ -100,6 +103,11 @@ protected:
 
 	UPROPERTY(Replicated)
 		int32 CurrentMagazineAmmo;
+
+	bool bCanFire;
+	void ControlFireDelay();
+
+
 
 
 protected:

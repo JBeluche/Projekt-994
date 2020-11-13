@@ -8,6 +8,7 @@
 #include "Projekt994/Public/Projekt994/Game/Projekt994GameState.h"
 #include "Net/UnrealNetwork.h"
 #include "Projekt994/Public/Projekt994/Zombie/ZombieBase.h"
+#include "TimerManager.h"
 
 // Sets default values
 AWeaponBase::AWeaponBase()
@@ -22,6 +23,9 @@ AWeaponBase::AWeaponBase()
 
     CurrentTotalAmmo = WeaponMaxAmmo;
     CurrentMagazineAmmo = MagazineMaxAmmo;
+
+    bCanFire = true;
+    DelayBetweenShots = 0.18;
 }
 
 // Called when the game starts or when spawned
@@ -67,6 +71,7 @@ void AWeaponBase::Server_Fire_Implementation(const TArray<FHitResult> &HitResult
         {
             --CurrentMagazineAmmo;
         }
+        bCanFire = false;
 
         if (HitResults.Num() > 0)
         {
@@ -95,6 +100,11 @@ void AWeaponBase::Server_Fire_Implementation(const TArray<FHitResult> &HitResult
     }
 }
 
+void AWeaponBase::ControlFireDelay()
+{
+   bCanFire = true; 
+}
+
 void AWeaponBase::Fire()
 {
 
@@ -103,7 +113,7 @@ void AWeaponBase::Fire()
     {
         UE_LOG(LogTemp, Warning, TEXT("Fire wb"));
 
-        if (CurrentMagazineAmmo > 0)
+        if (CurrentMagazineAmmo > 0 && bCanFire)
         {
             UE_LOG(LogTemp, Warning, TEXT("Ammo fire is %d"), CurrentMagazineAmmo);
 
@@ -166,6 +176,9 @@ void AWeaponBase::Fire()
             {
                 Server_Fire(HitResults);
             }
+
+            FTimerHandle FireRateHandle;
+            GetWorld()->GetTimerManager().SetTimer(FireRateHandle, this, &AWeaponBase::ControlFireDelay, DelayBetweenShots, false);
         }
     }
 }

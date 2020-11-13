@@ -102,6 +102,7 @@ void AProjekt994Character::Server_Interact_Implementation(AInteractableBase *Int
 void AProjekt994Character::OnFire()
 {
     if (CurrentWeapon)
+    
     {
         CurrentWeapon->Fire();
     }
