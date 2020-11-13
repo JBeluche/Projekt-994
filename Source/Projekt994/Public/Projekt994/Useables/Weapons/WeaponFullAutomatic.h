@@ -15,7 +15,7 @@ class PROJEKT994_API AWeaponFullAutomatic : public AWeaponBase
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(Replicated)//Replicated for using effects on other clients 
+	UPROPERTY(ReplicatedUsing = OnRep_StartFullAutoFire)//Replicated for using effects on other clients 
 		bool bIsFiring;
 
 		UFUNCTION()
@@ -39,6 +39,7 @@ protected:
 
 	virtual void Server_Fire_Implementation(const TArray<FHitResult>& HitResults) override;
 
+	void OnClientFire();
 
 
 public:

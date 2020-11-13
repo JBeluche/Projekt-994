@@ -1,6 +1,5 @@
 // Copyright by Creating Mountains
 
-
 #include "Projekt994/Public/Projekt994//Useables/Weapons/WeaponFullAutomatic.h"
 
 //Game Include
@@ -14,14 +13,11 @@
 #include "Net/UnrealNetwork.h"
 #include "TimerManager.h"
 
-
-
 AWeaponFullAutomatic::AWeaponFullAutomatic()
 {
     WeaponMaxAmmo = 240;
     MagazineMaxAmmo = 30;
     WeaponName = "Default Name";
-
 }
 
 void AWeaponFullAutomatic::BeginPlay()
@@ -29,8 +25,6 @@ void AWeaponFullAutomatic::BeginPlay()
     Super::BeginPlay();
     CurrentTotalAmmo = WeaponMaxAmmo;
     CurrentMagazineAmmo = MagazineMaxAmmo;
-
-
 }
 
 void AWeaponFullAutomatic::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -53,72 +47,129 @@ void AWeaponFullAutomatic::Server_StartFullAutoFire_Implementation(bool IsFiring
 
 void AWeaponFullAutomatic::OnRep_StartFullAutoFire()
 {
-    if(bIsFiring)
+    if (bIsFiring)
     {
-        GetWorld()->GetTimerManager().SetTimer(WeaponFireHandle, this, &AWeaponFullAutomatic::PlayWeaponEffects, .5f, true);
+        GetWorld()->GetTimerManager().SetTimer(WeaponFireHandle, this, &AWeaponFullAutomatic::OnClientFire, .2f, true);
+        PlayWeaponEffects();
     }
     else
     {
         GetWorld()->GetTimerManager().ClearTimer(WeaponFireHandle);
     }
-    
 }
 
 void AWeaponFullAutomatic::PlayWeaponEffects()
-{   
-        UE_LOG(LogTemp, Warning, TEXT("Onrep playing weapon effects for full auto class"));
+{
+    UE_LOG(LogTemp, Warning, TEXT("Onrep playing weapon effects for full auto class"));
 
-            if (AProjekt994Character *Character = Cast<AProjekt994Character>(GetOwner()))
+    if (AProjekt994Character *Character = Cast<AProjekt994Character>(GetOwner()))
     {
         if (!Character->IsLocallyControlled() && FireAnimation)
         {
-             if (UAnimInstance *AnimInstance = Character->GetMesh()->GetAnimInstance())
+            if (UAnimInstance *AnimInstance = Character->GetMesh1P()->GetAnimInstance())
             {
-                if (ThirdPersonMontage)
+                if (FPSArmsMontage)
                 {
-                    AnimInstance->Montage_Play(ThirdPersonMontage);
-                    if(Character->GetIsAiming())
+                    AnimInstance->Montage_Play(FPSArmsMontage);
+                    if (Character->GetIsAiming())
                     {
-                        AnimInstance->Montage_JumpToSection(FName("FireADS"), ThirdPersonMontage);
+                        AnimInstance->Montage_JumpToSection(FName("FireADS"), FPSArmsMontage);
                     }
                     else
                     {
-                        AnimInstance->Montage_JumpToSection(FName("FireHip"), ThirdPersonMontage);
+                        AnimInstance->Montage_JumpToSection(FName("FireHip"), FPSArmsMontage);
                     }
-                    
-                   
                 }
             }
             WeaponMesh->PlayAnimation(FireAnimation, false);
         }
     }
-
 }
-
 
 bool AWeaponFullAutomatic::Fire(AProjekt994Character *ShootingPlayer)
 {
 
-    if(!bIsFiring)
+    if (!bIsFiring)
     {
         bIsFiring = true;
+        OnClientFire();
+        GetWorld()->GetTimerManager().SetTimer(WeaponFireHandle, this, &AWeaponFullAutomatic::PlayWeaponEffects, .2f, true);
+    
         Server_StartFullAutoFire(bIsFiring);
     }
 
     return true;
-   
+}
+
+void AWeaponFullAutomatic::OnClientFire()
+{
+
+
+    if (AProjekt994Character *ShootingPlayer = Cast<AProjekt994Character>(GetOwner()))
+    {
+    Super::Fire(ShootingPlayer);
+
+    UE_LOG(LogTemp, Warning, TEXT("on client fire"));
+
+        if (CurrentMagazineAmmo <= 0 && FireEmptyAnimation)
+        {
+            WeaponMesh->PlayAnimation(FireEmptyAnimation, false);
+        }
+        else if (FireAnimation)
+        {
+            WeaponMesh->PlayAnimation(FireAnimation, false);
+        }
+
+        TArray<FHitResult> HitResults = PerformLineTrace(ShootingPlayer);
+
+        if (HitResults.Num() > 0)
+        {
+            for (FHitResult &Result : HitResults)
+            {
+                FString HitBone = Result.BoneName.ToString();
+                if (AActor *HitActor = Result.GetActor())
+                {
+                    if (AZombieBase *Zombie = Cast<AZombieBase>(HitActor))
+                    {
+                        Zombie->Hit(ShootingPlayer, Result);
+                    }
+                }
+            }
+        }
+        if (!GetWorld()->IsServer())
+            Server_Fire(HitResults);
+        }
 }
 
 void AWeaponFullAutomatic::Server_Fire_Implementation(const TArray<FHitResult> &HitResults)
 {
-    
+      if (CurrentMagazineAmmo > 0)
+    {
+        Super::Server_Fire_Implementation(HitResults);
+
+        if (HitResults.Num() > 0)
+        {
+            for (FHitResult Result : HitResults)
+            {
+                if (AActor *HitActor = Result.GetActor())
+                {
+                    if (AZombieBase *Zombie = Cast<AZombieBase>(HitActor))
+                    {
+                        if (AProjekt994Character *Player = Cast<AProjekt994Character>(GetOwner()))
+                        {
+                            Zombie->Hit(Player, Result);
+                        }
+                    }
+                }
+            }
+        }
+            
+    }
 }
 
 void AWeaponFullAutomatic::StopFiring()
 {
-        bIsFiring = false;
-        Server_StartFullAutoFire(bIsFiring);
+    bIsFiring = false;
+    GetWorld()->GetTimerManager().ClearTimer(WeaponFireHandle);
+    Server_StartFullAutoFire(bIsFiring);
 }
-
-
-
