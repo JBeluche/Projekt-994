@@ -60,8 +60,6 @@ void AWeaponFullAutomatic::OnRep_StartFullAutoFire()
 
 void AWeaponFullAutomatic::PlayWeaponEffects()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Onrep playing weapon effects for full auto class"));
-
     if (AProjekt994Character *Character = Cast<AProjekt994Character>(GetOwner()))
     {
         if (!Character->IsLocallyControlled() && FireAnimation)
@@ -86,30 +84,27 @@ void AWeaponFullAutomatic::PlayWeaponEffects()
     }
 }
 
-bool AWeaponFullAutomatic::Fire(AProjekt994Character *ShootingPlayer)
-{
-
-    if (!bIsFiring)
-    {
-        bIsFiring = true;
-        OnClientFire();
-        GetWorld()->GetTimerManager().SetTimer(WeaponFireHandle, this, &AWeaponFullAutomatic::PlayWeaponEffects, .2f, true);
-    
-        Server_StartFullAutoFire(bIsFiring);
-    }
-
-    return true;
-}
-
 void AWeaponFullAutomatic::OnClientFire()
 {
-
-
     if (AProjekt994Character *ShootingPlayer = Cast<AProjekt994Character>(GetOwner()))
     {
-    Super::Fire(ShootingPlayer);
+        Super::Fire(ShootingPlayer);
 
-    UE_LOG(LogTemp, Warning, TEXT("on client fire"));
+        if (UAnimInstance *AnimInstance = ShootingPlayer->GetMesh1P()->GetAnimInstance())
+        {
+            if (FPSArmsMontage)
+            {
+                AnimInstance->Montage_Play(FPSArmsMontage);
+                if (ShootingPlayer->GetIsAiming())
+                {
+                    AnimInstance->Montage_JumpToSection(FName("FireADS"), FPSArmsMontage);
+                }
+                else
+                {
+                    AnimInstance->Montage_JumpToSection(FName("FireHip"), FPSArmsMontage);
+                }
+            }
+        }
 
         if (CurrentMagazineAmmo <= 0 && FireEmptyAnimation)
         {
@@ -136,14 +131,18 @@ void AWeaponFullAutomatic::OnClientFire()
                 }
             }
         }
+
         if (!GetWorld()->IsServer())
+        {
             Server_Fire(HitResults);
         }
+    }
 }
 
 void AWeaponFullAutomatic::Server_Fire_Implementation(const TArray<FHitResult> &HitResults)
 {
-      if (CurrentMagazineAmmo > 0)
+
+    if (CurrentMagazineAmmo > 0)
     {
         Super::Server_Fire_Implementation(HitResults);
 
@@ -163,13 +162,33 @@ void AWeaponFullAutomatic::Server_Fire_Implementation(const TArray<FHitResult> &
                 }
             }
         }
-            
     }
+}
+
+bool AWeaponFullAutomatic::Fire(AProjekt994Character *ShootingPlayer)
+{
+    if (!bIsFiring)
+    {
+        bIsFiring = true;
+        OnClientFire();
+
+        GetWorld()->GetTimerManager().SetTimer(WeaponFireHandle, this, &AWeaponFullAutomatic::OnClientFire, .2f, true);
+
+        if (!GetWorld()->IsServer())
+        {
+            Server_StartFullAutoFire(bIsFiring);
+        }
+    }
+
+    return true;
 }
 
 void AWeaponFullAutomatic::StopFiring()
 {
     bIsFiring = false;
     GetWorld()->GetTimerManager().ClearTimer(WeaponFireHandle);
-    Server_StartFullAutoFire(bIsFiring);
+    if (!GetWorld()->IsServer())
+    {
+        Server_StartFullAutoFire(bIsFiring);
+    }
 }
