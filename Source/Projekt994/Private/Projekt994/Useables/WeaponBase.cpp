@@ -50,8 +50,12 @@ TArray<int32> AWeaponBase::GetCurrentAmmo()
 
 void AWeaponBase::Server_Fire_Implementation(const TArray<FHitResult> &HitResults)
 {
+    UE_LOG(LogTemp, Warning, TEXT("Server_Fire_Implementation wb"));
+
     if (CurrentMagazineAmmo > 0)
     {
+        UE_LOG(LogTemp, Warning, TEXT("Ammo server fire is %d"), CurrentMagazineAmmo);
+
         if (AProjekt994GameState *GS = GetWorld()->GetGameState<AProjekt994GameState>())
         {
             if (!GS->CheatIgnoreAmmo())
@@ -91,86 +95,79 @@ void AWeaponBase::Server_Fire_Implementation(const TArray<FHitResult> &HitResult
     }
 }
 
-bool AWeaponBase::Fire(AProjekt994Character *ShootingPlayer)
+void AWeaponBase::Fire()
 {
 
-    if (CurrentMagazineAmmo > 0)
+    if (AProjekt994Character *Player = Cast<AProjekt994Character>(GetOwner()))
+
     {
-        if (AProjekt994GameState *GS = GetWorld()->GetGameState<AProjekt994GameState>())
+        UE_LOG(LogTemp, Warning, TEXT("Fire wb"));
+
+        if (CurrentMagazineAmmo > 0)
         {
-            if (!GS->CheatIgnoreAmmo())
+            UE_LOG(LogTemp, Warning, TEXT("Ammo fire is %d"), CurrentMagazineAmmo);
+
+            //Play animation
+            if (UAnimInstance *AnimInstance = Player->GetMesh1P()->GetAnimInstance())
             {
-                --CurrentMagazineAmmo;
-            }
-        }
-        else
-        {
-            --CurrentMagazineAmmo;
-        }
-
-        //Play animation
-        if (UAnimInstance *AnimInstance = ShootingPlayer->GetMesh1P()->GetAnimInstance())
-        {
-            if (FPSArmsMontage)
-            {
-                AnimInstance->Montage_Play(FPSArmsMontage);
-                if (ShootingPlayer->GetIsAiming())
+                if (FPSArmsMontage)
                 {
-                    AnimInstance->Montage_JumpToSection(FName("FireADS"), FPSArmsMontage);
-                }
-                else
-                {
-                    AnimInstance->Montage_JumpToSection(FName("FireHip"), FPSArmsMontage);
-                }
-            }
-        }
-
-        //Unlimited ammo cheat
-        if (CurrentMagazineAmmo <= 0 && FireEmptyAnimation)
-        {
-            WeaponMesh->PlayAnimation(FireEmptyAnimation, false);
-        }
-        else if (FireAnimation)
-        {
-            WeaponMesh->PlayAnimation(FireAnimation, false);
-        }
-
-        TArray<FHitResult> HitResults = PerformLineTrace(ShootingPlayer);
-
-        if (HitResults.Num() > 0)
-        {
-            for (FHitResult &Result : HitResults)
-            {
-                FString HitBone = Result.BoneName.ToString();
-                if (AActor *HitActor = Result.GetActor())
-                {
-                    if (AZombieBase *Zombie = Cast<AZombieBase>(HitActor))
+                    AnimInstance->Montage_Play(FPSArmsMontage);
+                    if (Player->GetIsAiming())
                     {
-                        Zombie->Hit(ShootingPlayer, Result);
+
+                        AnimInstance->Montage_JumpToSection(FName("FireADS"), FPSArmsMontage);
+                    }
+                    else
+                    {
+
+                        AnimInstance->Montage_JumpToSection(FName("FireHip"), FPSArmsMontage);
                     }
                 }
             }
-        }
-        if (GetWorld()->IsServer())
-        {
+
+            if (CurrentMagazineAmmo <= 0 && FireEmptyAnimation)
+            {
+                WeaponMesh->PlayAnimation(FireEmptyAnimation, false);
+            }
+            else if (FireAnimation)
+            {
+                WeaponMesh->PlayAnimation(FireAnimation, false);
+            }
+
+            TArray<FHitResult> HitResults = PerformLineTrace(Player);
+
             if (HitResults.Num() > 0)
             {
-                Multi_Fire(HitResults[0]);
+                for (FHitResult &Result : HitResults)
+                {
+                    FString HitBone = Result.BoneName.ToString();
+                    if (AActor *HitActor = Result.GetActor())
+                    {
+                        if (AZombieBase *Zombie = Cast<AZombieBase>(HitActor))
+                        {
+                            Zombie->Hit(Player, Result);
+                        }
+                    }
+                }
+            }
+            if (!GetWorld()->IsServer())
+            {
+                if (HitResults.Num() > 0)
+                {
+                    Multi_Fire(HitResults[0]);
+                }
+                else
+                {
+                    Multi_Fire(FHitResult());
+                }
             }
             else
             {
-                Multi_Fire(FHitResult());
+                Server_Fire(HitResults);
             }
         }
-        else
-        {
-            Server_Fire(HitResults);
-        }
-
-        return true;
     }
-
-    return false;
 }
 
 bool AWeaponBase::Multi_Fire_Validate(const FHitResult &HitResult)
@@ -180,25 +177,27 @@ bool AWeaponBase::Multi_Fire_Validate(const FHitResult &HitResult)
 
 void AWeaponBase::Multi_Fire_Implementation(const FHitResult &HitResult)
 {
-     if (AProjekt994Character *Character = Cast<AProjekt994Character>(GetOwner()))
+    UE_LOG(LogTemp, Warning, TEXT("Multi_Fire_Implementation wb"));
+
+    if (AProjekt994Character *Character = Cast<AProjekt994Character>(GetOwner()))
     {
         if (!Character->IsLocallyControlled() && FireAnimation)
         {
-             if (UAnimInstance *AnimInstance = Character->GetMesh1P()->GetAnimInstance())
+            if (UAnimInstance *AnimInstance = Character->GetMesh1P()->GetAnimInstance())
             {
                 if (FPSArmsMontage)
                 {
                     AnimInstance->Montage_Play(FPSArmsMontage);
-                    if(Character->GetIsAiming())
+                    if (Character->GetIsAiming())
                     {
+
                         AnimInstance->Montage_JumpToSection(FName("FireADS"), FPSArmsMontage);
                     }
                     else
                     {
+
                         AnimInstance->Montage_JumpToSection(FName("FireHip"), FPSArmsMontage);
                     }
-                    
-                   
                 }
             }
             WeaponMesh->PlayAnimation(FireAnimation, false);
@@ -268,59 +267,68 @@ TEnumAsByte<EWeaponID> AWeaponBase::GetWeaponID()
     return WeaponID;
 }
 
-int8 AWeaponBase::Reload()
+void AWeaponBase::Reload()
 {
     if (CurrentTotalAmmo > 0 && CurrentMagazineAmmo != MagazineMaxAmmo)
     {
-        bool bIsSlideLockReload = CurrentMagazineAmmo <= 0;
-        if (APawn *Pawn = Cast<APawn>(GetOwner()))
+        if (AProjekt994Character *Player = Cast<AProjekt994Character>(GetOwner()))
         {
-            if (Pawn->IsLocallyControlled())
+            bool bMagazineIsEmpty = CurrentMagazineAmmo <= 0;
+
+            if (UAnimInstance *AnimInstance = Player->GetMesh1P()->GetAnimInstance())
             {
-                if (CurrentMagazineAmmo <= 0 && ReloadEmptyAnimation)
+                if (FPSArmsMontage)
                 {
-                    WeaponMesh->PlayAnimation(ReloadEmptyAnimation, false);
-                }
-                else if (ReloadAnimation)
-                {
-                    WeaponMesh->PlayAnimation(ReloadAnimation, false);
+                    AnimInstance->Montage_Play(FPSArmsMontage);
+                    if (bMagazineIsEmpty)
+                    {
+                        AnimInstance->Montage_JumpToSection(FName("ReloadEmpty"), FPSArmsMontage);
+                    }
+                    else
+                    {
+                        AnimInstance->Montage_JumpToSection(FName("Reload"), FPSArmsMontage);
+                    }
                 }
             }
-        }
 
-        //Set ammo difference
-        int Difference = MagazineMaxAmmo - CurrentMagazineAmmo;
-        if (CurrentTotalAmmo - Difference >= 0)
-        {
-            CurrentTotalAmmo -= Difference;
-            CurrentMagazineAmmo = MagazineMaxAmmo;
-        }
-        else
-        {
-            CurrentMagazineAmmo += CurrentTotalAmmo;
-            CurrentTotalAmmo = 0;
-        }
+            if (APawn *Pawn = Cast<APawn>(GetOwner()))
+            {
+                if (Pawn->IsLocallyControlled())
+                {
+                    if (CurrentMagazineAmmo <= 0 && ReloadEmptyAnimation)
+                    {
+                        WeaponMesh->PlayAnimation(ReloadEmptyAnimation, false);
+                    }
+                    else if (ReloadAnimation)
+                    {
+                        WeaponMesh->PlayAnimation(ReloadAnimation, false);
+                    }
+                }
+            }
 
-        if (GetWorld()->IsServer())
-        {
-            Multi_Reload();
-        }
-        else
-        {
-            Server_Reload();
-        }
+            //Set ammo difference
+            int Difference = MagazineMaxAmmo - CurrentMagazineAmmo;
+            if (CurrentTotalAmmo - Difference >= 0)
+            {
+                CurrentTotalAmmo -= Difference;
+                CurrentMagazineAmmo = MagazineMaxAmmo;
+            }
+            else
+            {
+                CurrentMagazineAmmo += CurrentTotalAmmo;
+                CurrentTotalAmmo = 0;
+            }
 
-        if (bIsSlideLockReload)
-        {
-            return 2;
-        }
-        else
-        {
-            return 1;
+            if (GetWorld()->IsServer())
+            {
+                Multi_Reload();
+            }
+            else
+            {
+                Server_Reload();
+            }
         }
     }
-
-    return 0;
 }
 
 bool AWeaponBase::Server_Reload_Validate()
@@ -364,5 +372,9 @@ int AWeaponBase::GetMagazineAmmo()
 }
 
 void AWeaponBase::StopFiring()
+{
+}
+
+void AWeaponBase::ChangeFireMode()
 {
 }

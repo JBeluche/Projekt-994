@@ -103,24 +103,7 @@ void AProjekt994Character::OnFire()
 {
     if (CurrentWeapon)
     {
-        if (CurrentWeapon->Fire(this))
-        {
-            if (UAnimInstance *AnimInstance = Mesh1P->GetAnimInstance())
-            {
-                if (UAnimMontage *FireMontage = CurrentWeapon->GetFPSAnimMontage())
-                {
-                    AnimInstance->Montage_Play(FireMontage);
-                    if (bIsAiming)
-                    {
-                        AnimInstance->Montage_JumpToSection(FName("FireADS"), FireMontage);
-                    }
-                    else
-                    {
-                        AnimInstance->Montage_JumpToSection(FName("FireHip"), FireMontage);
-                    }
-                }
-            }
-        }
+        CurrentWeapon->Fire();
     }
 }
 
@@ -128,24 +111,7 @@ void AProjekt994Character::OnReload()
 {
     if (CurrentWeapon)
     {
-        if (int8 ReloadValue = CurrentWeapon->Reload())
-        {
-            if (UAnimInstance *AnimInstance = Mesh1P->GetAnimInstance())
-            {
-                if (UAnimMontage *FireMontage = CurrentWeapon->GetFPSAnimMontage())
-                {
-                    AnimInstance->Montage_Play(FireMontage);
-                    if (ReloadValue == 2)
-                    {
-                        AnimInstance->Montage_JumpToSection(FName("ReloadEmpty"), FireMontage);
-                    }
-                    else
-                    {
-                        AnimInstance->Montage_JumpToSection(FName("Reload"), FireMontage);
-                    }
-                }
-            }
-        }
+        CurrentWeapon->Reload();
     }
 }
 

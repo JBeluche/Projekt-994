@@ -110,6 +110,9 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent *PlayerInputCompo
 	// Bind fire event
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ACharacterBase::OnFire);
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ACharacterBase::OnStopFire);
+	
+	//Switch weapon fire mode
+	PlayerInputComponent->BindAction("WeaponFireToggle", IE_Released, this, &ACharacterBase::ChangeWeaponFireMode);
 
 	// Bind movement events
 	PlayerInputComponent->BindAxis("MoveForward", this, &ACharacterBase::MoveForward);
@@ -196,4 +199,12 @@ bool ACharacterBase::Server_SetAiming_Validate(bool WantsToAim)
 void ACharacterBase::Server_SetAiming_Implementation(bool WantsToAim)
 {
 	bIsAiming = WantsToAim;
+}
+
+void ACharacterBase::ChangeWeaponFireMode()
+{
+	if(CurrentWeapon)
+	{
+		CurrentWeapon->ChangeFireMode();
+	}
 }

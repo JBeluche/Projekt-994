@@ -67,6 +67,8 @@ protected:
 	virtual void OnAimingStart();
 	virtual void OnAimingEnd();
 
+	virtual void ChangeWeaponFireMode();
+
 	/** Handles moving forward/backward */
 	void MoveForward(float Val);
 

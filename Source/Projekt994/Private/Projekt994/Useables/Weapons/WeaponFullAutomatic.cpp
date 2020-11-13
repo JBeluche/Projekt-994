@@ -43,12 +43,16 @@ bool AWeaponFullAutomatic::Server_StartFullAutoFire_Validate(bool IsFiring)
 
 void AWeaponFullAutomatic::Server_StartFullAutoFire_Implementation(bool IsFiring)
 {
+        UE_LOG(LogTemp, Warning, TEXT("Server_StartFullAutoFire_Implementation"));
+
     bIsFiring = IsFiring;
     OnRep_StartFullAutoFire();
 }
 
 void AWeaponFullAutomatic::OnRep_StartFullAutoFire()
 {
+        UE_LOG(LogTemp, Warning, TEXT("OnRep_StartFullAutoFire"));
+
     if (bIsFiring)
     {
         GetWorld()->GetTimerManager().SetTimer(WeaponFireHandle, this, &AWeaponFullAutomatic::OnClientFire, .2f, true);
@@ -62,6 +66,8 @@ void AWeaponFullAutomatic::OnRep_StartFullAutoFire()
 
 void AWeaponFullAutomatic::PlayWeaponEffects()
 {
+        UE_LOG(LogTemp, Warning, TEXT("PlayWeaponEffects"));
+
     if (AProjekt994Character *Character = Cast<AProjekt994Character>(GetOwner()))
     {
         if (!Character->IsLocallyControlled() && FireAnimation)
@@ -88,61 +94,79 @@ void AWeaponFullAutomatic::PlayWeaponEffects()
 
 void AWeaponFullAutomatic::OnClientFire()
 {
-    if (AProjekt994Character *ShootingPlayer = Cast<AProjekt994Character>(GetOwner()))
+        UE_LOG(LogTemp, Warning, TEXT("OnClientFire"));
+
+    if (CurrentMagazineAmmo > 0)
     {
-        Super::Fire(ShootingPlayer);
 
-        if (UAnimInstance *AnimInstance = ShootingPlayer->GetMesh1P()->GetAnimInstance())
+        if (AProjekt994Character *ShootingPlayer = Cast<AProjekt994Character>(GetOwner()))
         {
-            if (FPSArmsMontage)
+            --CurrentMagazineAmmo;
+
+            if (UAnimInstance *AnimInstance = ShootingPlayer->GetMesh1P()->GetAnimInstance())
             {
-                AnimInstance->Montage_Play(FPSArmsMontage);
-                if (ShootingPlayer->GetIsAiming())
+                if (FPSArmsMontage)
                 {
-                    AnimInstance->Montage_JumpToSection(FName("FireADS"), FPSArmsMontage);
-                }
-                else
-                {
-                    AnimInstance->Montage_JumpToSection(FName("FireHip"), FPSArmsMontage);
-                }
-            }
-        }
-
-        if (CurrentMagazineAmmo <= 0 && FireEmptyAnimation)
-        {
-            WeaponMesh->PlayAnimation(FireEmptyAnimation, false);
-        }
-        else if (FireAnimation)
-        {
-            WeaponMesh->PlayAnimation(FireAnimation, false);
-        }
-
-        TArray<FHitResult> HitResults = PerformLineTrace(ShootingPlayer);
-
-        if (HitResults.Num() > 0)
-        {
-            for (FHitResult &Result : HitResults)
-            {
-                FString HitBone = Result.BoneName.ToString();
-                if (AActor *HitActor = Result.GetActor())
-                {
-                    if (AZombieBase *Zombie = Cast<AZombieBase>(HitActor))
+                    AnimInstance->Montage_Play(FPSArmsMontage);
+                    if (ShootingPlayer->GetIsAiming())
                     {
-                        Zombie->Hit(ShootingPlayer, Result);
+
+                        AnimInstance->Montage_JumpToSection(FName("FireADS"), FPSArmsMontage);
+                    }
+                    else
+                    {
+
+                        AnimInstance->Montage_JumpToSection(FName("FireHip"), FPSArmsMontage);
                     }
                 }
             }
-        }
 
+            if (CurrentMagazineAmmo <= 0 && FireEmptyAnimation)
+            {
+                WeaponMesh->PlayAnimation(FireEmptyAnimation, false);
+            }
+            else if (FireAnimation)
+            {
+                WeaponMesh->PlayAnimation(FireAnimation, false);
+            }
+
+            TArray<FHitResult> HitResults = PerformLineTrace(ShootingPlayer);
+
+            if (HitResults.Num() > 0)
+            {
+                for (FHitResult &Result : HitResults)
+                {
+                    FString HitBone = Result.BoneName.ToString();
+                    if (AActor *HitActor = Result.GetActor())
+                    {
+                        if (AZombieBase *Zombie = Cast<AZombieBase>(HitActor))
+                        {
+                            Zombie->Hit(ShootingPlayer, Result);
+                        }
+                    }
+                }
+            }
+
+            if (!GetWorld()->IsServer())
+            {
+                Server_Fire(HitResults);
+            }
+        }
+    }
+    else
+    {
+        GetWorld()->GetTimerManager().ClearTimer(WeaponFireHandle);
+        bIsFiring = false;
         if (!GetWorld()->IsServer())
         {
-            Server_Fire(HitResults);
+            Server_StartFullAutoFire(bIsFiring);
         }
     }
 }
 
 void AWeaponFullAutomatic::Server_Fire_Implementation(const TArray<FHitResult> &HitResults)
 {
+        UE_LOG(LogTemp, Warning, TEXT("Server_Fire_Implementation"));
 
     if (CurrentMagazineAmmo > 0)
     {
@@ -167,8 +191,10 @@ void AWeaponFullAutomatic::Server_Fire_Implementation(const TArray<FHitResult> &
     }
 }
 
-bool AWeaponFullAutomatic::Fire(AProjekt994Character *ShootingPlayer)
+void AWeaponFullAutomatic::Fire()
 {
+        UE_LOG(LogTemp, Warning, TEXT("Fire"));
+
     if (!bIsFiring && bIsInFullAuto)
     {
         bIsFiring = true;
@@ -183,18 +209,26 @@ bool AWeaponFullAutomatic::Fire(AProjekt994Character *ShootingPlayer)
     }
     else
     {
-        Super::Fire(ShootingPlayer);
+        Super::Fire();
     }
-
-    return true;
 }
 
 void AWeaponFullAutomatic::StopFiring()
 {
+        UE_LOG(LogTemp, Warning, TEXT("StopFiring"));
+
     bIsFiring = false;
     GetWorld()->GetTimerManager().ClearTimer(WeaponFireHandle);
     if (!GetWorld()->IsServer())
     {
         Server_StartFullAutoFire(bIsFiring);
+    }
+}
+
+void AWeaponFullAutomatic::ChangeFireMode()
+{
+    if (bIsSelectFire)
+    {
+        bIsInFullAuto = !bIsInFullAuto;
     }
 }

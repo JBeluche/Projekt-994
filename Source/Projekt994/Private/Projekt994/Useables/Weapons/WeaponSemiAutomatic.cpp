@@ -24,17 +24,3 @@ void AWeaponSemiAutomatic::BeginPlay()
     
 }
 
-bool AWeaponSemiAutomatic::Fire(AProjekt994Character *ShootingPlayer)
-{
-   return Super::Fire(ShootingPlayer);
-}
-
-void AWeaponSemiAutomatic::Server_Fire_Implementation(const TArray<FHitResult> &HitResults)
-{
-    Super::Server_Fire_Implementation(HitResults);
-}
-
-int8 AWeaponSemiAutomatic::Reload()
-{
-    return Super::Reload();
-}

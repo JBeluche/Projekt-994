@@ -19,12 +19,6 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void Server_Fire_Implementation(const TArray<FHitResult>& HitResults) override;
 
-public:
-	virtual bool  Fire(class AProjekt994Character* ShootingPlayer) override;
 	
-	virtual int8 Reload() override;
-
-
 };

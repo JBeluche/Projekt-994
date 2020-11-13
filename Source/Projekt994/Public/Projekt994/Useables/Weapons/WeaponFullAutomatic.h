@@ -15,7 +15,6 @@ class PROJEKT994_API AWeaponFullAutomatic : public AWeaponBase
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
 		bool bIsInFullAuto;
 
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
@@ -49,6 +48,7 @@ protected:
 
 
 public:
-	virtual bool  Fire(class AProjekt994Character* ShootingPlayer) override;
+	virtual void  Fire() override;
 	virtual void StopFiring() override;
+	virtual void ChangeFireMode() override;
 };

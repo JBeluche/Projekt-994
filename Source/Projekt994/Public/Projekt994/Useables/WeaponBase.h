@@ -135,12 +135,14 @@ protected:
 
 
 public:	
-	virtual bool Fire(class AProjekt994Character* ShootingPlayer);
+	virtual void Fire();
 	virtual void StopFiring();
+	virtual void ChangeFireMode();
+
 	FWeaponDamage GetWeaponDamage();
 	
 	//0 = cant reload, 1 = reload with mag, 2 = reload with empty mag
-	virtual int8 Reload();
+	virtual void Reload();
 
 	//First element is Magazine Ammo, second element is total ammo
 	TArray<int32> GetCurrentAmmo();
