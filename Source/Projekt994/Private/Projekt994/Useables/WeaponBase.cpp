@@ -37,6 +37,7 @@ void AWeaponBase::BeginPlay()
     WeaponMesh->HideBoneByName(FName("emptyCase_3"), EPhysBodyOp::PBO_None);
     WeaponMesh->HideBoneByName(FName("emptyCase_4"), EPhysBodyOp::PBO_None);
     WeaponMesh->HideBoneByName(FName("Magazine2"), EPhysBodyOp::PBO_None);
+
 }
 
 void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -102,7 +103,7 @@ void AWeaponBase::Server_Fire_Implementation(const TArray<FHitResult> &HitResult
 
 void AWeaponBase::ControlFireDelay()
 {
-   bCanFire = true; 
+    bCanFire = true;
 }
 
 void AWeaponBase::Fire()
@@ -292,15 +293,24 @@ void AWeaponBase::Reload()
             {
                 if (FPSArmsMontage)
                 {
+                    bCanFire = false;
                     AnimInstance->Montage_Play(FPSArmsMontage);
+                    float AnimationLength = 40.0f;
                     if (bMagazineIsEmpty)
                     {
                         AnimInstance->Montage_JumpToSection(FName("ReloadEmpty"), FPSArmsMontage);
+                        AnimationLength = FPSArmsMontage->GetSectionLength(2);
                     }
                     else
                     {
                         AnimInstance->Montage_JumpToSection(FName("Reload"), FPSArmsMontage);
+                        AnimationLength = FPSArmsMontage->GetSectionLength(3);
                     }
+
+                    AnimationLength -= 0.05;
+                    FTimerHandle ReloadHandle;
+
+                    GetWorld()->GetTimerManager().SetTimer(ReloadHandle, this, &AWeaponBase::ControlFireDelay, AnimationLength, false);
                 }
             }
 
