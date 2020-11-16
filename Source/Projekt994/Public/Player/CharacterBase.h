@@ -27,6 +27,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
 		TSubclassOf<class AWeaponBase> StartingWeaponClass;
+	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
+		TSubclassOf<class AWeaponBase> SecondWeaponClass;
+	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
+		TSubclassOf<class AWeaponBase> ThirdWeaponClass;
 
 	UPROPERTY(ReplicatedUsing = OnRep_AttachWeapon)
 		class AWeaponBase* CurrentWeapon;
@@ -59,6 +63,9 @@ public:
 	float BaseLookUpRate;
 
 protected:
+
+	void SwitchNextWeapon();
+	void SwitchPreviousWeapon();
 	
 	/** Fires a projectile. */
 	virtual void OnFire();

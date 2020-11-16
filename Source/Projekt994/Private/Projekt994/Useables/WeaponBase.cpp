@@ -235,7 +235,7 @@ TArray<FHitResult> AWeaponBase::PerformLineTrace(AProjekt994Character *ShootingP
     FCollisionResponseParams CollisionResponse;
 
     GetWorld()->LineTraceMultiByChannel(OUT HitResults, Start, End, ECollisionChannel::ECC_GameTraceChannel2, CollisionParams, CollisionResponse);
-    DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.0f, 0, 3.0f);
+    //DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.0f, 0, 3.0f);
 
     return HitResults;
 }
@@ -266,7 +266,7 @@ TArray<FHitResult> AWeaponBase::PerformLineTrace(FVector MuzzleLocation, FRotato
     FCollisionResponseParams CollisionResponse;
 
     GetWorld()->LineTraceMultiByChannel(OUT HitResults, MuzzleLocation, End, ECollisionChannel::ECC_GameTraceChannel2, CollisionParams, CollisionResponse);
-    DrawDebugLine(GetWorld(), MuzzleLocation, End, FColor::Red, false, 2.0f, 0, 3.0f);
+   // DrawDebugLine(GetWorld(), MuzzleLocation, End, FColor::Red, false, 2.0f, 0, 3.0f);
 
     return HitResults;
 }

@@ -55,9 +55,24 @@ void ACharacterBase::BeginPlay()
 
 		if (CurrentWeapon)
 		{
+			WeaponArray.Add(CurrentWeapon);
+
 			OnRep_AttachWeapon();
 
-			WeaponArray.Add(CurrentWeapon);
+		}
+		if (AWeaponBase *Weapon = GetWorld()->SpawnActor<AWeaponBase>(SecondWeaponClass, SpawnParams))
+		{
+			Weapon->GetWeaponMesh()->SetHiddenInGame(true);
+
+			Weapon->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocket"));
+			WeaponArray.Add(Weapon);
+		}
+		if (AWeaponBase *Weapon2 = GetWorld()->SpawnActor<AWeaponBase>(ThirdWeaponClass, SpawnParams))
+		{
+			Weapon2->GetWeaponMesh()->SetHiddenInGame(true);
+
+			Weapon2->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocket"));
+			WeaponArray.Add(Weapon2);
 		}
 	}
 
@@ -110,7 +125,11 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent *PlayerInputCompo
 	// Bind fire event
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ACharacterBase::OnFire);
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ACharacterBase::OnStopFire);
-	
+
+	//Switch Weapon
+	PlayerInputComponent->BindAction("SwitchNextWeapon", IE_Pressed, this, &ACharacterBase::SwitchNextWeapon);
+	PlayerInputComponent->BindAction("SwitchPreviousWeapon", IE_Pressed, this, &ACharacterBase::SwitchPreviousWeapon);
+
 	//Switch weapon fire mode
 	PlayerInputComponent->BindAction("WeaponFireToggle", IE_Released, this, &ACharacterBase::ChangeWeaponFireMode);
 
@@ -203,8 +222,64 @@ void ACharacterBase::Server_SetAiming_Implementation(bool WantsToAim)
 
 void ACharacterBase::ChangeWeaponFireMode()
 {
-	if(CurrentWeapon)
+	if (CurrentWeapon)
 	{
 		CurrentWeapon->ChangeFireMode();
+	}
+}
+
+void ACharacterBase::SwitchNextWeapon()
+{
+	if (CurrentWeapon)
+	{
+		if (WeaponArray.Num() > WeaponIndex + 1)
+		{
+			++WeaponIndex;
+			if (AWeaponBase *NextWeapon = WeaponArray[WeaponIndex])
+			{
+				UE_LOG(LogTemp, Warning, TEXT("switching weapong %s"), *NextWeapon->GetName());
+
+				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(true);
+				CurrentWeapon = NextWeapon;
+				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(false);
+
+			}
+		}
+		else
+		{
+			if (WeaponIndex > 0)
+			{
+				WeaponIndex = 0;
+
+			}
+		}
+	}
+}
+
+void ACharacterBase::SwitchPreviousWeapon()
+{
+		if (CurrentWeapon)
+	{
+		if (WeaponIndex - 1 >= 0)
+		{
+			--WeaponIndex;
+			if (AWeaponBase *NextWeapon = WeaponArray[WeaponIndex])
+			{
+				UE_LOG(LogTemp, Warning, TEXT("switching  previous weapong %s"), *NextWeapon->GetName());
+
+				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(true);
+				CurrentWeapon = NextWeapon;
+				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(false);
+
+			}
+		}
+		else
+		{
+			if (WeaponIndex > 0)
+			{
+				WeaponIndex = 0;
+
+			}
+		}
 	}
 }
