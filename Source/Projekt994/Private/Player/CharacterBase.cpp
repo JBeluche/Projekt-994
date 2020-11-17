@@ -58,7 +58,6 @@ void ACharacterBase::BeginPlay()
 			WeaponArray.Add(CurrentWeapon);
 
 			OnRep_AttachWeapon();
-
 		}
 		if (AWeaponBase *Weapon = GetWorld()->SpawnActor<AWeaponBase>(SecondWeaponClass, SpawnParams))
 		{
@@ -237,20 +236,19 @@ void ACharacterBase::SwitchNextWeapon()
 			++WeaponIndex;
 			if (AWeaponBase *NextWeapon = WeaponArray[WeaponIndex])
 			{
-				UE_LOG(LogTemp, Warning, TEXT("switching weapong %s"), *NextWeapon->GetName());
-
 				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(true);
 				CurrentWeapon = NextWeapon;
 				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(false);
-
 			}
 		}
 		else
 		{
-			if (WeaponIndex > 0)
+			WeaponIndex = 0;
+			if (AWeaponBase *NextWeapon = WeaponArray[WeaponIndex])
 			{
-				WeaponIndex = 0;
-
+				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(true);
+				CurrentWeapon = NextWeapon;
+				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(false);
 			}
 		}
 	}
@@ -258,27 +256,26 @@ void ACharacterBase::SwitchNextWeapon()
 
 void ACharacterBase::SwitchPreviousWeapon()
 {
-		if (CurrentWeapon)
+	if (CurrentWeapon)
 	{
 		if (WeaponIndex - 1 >= 0)
 		{
 			--WeaponIndex;
 			if (AWeaponBase *NextWeapon = WeaponArray[WeaponIndex])
 			{
-				UE_LOG(LogTemp, Warning, TEXT("switching  previous weapong %s"), *NextWeapon->GetName());
-
 				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(true);
 				CurrentWeapon = NextWeapon;
 				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(false);
-
 			}
 		}
 		else
 		{
-			if (WeaponIndex > 0)
+			WeaponIndex = WeaponArray.Num() - 1;
+			if (AWeaponBase *NextWeapon = WeaponArray[WeaponIndex])
 			{
-				WeaponIndex = 0;
-
+				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(true);
+				CurrentWeapon = NextWeapon;
+				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(false);
 			}
 		}
 	}
