@@ -32,6 +32,8 @@ AWeaponBase::AWeaponBase()
 void AWeaponBase::BeginPlay()
 {
     Super::BeginPlay();
+
+    WeaponMesh->SetHiddenInGame(true);
     WeaponMesh->HideBoneByName(FName("emptyCase_1"), EPhysBodyOp::PBO_None);
     WeaponMesh->HideBoneByName(FName("emptyCase_2"), EPhysBodyOp::PBO_None);
     WeaponMesh->HideBoneByName(FName("emptyCase_3"), EPhysBodyOp::PBO_None);
@@ -400,4 +402,9 @@ void AWeaponBase::StopFiring()
 
 void AWeaponBase::ChangeFireMode()
 {
+}
+
+void AWeaponBase::WeaponIsNowInHand(bool InHand)
+{
+    WeaponMesh->SetHiddenInGame(!InHand);
 }

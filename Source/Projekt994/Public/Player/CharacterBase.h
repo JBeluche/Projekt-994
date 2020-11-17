@@ -34,11 +34,19 @@ protected:
 
 	UPROPERTY(ReplicatedUsing = OnRep_AttachWeapon)
 		class AWeaponBase* CurrentWeapon;
+	//UPROPERTY(Replicated)
+		class AWeaponBase* PreviousWeapon;
 	UFUNCTION()
 		void OnRep_AttachWeapon();	
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SwitchWeapon(class AWeaponBase* NewWeapon);
+		bool Server_SwitchWeapon_Validate(class AWeaponBase* NewWeapon);
+		void Server_SwitchWeapon_Implementation(class AWeaponBase* NewWeapon);
+
 
 	int32 WeaponIndex;
-	TArray<AWeaponBase*> WeaponArray;
+	UPROPERTY(Replicated)
+		TArray<AWeaponBase*> WeaponArray;
 
 	//Set to replicate, skip owner
 	UPROPERTY(Replicated)

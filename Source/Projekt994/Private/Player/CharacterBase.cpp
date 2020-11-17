@@ -55,30 +55,22 @@ void ACharacterBase::BeginPlay()
 
 		if (CurrentWeapon)
 		{
+			PreviousWeapon = CurrentWeapon;
 			WeaponArray.Add(CurrentWeapon);
-
+			CurrentWeapon->WeaponIsNowInHand(true);
 			OnRep_AttachWeapon();
 		}
 		if (AWeaponBase *Weapon = GetWorld()->SpawnActor<AWeaponBase>(SecondWeaponClass, SpawnParams))
 		{
-			Weapon->GetWeaponMesh()->SetHiddenInGame(true);
-
 			Weapon->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocket"));
 			WeaponArray.Add(Weapon);
 		}
 		if (AWeaponBase *Weapon2 = GetWorld()->SpawnActor<AWeaponBase>(ThirdWeaponClass, SpawnParams))
 		{
-			Weapon2->GetWeaponMesh()->SetHiddenInGame(true);
-
 			Weapon2->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocket"));
 			WeaponArray.Add(Weapon2);
 		}
 	}
-
-	//Attach spawn weapon to sockets_weaponSocket
-
-	//Attach gun mesh component to Skeleton, doing it here because the skeleton is not yet created in the constructor
-	//	FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
 }
 
 void ACharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -86,22 +78,9 @@ void ACharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ACharacterBase, CurrentWeapon);
+	//DOREPLIFETIME(ACharacterBase, PreviousWeapon);
+	DOREPLIFETIME(ACharacterBase, WeaponArray);
 	DOREPLIFETIME_CONDITION(ACharacterBase, bIsAiming, COND_SkipOwner);
-}
-
-void ACharacterBase::OnRep_AttachWeapon()
-{
-	if (CurrentWeapon) //remove true
-	{
-		if (IsLocallyControlled())
-		{
-			CurrentWeapon->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocket"));
-		}
-		else
-		{
-			CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocketThirdPerson"));
-		}
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -236,9 +215,10 @@ void ACharacterBase::SwitchNextWeapon()
 			++WeaponIndex;
 			if (AWeaponBase *NextWeapon = WeaponArray[WeaponIndex])
 			{
-				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(true);
+				CurrentWeapon->WeaponIsNowInHand(false);
+
 				CurrentWeapon = NextWeapon;
-				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(false);
+				CurrentWeapon->WeaponIsNowInHand(true);
 			}
 		}
 		else
@@ -246,11 +226,13 @@ void ACharacterBase::SwitchNextWeapon()
 			WeaponIndex = 0;
 			if (AWeaponBase *NextWeapon = WeaponArray[WeaponIndex])
 			{
-				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(true);
+				CurrentWeapon->WeaponIsNowInHand(false);
+
 				CurrentWeapon = NextWeapon;
-				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(false);
+				CurrentWeapon->WeaponIsNowInHand(true);
 			}
 		}
+		Server_SwitchWeapon(CurrentWeapon);
 	}
 }
 
@@ -263,9 +245,10 @@ void ACharacterBase::SwitchPreviousWeapon()
 			--WeaponIndex;
 			if (AWeaponBase *NextWeapon = WeaponArray[WeaponIndex])
 			{
-				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(true);
+				CurrentWeapon->WeaponIsNowInHand(false);
+
 				CurrentWeapon = NextWeapon;
-				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(false);
+				CurrentWeapon->WeaponIsNowInHand(true);
 			}
 		}
 		else
@@ -273,10 +256,44 @@ void ACharacterBase::SwitchPreviousWeapon()
 			WeaponIndex = WeaponArray.Num() - 1;
 			if (AWeaponBase *NextWeapon = WeaponArray[WeaponIndex])
 			{
-				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(true);
+				CurrentWeapon->WeaponIsNowInHand(false);
+
 				CurrentWeapon = NextWeapon;
-				CurrentWeapon->GetWeaponMesh()->SetHiddenInGame(false);
+				CurrentWeapon->WeaponIsNowInHand(true);
 			}
+		}
+		Server_SwitchWeapon(CurrentWeapon);
+	}
+}
+
+bool ACharacterBase::Server_SwitchWeapon_Validate(class AWeaponBase *NewWeapon)
+{
+	return true;
+}
+
+void ACharacterBase::Server_SwitchWeapon_Implementation(class AWeaponBase *NewWeapon)
+{
+	CurrentWeapon = NewWeapon;
+	OnRep_AttachWeapon();
+}
+
+void ACharacterBase::OnRep_AttachWeapon()
+{
+	if (PreviousWeapon)
+	{
+		PreviousWeapon->WeaponIsNowInHand(false);
+	}
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->WeaponIsNowInHand(true);
+		PreviousWeapon = CurrentWeapon;
+		if (true)
+		{
+			CurrentWeapon->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocket"));
+		}
+		else
+		{
+			CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocketThirdPerson"));
 		}
 	}
 }
