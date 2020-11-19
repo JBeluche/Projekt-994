@@ -37,6 +37,9 @@ protected:
 	void Die();
 	uint8 GetPointsForHit(uint8 HitPart, float Damage);
 
+	UPROPERTY(EditAnywhere, Category = "Projekt994 Settings")
+	TSubclassOf<class AAttackZoneTriggerCapsule> AttackZone;
+
 
 public:
 	void Hit(class AProjekt994Character* Player, FHitResult HitResult);
