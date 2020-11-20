@@ -4,6 +4,8 @@
 #include "Projekt994/Public/Player/Projekt994Character.h"
 #include "Projekt994/Public/Projekt994/Game/Projekt994GameModeBase.h"
 #include "Projekt994/Public/Projekt994//Useables/WeaponBase.h"
+
+
 #include "Projekt994/Public/Projekt994/Zombie/ZombieBase.h"
 
 #include "Net/UnrealNetwork.h"
@@ -195,3 +197,4 @@ void AZombieBase::OnCleanup()
 {
 	Destroy();
 }
+

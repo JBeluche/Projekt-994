@@ -114,11 +114,9 @@ void AWeaponBase::Fire()
     if (AProjekt994Character *Player = Cast<AProjekt994Character>(GetOwner()))
 
     {
-        UE_LOG(LogTemp, Warning, TEXT("Fire wb"));
 
         if (CurrentMagazineAmmo > 0 && bCanFire)
         {
-            UE_LOG(LogTemp, Warning, TEXT("Ammo fire is %d"), CurrentMagazineAmmo);
 
             //Play animation
             if (UAnimInstance *AnimInstance = Player->GetMesh1P()->GetAnimInstance())

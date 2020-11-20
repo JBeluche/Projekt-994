@@ -17,11 +17,18 @@ class PROJEKT994_API AAIControllerZombieBase : public AAIController
 public:
 	AAIControllerZombieBase();
 
-	
+	void SetIsInAttackZone();
+	void ClearIsInAttackZone();
+
 protected:
 	virtual void BeginPlay() override;
+	void Tick(float DeltaSeconds);
+
 
 private:
 	UPROPERTY(EditAnywhere)
 	class UBehaviorTree* AIBehavior;
+	class AAttackZoneTriggerCapsule* GetClosestAttackZone();
+
+	
 };

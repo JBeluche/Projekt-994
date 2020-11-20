@@ -6,16 +6,11 @@
 		},
 		{
 			"name": "UE4",
-			"path": "C:\\Program Files\\UnrealEngine\\UE_4.25"
+			"path": "Z:\\Program Files\\UE_4.25"
 		}
 	],
 	"settings": {
-		"typescript.tsc.autoDetect": "off",
-		"files.associations": {
-			".blade.php": "html",
-			".tpl": "html",
-			"*.rh": "cpp"
-		}
+		"typescript.tsc.autoDetect": "off"
 	},
 	"extensions": {
 		"recommendations": [
